@@ -38,11 +38,32 @@ derivative of MojoLauncher under LGPLv3.
 - [x] `README.md` and `README_RU.md` rewritten for MojoRemake.
 - [x] CI verified on the fork: both debug APKs build successfully. Upstream-only
   Mesa and publishing steps are skipped on forks.
-- [x] No app code has been modified yet.
+- [x] CI versioning implemented and verified (run `39394222720`, build #4):
+  - `appVersion=1.0.1` in `gradle.properties` is the single version source.
+  - Debug APKs are named
+    `MojoRemake-v1.0.1-b<run>-full-debug.apk` and
+    `MojoRemake-v1.0.1-b<run>-noruntime-debug.apk`.
+  - `versionName` is `v1.0.1` (full) / `v1.0.1-noruntime` (noruntime).
+  - `versionCode` is `(major*10000 + minor*100 + patch)*1000 + CI run`.
+  - Debug package IDs are unique per CI run
+    (`git.artdeell.mjlaunch.debug.b<run>` and
+    `git.artdeell.mjlaunch.noruntime.debug.b<run>`), so full/noruntime and
+    different CI runs can be installed side by side.
+  - Storage provider authorities and the custom-controls target package follow
+    the final variant application ID.
+- [x] No game-engine or UI code has been modified yet; only build/CI versioning.
 
 ## Next steps
 
-1. **Minimal rebrand (safe layer)**
+1. **UI/UX remake (main work)**
+   - Read `prompt.txt` at the repository root (local file, intentionally not
+     committed) for the full first-session brief.
+   - Shell: `LauncherActivity`, `BaseActivity`, `MainMenuFragment`,
+     `app_mojo/src/main/res/layout/`.
+   - Theme and colors: `app_mojo/src/main/res/values/`.
+   - Keep game/instance flows reachable while the UI is replaced.
+   - Write `docs/UI_REMAKE_PLAN.md`, then implement in the same session.
+2. **Minimal rebrand (part of UI work)**
    - Display name and strings: `app_mojo/src/main/res/values/strings.xml`
      (`app_short_name`), `app_mojo/src/main/AndroidManifest.xml`.
    - App identity: `app_mojo/build.gradle` (`applicationId`, `namespace`
@@ -50,17 +71,8 @@ derivative of MojoLauncher under LGPLv3.
    - URLs and constants: `app_mojo/src/main/java/git/artdeell/mojo/Tools.java`.
    - Icon and splash assets in `app_mojo/src/main/res/`.
    - README/NOTICE/privacy docs.
-   - Decide the final application ID before any release; changing it later
-     changes app identity, provider authorities, and update paths.
-2. **Build verification**
-   - Push to `dev` and let GitHub Actions build the debug APKs.
-   - Fix any fork-specific CI issues before UI work starts.
-3. **UI remake**
-   - Shell: `LauncherActivity`, `BaseActivity`, `MainMenuFragment`,
-     `app_mojo/src/main/res/layout/`.
-   - Theme and colors: `app_mojo/src/main/res/values/`.
-   - Keep game/instance flows reachable while the UI is replaced.
-4. **Feature work after the shell is stable**
+   - Do not change the base application ID or the CI debug/flavor suffixes.
+3. **Feature work after the shell is stable**
    - Instance list/home, mod browser/installer UX, account flow, settings,
      downloads/progress, and error states.
 
@@ -69,11 +81,16 @@ derivative of MojoLauncher under LGPLv3.
 - Full Android SDK/NDK builds do not work in Termux. Use GitHub Actions.
 - Local submodules can be fetched with
   `git submodule update --init --recursive`.
-- CI workflow: `.github/workflows/android.yml` (JDK 17, Gradle 8.14.5,
-  `assembleFullDebug` and `assembleNoruntimeDebug`).
+- CI workflow: `.github/workflows/android.yml` ("MojoRemake CI", JDK 17,
+  Gradle 8.14.5, `assembleFullDebug` and `assembleNoruntimeDebug`).
+- Version bumps: edit `appVersion` in `gradle.properties`; never reuse a
+  version for different code. `versionCode` is derived automatically.
 - `CURSEFORGE_API_KEY` is optional; without it the build uses a dummy key.
   Release/publishing steps are gated to the upstream owner and are skipped on
   the fork.
+- On Android 9 and older, game storage still uses the shared legacy
+  `/sdcard/games/PojavLauncher` path; side-by-side test builds share that data.
+  On Android 10+ each package gets app-specific external storage.
 
 ## Session rules
 
