@@ -23,7 +23,7 @@ public final class SkinValidator {
         EMPTY
     }
 
-    public static final class SkinValidationException extends Exception {
+    public static final class SkinValidationException extends java.io.IOException {
         public final Reason reason;
 
         public SkinValidationException(Reason reason, String message) {
