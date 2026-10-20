@@ -36,6 +36,8 @@ derivative of MojoLauncher under LGPLv3.
 - [x] Full-autonomy `AGENTS.md` policy replaces the upstream policy.
 - [x] `CLAUDE.md` points at `AGENTS.md`.
 - [x] `README.md` and `README_RU.md` rewritten for MojoRemake.
+- [x] CI verified on the fork: both debug APKs build successfully. Upstream-only
+  Mesa and publishing steps are skipped on forks.
 - [x] No app code has been modified yet.
 
 ## Next steps
