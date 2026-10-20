@@ -1,35 +1,23 @@
 plugins {
     id 'com.android.application' version '8.11.1'
     id 'de.undercouch.download' version '5.6.0'
-    id 'org.ajoberstar.grgit' version '5.3.2'
 }
 
 apply from: rootProject.file('gradle/prefab_bypass.gradle')
 
+import com.android.build.api.variant.ResValue
 import de.undercouch.gradle.tasks.download.Download
 
-static def getDate() { return new Date().format('yyyyMMdd') }
-
-static def getDateSeconds() {
-    if (System.getenv("GITHUB_ACTIONS") == "true") {
-        return Integer.parseInt(System.getenv("GITHUB_RUN_NUMBER"))
-    } else {
-        return 172005
-    }
+def appVersion = (project.findProperty("appVersion") ?: "1.0.1").toString()
+def versionParts = appVersion.tokenize('.')
+if (versionParts.size() != 3) {
+    throw new GradleException("appVersion must use MAJOR.MINOR.PATCH, got '${appVersion}'")
 }
-
-def getVersionName = {
-    def currentBranch = grgit.branch.current()
-    def latestCommit = grgit.log(maxCommits: 1)
-    def dateToday = getDate()
-    if(currentBranch == null || latestCommit == null) {
-        return "LOCAL-${dateToday}"
-    }else {
-        def branchName = currentBranch.getName()
-        def commitAbbreviation = latestCommit.abbreviatedId
-        return "justicia-${dateToday}-${commitAbbreviation}-${branchName}"
-    }
-}
+def appVersionCode = (versionParts[0] as int) * 10000 + (versionParts[1] as int) * 100 + (versionParts[2] as int)
+def ciRunNumber = System.getenv("GITHUB_RUN_NUMBER")
+def isCiBuild = System.getenv("GITHUB_ACTIONS") == "true" && ciRunNumber != null
+def ciBuildNumber = isCiBuild ? (ciRunNumber as int) : 0
+def ciBuildSuffix = isCiBuild ? ".b${ciRunNumber}" : ""
 
 def getCFApiKey = {
     String key = System.getenv("CURSEFORGE_API_KEY")
@@ -83,8 +71,8 @@ android {
         applicationId "git.artdeell.mjlaunch"
         minSdkVersion 21
         targetSdkVersion 36
-        versionCode getDateSeconds()
-        versionName getVersionName()
+        versionCode (appVersionCode * 1000 + ciBuildNumber)
+        versionName "v${appVersion}"
         multiDexEnabled false //important
         resValue 'string', 'curseforge_api_key', getCFApiKey()
         resValue 'string', 'group_id', 'git.artdeell'
@@ -99,19 +87,18 @@ android {
         
         noruntime {
             dimension "runtime"
+            applicationIdSuffix ".noruntime"
             versionNameSuffix "-noruntime"
         }
     }
 
     buildTypes {
         debug {
-            applicationIdSuffix '.debug'
+            applicationIdSuffix ".debug${ciBuildSuffix}"
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.customDebug
-            resValue 'string', 'application_package', 'git.artdeell.mjlaunch.debug'
-            resValue 'string', 'storageProviderAuthorities', 'git.artdeell.mjlaunch.scoped.gamefolder.debug'
         }
         proguard {
             initWith debug
@@ -131,8 +118,6 @@ android {
             // defaultConfig already set
             // multiDexEnabled = true
             // debuggable = true
-            resValue 'string', 'storageProviderAuthorities', 'git.artdeell.mjlaunch.scoped.gamefolder'
-            resValue 'string', 'application_package', 'git.artdeell.mjlaunch'
         }
         gplay {
             initWith release
@@ -174,6 +159,15 @@ android {
 
     buildFeatures {
         buildConfig true
+    }
+}
+
+androidComponents {
+    onVariants(selector().all()) { variant ->
+        variant.resValues.put(
+                variant.makeResValueKey("string", "application_package"),
+                new ResValue(variant.applicationId.get(), "Generated from the final applicationId")
+        )
     }
 }
 

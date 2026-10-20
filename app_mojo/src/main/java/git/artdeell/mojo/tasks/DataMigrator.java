@@ -97,7 +97,7 @@ public class DataMigrator {
             return;
         }
         // also shouldn't allow importing from self
-        if(authority.equals(activity.getString(R.string.storageProviderAuthorities))){
+        if(authority.equals(Tools.getStorageProviderAuthority())){
             Toast.makeText(activity, R.string.migration_progress_self, Toast.LENGTH_LONG).show();
             return;
         }

@@ -1,4 +1,4 @@
-name: Android CI
+name: MojoRemake CI
 
 on:
   push:
@@ -18,6 +18,23 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: true
+
+      - name: Read app version
+        id: version
+        run: |
+          VERSION="$(grep -E '^appVersion=' gradle.properties | cut -d= -f2 | tr -d '[:space:]')"
+          if [ -z "$VERSION" ]; then
+            echo "appVersion is missing from gradle.properties" >&2
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          {
+            echo "## MojoRemake v$VERSION"
+            echo ""
+            echo "- Build: #${{ github.run_number }}"
+            echo "- Commit: \`${{ github.sha }}\`"
+            echo "- Branch: \`${{ github.ref_name }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Get LTW
         uses: dawidd6/action-download-artifact@v6
@@ -51,8 +68,10 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+
       - name: Create out directory
         run: mkdir out
+
       - name: Build Publishing .aab
         if: github.repository_owner == 'MojoLauncher' && github.ref_name == 'v3_openjdk'
         run: |
@@ -61,48 +80,75 @@ jobs:
 
       - name: Build Debug .apk
         run: |
-          # Build the launcher
           gradle :app_mojo:assembleFullDebug
-          mv app_mojo/build/outputs/apk/full/debug/app_mojo-full-debug.apk out/app-debug-full.apk
+          mv app_mojo/build/outputs/apk/full/debug/app_mojo-full-debug.apk \
+            "out/MojoRemake-v${{ steps.version.outputs.version }}-b${{ github.run_number }}-full-debug.apk"
 
       - name: Build Debug .apk (No runtime)
         run: |
           gradle :app_mojo:assembleNoruntimeDebug
-          mv app_mojo/build/outputs/apk/noruntime/debug/app_mojo-noruntime-debug.apk out/app-debug-noruntime.apk
+          mv app_mojo/build/outputs/apk/noruntime/debug/app_mojo-noruntime-debug.apk \
+            "out/MojoRemake-v${{ steps.version.outputs.version }}-b${{ github.run_number }}-noruntime-debug.apk"
+
       - name: Build Nightly Release .apk
         if: github.repository_owner == 'MojoLauncher' && github.ref_name == 'v3_openjdk'
         run: |
           gradle :app_mojo:assembleFullPubRelease
-          mv app_mojo/build/outputs/apk/full/pubRelease/app_mojo-full-pubRelease.apk out/MojoLauncher-release.apk
+          mv app_mojo/build/outputs/apk/full/pubRelease/app_mojo-full-pubRelease.apk \
+            "out/MojoRemake-v${{ steps.version.outputs.version }}-full-release.apk"
+
       - name: Gen md5sums
         run: |
-          md5sum out/app-debug-full.apk > out/app-debug-full.md5
-          md5sum out/app-debug-noruntime.apk > out/app-debug-noruntime.md5
+          for apk in out/*.apk; do
+            md5sum "$apk" > "$apk.md5"
+          done
+
+      - name: Write build info
+        run: |
+          cat > out/build-info.txt <<EOF
+          MojoRemake v${{ steps.version.outputs.version }}
+          Build: #${{ github.run_number }}
+          Commit: ${{ github.sha }}
+          Branch: ${{ github.ref_name }}
+          Workflow: ${{ github.workflow }}
+          EOF
 
       - name: Upload Debug APK
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug
-          path: out/app-debug-full.apk
+          name: MojoRemake-v${{ steps.version.outputs.version }}-b${{ github.run_number }}-full-debug
+          path: out/*-full-debug.apk
 
       - name: Upload Debug APK (No runtime)
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug-noruntime
-          path: out/app-debug-noruntime.apk
+          name: MojoRemake-v${{ steps.version.outputs.version }}-b${{ github.run_number }}-noruntime-debug
+          path: out/*-noruntime-debug.apk
+
+      - name: Upload checksums
+        uses: actions/upload-artifact@v4
+        with:
+          name: MojoRemake-v${{ steps.version.outputs.version }}-b${{ github.run_number }}-checksums
+          path: out/*.md5
+
+      - name: Upload build info
+        uses: actions/upload-artifact@v4
+        with:
+          name: MojoRemake-v${{ steps.version.outputs.version }}-b${{ github.run_number }}-build-info
+          path: out/build-info.txt
 
       - name: Release Nightly APK
         if: github.repository_owner == 'MojoLauncher' && github.ref_name == 'v3_openjdk'
         uses: softprops/action-gh-release@v3
         with:
-          name: MojoLauncher Nightly Builds
+          name: MojoRemake Nightly Builds
           prerelease: true
           tag_name: nightly
           body: |
-            MojoLauncher nightly build.
+            MojoRemake nightly build.
             Commit hash: ${{ github.sha }}
           files: |
-            out/MojoLauncher-release.apk
+            out/MojoRemake-v${{ steps.version.outputs.version }}-full-release.apk
 
       - name: Upload AAB
         if: github.repository_owner == 'MojoLauncher' && github.ref_name == 'v3_openjdk'

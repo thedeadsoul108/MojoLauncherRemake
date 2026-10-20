@@ -120,7 +120,7 @@
 
         <provider
             android:name=".utils.scoped.FolderProvider"
-            android:authorities="@string/storageProviderAuthorities"
+            android:authorities="${applicationId}.scoped.gamefolder"
             android:exported="true"
             android:grantUriPermissions="true"
             android:permission="android.permission.MANAGE_DOCUMENTS">

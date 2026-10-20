@@ -197,6 +197,15 @@ public final class Tools {
         CTRLDEF_FILE = DIR_GAME_HOME + "/controlmap/default.json";
     }
 
+    /**
+     * The authority of the storage provider for the currently installed package.
+     * It must match the final applicationId, including debug/flavor suffixes,
+     * so multiple MojoRemake builds can be installed side by side.
+     */
+    public static String getStorageProviderAuthority() {
+        return BuildConfig.APPLICATION_ID + ".scoped.gamefolder";
+    }
+
     public static void buildNotificationChannel(Context context){
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return;
         NotificationChannel channel = new NotificationChannel(
@@ -839,7 +848,7 @@ public final class Tools {
      * @param share whether to open a "Share" or an "Open" dialog.
      */
     public static void openPath(Context context, File file, boolean share) {
-        Uri contentUri = DocumentsContract.buildDocumentUri(context.getString(R.string.storageProviderAuthorities), file.getAbsolutePath());
+        Uri contentUri = DocumentsContract.buildDocumentUri(getStorageProviderAuthority(), file.getAbsolutePath());
         String mimeType = getMimeType(file);
         Intent intent = new Intent();
         if(share) {
