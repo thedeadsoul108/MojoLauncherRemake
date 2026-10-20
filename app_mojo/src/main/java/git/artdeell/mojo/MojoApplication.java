@@ -16,6 +16,7 @@ import androidx.core.app.ActivityCompat;
 import git.artdeell.mojo.utils.lifecycle.ContextExecutor;
 import git.artdeell.mojo.prefs.LauncherPreferences;
 import git.artdeell.mojo.tasks.AsyncAssetManager;
+import git.artdeell.mojo.ui.ThemeManager;
 import git.artdeell.mojo.utils.FileUtils;
 import git.artdeell.mojo.utils.LocaleUtils;
 
@@ -82,6 +83,7 @@ public class MojoApplication extends Application {
 				// and not explode.
 				Tools.initEarlyConstants(this);
 			}
+			ThemeManager.apply(LauncherPreferences.PREF_THEME);
 			Tools.DEVICE_ARCHITECTURE = Architecture.getDeviceArchitecture();
 			//Force x86 lib directory for Asus x86 based zenfones
 			if(Architecture.isx86Device() && Architecture.is32BitsDevice()) {

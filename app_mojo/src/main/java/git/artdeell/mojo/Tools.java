@@ -245,7 +245,7 @@ public final class Tools {
     }
 
     @SuppressWarnings("deprecation")
-    private static void setLegacyFullscreen(View insetView, boolean fullscreen) {
+    private static void setLegacyFullscreen(View insetView, boolean fullscreen, boolean lightBars) {
         View.OnSystemUiVisibilityChangeListener listener = (visibility)->{
             if(fullscreen && (visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
                 insetView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -255,7 +255,16 @@ public final class Tools {
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
             }else if(!fullscreen) {
-                insetView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+                int flags = View.SYSTEM_UI_FLAG_VISIBLE;
+                if (lightBars) {
+                    if (SDK_INT >= Build.VERSION_CODES.M) {
+                        flags |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+                    }
+                    if (SDK_INT >= Build.VERSION_CODES.O) {
+                        flags |= View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+                    }
+                }
+                insetView.setSystemUiVisibility(flags);
             }
         };
         listener.onSystemUiVisibilityChange(insetView.getSystemUiVisibility());
@@ -265,6 +274,7 @@ public final class Tools {
     public static void setInsetsMode(Activity activity, boolean noSystemBars, boolean ignoreNotch) {
         Window window = activity.getWindow();
         View insetView = activity.findViewById(android.R.id.content);
+        boolean lightBars = activity.getResources().getBoolean(R.bool.mojo_light_system_bars);
         // Don't ignore system bars in window mode (will put game behind window button bar)
         if(SDK_INT >= Build.VERSION_CODES.N && activity.isInMultiWindowMode()) noSystemBars = false;
 
@@ -274,6 +284,17 @@ public final class Tools {
         if(!noSystemBars) bgColor = activity.getResources().getColor(R.color.background_status_bar);
         else bgColor = Color.BLACK;
 
+        // Old releases can't draw dark system-bar icons. Give them a dark bar instead of white
+        // icons on a near-white launcher background.
+        if (lightBars && !noSystemBars) {
+            if (SDK_INT < Build.VERSION_CODES.M) {
+                window.setStatusBarColor(activity.getResources().getColor(R.color.text_primary));
+            }
+            if (SDK_INT < Build.VERSION_CODES.O) {
+                window.setNavigationBarColor(activity.getResources().getColor(R.color.text_primary));
+            }
+        }
+
         // On API 35 onwards, apps are edge-to-edge by default and are controlled entirely though the
         // inset API. On levels below, we still need to set the correct cutout mode.
         if(SDK_INT >= Build.VERSION_CODES.P) setCutoutMode(window, ignoreNotch);
@@ -281,7 +302,7 @@ public final class Tools {
         // The AppCompat APIs don't work well, and break when opening alert dialogs on older Android
         // versions. Use the legacy fullscreen flags for lower APIs. (notch is already handled above)
         if(SDK_INT < Build.VERSION_CODES.R) {
-            setLegacyFullscreen(insetView, noSystemBars);
+            setLegacyFullscreen(insetView, noSystemBars, lightBars);
             return;
         }
         // Code below expects this to be set to false, since that's the SDK 35 default.
@@ -292,6 +313,12 @@ public final class Tools {
         WindowInsetsController insetsController = window.getInsetsController();
         if(insetsController != null) {
             insetsController.setSystemBarsBehavior(WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+            int appearanceMask = WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS;
+            if (SDK_INT >= Build.VERSION_CODES.O) {
+                appearanceMask |= WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS;
+            }
+            insetsController.setSystemBarsAppearance(
+                    lightBars && !noSystemBars ? appearanceMask : 0, appearanceMask);
             if(noSystemBars) insetsController.hide(WindowInsets.Type.systemBars());
             else insetsController.show(WindowInsets.Type.systemBars());
         }

@@ -35,6 +35,7 @@ import git.artdeell.mojo.prefs.screens.LauncherPreferenceJavaFragment;
 import git.artdeell.mojo.prefs.screens.LauncherPreferenceMiscellaneousFragment;
 import git.artdeell.mojo.prefs.screens.LauncherPreferenceVideoFragment;
 import git.artdeell.mojo.ui.ScreenTitleProvider;
+import git.artdeell.mojo.ui.ThemeManager;
 import git.artdeell.mojo.utils.FileUtils;
 
 import java.io.File;
@@ -49,6 +50,7 @@ public class SettingsFragment extends Fragment implements ScreenTitleProvider {
 
     private TextView mAccountSummary;
     private TextView mNotificationSummary;
+    private TextView mThemeSummary;
 
     public SettingsFragment() {
         super(R.layout.fragment_settings);
@@ -67,6 +69,12 @@ public class SettingsFragment extends Fragment implements ScreenTitleProvider {
         LinearLayout gameplay = view.findViewById(R.id.settings_gameplay_container);
         LinearLayout tools = view.findViewById(R.id.settings_tools_container);
         LinearLayout about = view.findViewById(R.id.settings_about_container);
+        LinearLayout appearance = view.findViewById(R.id.settings_appearance_container);
+
+        mThemeSummary = addRow(inflater, appearance, R.drawable.ic_ui_appearance,
+                R.string.settings_theme_title, R.string.settings_theme_summary,
+                v -> showThemeDialog()).summary;
+        refreshThemeSummary();
 
         mAccountSummary = addRow(inflater, accounts, R.drawable.ic_ui_accounts,
                 R.string.settings_accounts_title, R.string.settings_accounts_summary,
@@ -123,6 +131,7 @@ public class SettingsFragment extends Fragment implements ScreenTitleProvider {
     @Override
     public void onResume() {
         super.onResume();
+        refreshThemeSummary();
         refreshAccountSummary();
         refreshNotificationSummary();
     }
@@ -149,6 +158,41 @@ public class SettingsFragment extends Fragment implements ScreenTitleProvider {
         mNotificationSummary.setText(granted
                 ? R.string.settings_notifications_allowed
                 : R.string.settings_notifications_off);
+    }
+
+    private void refreshThemeSummary() {
+        if (mThemeSummary == null || !isAdded()) return;
+        mThemeSummary.setText(ThemeManager.summaryRes(LauncherPreferences.PREF_THEME));
+    }
+
+    private void showThemeDialog() {
+        if (!isAdded()) return;
+        final String[] modes = {ThemeManager.SYSTEM, ThemeManager.DARK, ThemeManager.LIGHT};
+        final String[] labels = {
+                getString(R.string.settings_theme_system),
+                getString(R.string.settings_theme_dark),
+                getString(R.string.settings_theme_light)
+        };
+        int selected = 0;
+        for (int i = 0; i < modes.length; i++) {
+            if (modes[i].equals(LauncherPreferences.PREF_THEME)) {
+                selected = i;
+                break;
+            }
+        }
+        new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.settings_theme_dialog_title)
+                .setSingleChoiceItems(labels, selected, (dialog, which) -> {
+                    String mode = modes[which];
+                    LauncherPreferences.DEFAULT_PREF.edit()
+                            .putString(LauncherPreferences.PREF_KEY_THEME, mode).apply();
+                    LauncherPreferences.PREF_THEME = mode;
+                    ThemeManager.apply(mode);
+                    refreshThemeSummary();
+                    dialog.dismiss();
+                })
+                .setNegativeButton(R.string.action_cancel, null)
+                .show();
     }
 
     private void refreshAccountSummary() {

@@ -574,7 +574,7 @@
     <string name="home_quick_actions">Shortcuts</string>
     <string name="home_quick_create_title">New instance</string>
     <string name="home_quick_create_body">Vanilla or modded</string>
-    <string name="home_quick_browse_title">Browse modpacks</string>
+    <string name="home_quick_browse_title">Browse content</string>
     <string name="home_quick_browse_body">Find something new</string>
     <string name="home_quick_import_title">Import modpack</string>
     <string name="home_quick_import_body">From a local file</string>
@@ -691,20 +691,28 @@
     <string name="editor_loader_vanilla">Vanilla</string>
 
     <!-- Browse -->
-    <string name="browse_subtitle">Modpacks from Modrinth and CurseForge, ready to install.</string>
-    <string name="browse_search_hint">Search modpacks</string>
-    <string name="browse_import">Import local modpack</string>
-    <string name="browse_source_note">Results from Modrinth and CurseForge</string>
-    <string name="browse_filter_title">Filter modpacks</string>
+    <string name="browse_subtitle">Mods, modpacks, resource packs, shaders and datapacks from Modrinth.</string>
+    <string name="browse_search_hint">Search Modrinth</string>
+    <string name="browse_import">Import .mrpack</string>
+    <string name="browse_source_note">Results from Modrinth</string>
+    <string name="browse_filter_title">Filter results</string>
     <string name="browse_filter_version">Minecraft version</string>
-    <string name="browse_filter_clear">Clear</string>
+    <string name="browse_filter_loader">Mod loader</string>
+    <string name="browse_filter_environment">Environment</string>
+    <string name="browse_filter_category">Category</string>
+    <string name="browse_filter_category_hint">e.g. optimization, adventure</string>
+    <string name="browse_filter_category_note">Use a Modrinth category slug. Leave empty for all categories.</string>
+    <string name="browse_filter_choose_version">Choose</string>
+    <string name="browse_filter_clear">Reset</string>
     <string name="browse_filter_apply">Apply</string>
-    <string name="browse_empty_title">Find your next modpack</string>
-    <string name="browse_empty_body">Search by name, or browse the most popular modpacks right now.</string>
-    <string name="browse_no_results_title">No modpacks found</string>
-    <string name="browse_no_results_body">Try another search or choose a different Minecraft version.</string>
-    <string name="browse_error_title">Could not load modpacks</string>
+    <string name="browse_empty_title">Browse Modrinth</string>
+    <string name="browse_empty_body">Find mods, modpacks, resource packs, shaders and datapacks for your instance.</string>
+    <string name="browse_no_results_title">Nothing found</string>
+    <string name="browse_no_results_body">Try another search, or clear a filter.</string>
+    <string name="browse_error_title">Could not load Modrinth</string>
     <string name="browse_error_body">Check your connection and try again.</string>
+    <string name="browse_rate_limited_title">Modrinth is rate limiting requests</string>
+    <string name="browse_rate_limited_body">Wait a moment, then try again.</string>
     <string name="browse_retry">Try again</string>
     <string name="browse_clear_search">Clear search</string>
     <string name="browse_import_started">Preparing modpack import…</string>
@@ -713,6 +721,52 @@
     <string name="browse_version_any">Any version</string>
     <string name="browse_filter_description">Filter results</string>
     <string name="browse_import_description">Import local modpack</string>
+    <string name="browse_type_mods">Mods</string>
+    <string name="browse_type_modpacks">Modpacks</string>
+    <string name="browse_type_resourcepacks">Resource packs</string>
+    <string name="browse_type_shaders">Shaders</string>
+    <string name="browse_type_datapacks">Datapacks</string>
+    <string name="browse_sort_description">Sort results</string>
+    <string name="browse_choose_instance">Choose instance</string>
+    <string name="browse_installing_into">Installing into %1$s</string>
+    <string name="browse_no_instance">No instance selected — pick one to install content</string>
+    <string name="browse_project_description">%1$s by %2$s. %3$s. %4$s</string>
+    <string name="browse_unknown_author">Unknown author</string>
+    <string name="browse_download_count">%1$s downloads</string>
+    <string name="browse_detail_version">Version</string>
+    <string name="browse_detail_no_versions">No versions match this instance's Minecraft version and loader.</string>
+    <string name="browse_install">Install</string>
+    <string name="browse_install_modpack">Install modpack</string>
+    <string name="browse_modpack_hint">Modpacks install into a new instance</string>
+    <string name="browse_detail_versions_error">Could not load versions for this instance.</string>
+    <string name="browse_detail_modpack_note">Creates a new instance</string>
+    <string name="browse_install_started">Installing %1$s…</string>
+    <string name="browse_installed">Installed %1$s</string>
+    <string name="browse_install_failed">Could not install this project.</string>
+    <string name="browse_install_no_instance">Choose an instance before installing this content.</string>
+    <string name="downloads_task_content">Installing content</string>
+
+    <string-array name="browse_sort_options">
+        <item>Relevance</item>
+        <item>Downloads</item>
+        <item>Follows</item>
+        <item>Newest</item>
+        <item>Updated</item>
+    </string-array>
+
+    <string-array name="browse_loader_options">
+        <item>Automatic</item>
+        <item>Fabric</item>
+        <item>Quilt</item>
+        <item>Forge</item>
+        <item>NeoForge</item>
+    </string-array>
+
+    <string-array name="browse_environment_options">
+        <item>Any environment</item>
+        <item>Client only</item>
+        <item>Server only</item>
+    </string-array>
 
     <!-- Downloads -->
     <string name="downloads_subtitle">Active downloads and installs.</string>
@@ -739,6 +793,7 @@
 
     <!-- Settings -->
     <string name="settings_subtitle">Tune the launcher to your device.</string>
+    <string name="settings_section_appearance">Appearance</string>
     <string name="settings_section_accounts">Account</string>
     <string name="settings_section_gameplay">Gameplay</string>
     <string name="settings_section_tools">Tools</string>
@@ -746,6 +801,12 @@
     <string name="settings_accounts_title">Accounts</string>
     <string name="settings_accounts_summary">Manage Microsoft, Ely.by and local accounts</string>
     <string name="settings_account_current">Signed in as %1$s</string>
+    <string name="settings_theme_title">Theme</string>
+    <string name="settings_theme_summary">Choose light, dark or follow the system</string>
+    <string name="settings_theme_system">Follow system</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dialog_title">Appearance</string>
     <string name="settings_notifications_title">Background downloads</string>
     <string name="settings_notifications_allowed">Notifications allowed</string>
     <string name="settings_notifications_off">Notifications off · tap to enable</string>

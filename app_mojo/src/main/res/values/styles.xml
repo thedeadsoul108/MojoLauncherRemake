@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Base application theme. Dark-only for now. -->
-    <style name="MojoLauncher" parent="@style/Theme.AppCompat.NoActionBar">
+    <!-- Base application theme. DayNight keeps the launcher and legacy preference screens in
+         sync with the user's light/dark/system choice. -->
+    <style name="MojoLauncher" parent="@style/Theme.AppCompat.DayNight.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowBackground">@color/bg</item>
         <item name="android:statusBarColor">@color/bg</item>
         <item name="android:navigationBarColor">@color/bg</item>
-        <item name="android:windowLightStatusBar">false</item>
-        <item name="android:windowLightNavigationBar">false</item>
+        <item name="android:windowLightStatusBar">@bool/mojo_light_system_bars</item>
+        <item name="android:windowLightNavigationBar">@bool/mojo_light_system_bars</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:forceDarkAllowed">false</item>
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:textColorPrimary">@color/text_primary</item>
         <item name="android:textColorSecondary">@color/text_secondary</item>
