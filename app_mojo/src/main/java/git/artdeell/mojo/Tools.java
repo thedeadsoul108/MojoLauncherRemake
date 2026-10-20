@@ -781,6 +781,15 @@ public final class Tools {
                 .replace(R.id.container_fragment, fragmentClass, bundle, fragmentTag).commit();
     }
 
+    /** Swap to a pre-built fragment instance while keeping the same back-stack behaviour. */
+    public static void swapFragment(FragmentActivity fragmentActivity, Fragment fragment,
+                                    @Nullable String fragmentTag) {
+        fragmentActivity.getSupportFragmentManager().beginTransaction()
+                .setReorderingAllowed(true)
+                .addToBackStack(fragment.getClass().getName())
+                .replace(R.id.container_fragment, fragment, fragmentTag).commit();
+    }
+
     public static void backToMainMenu(FragmentActivity fragmentActivity) {
         fragmentActivity.getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 

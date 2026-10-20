@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/mojo_space_5"
+    android:paddingTop="@dimen/mojo_space_4"
+    android:paddingEnd="@dimen/mojo_space_5"
+    android:paddingBottom="@dimen/mojo_space_1">
+
+    <TextView
+        android:id="@+id/skin_input_hint"
+        style="@style/TextAppearance.Mojo.Body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/text_secondary" />
+
+    <EditText
+        android:id="@+id/skin_input"
+        style="@style/Widget.Mojo.Input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/mojo_space_3"
+        android:importantForAutofill="no"
+        android:inputType="text"
+        android:maxLines="2" />
+</LinearLayout>

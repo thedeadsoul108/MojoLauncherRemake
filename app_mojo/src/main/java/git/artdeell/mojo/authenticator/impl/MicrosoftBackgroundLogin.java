@@ -125,6 +125,29 @@ public class MicrosoftBackgroundLogin implements BackgroundLogin{
         }, account.refreshToken, true);
     }
 
+    /**
+     * Refreshes the Minecraft services token through the same OAuth/XBL/XSTS chain used by
+     * login and persists the rotated tokens. Used by skin upload when the cached token expired.
+     */
+    public static String refreshAccessToken(Account account) throws Exception {
+        if (account == null || account.refreshToken == null
+                || account.refreshToken.isEmpty() || "0".equals(account.refreshToken)) {
+            throw new IOException("This account has no refresh token");
+        }
+        MicrosoftBackgroundLogin login = new MicrosoftBackgroundLogin();
+        String msAccessToken = login.acquireAccessToken(true, account.refreshToken);
+        String xblToken = login.acquireXBLToken(msAccessToken);
+        String[] xsts = login.acquireXsts(xblToken);
+        String minecraftToken = login.acquireToken(xsts[0], xsts[1]);
+        account.accessToken = minecraftToken;
+        account.expiresAt = login.expiresAt;
+        if (login.msRefreshToken != null && !login.msRefreshToken.isEmpty()) {
+            account.refreshToken = login.msRefreshToken;
+        }
+        if (account.mSaveLocation != null) account.save();
+        return minecraftToken;
+    }
+
     private String acquireAccessToken(boolean isRefresh, String code) throws IOException, PresentableException {
         URL url = new URL(authTokenUrl);
         Log.i("MicrosoftLogin", "isRefresh=" + isRefresh + ", authCode= "+code);

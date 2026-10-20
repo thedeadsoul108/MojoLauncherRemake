@@ -83,6 +83,15 @@
         android:text="@string/accounts_switch" />
 
     <ImageButton
+        android:id="@+id/account_row_skin"
+        style="@style/Widget.Mojo.IconButton"
+        android:layout_width="@dimen/mojo_touch_target"
+        android:layout_height="@dimen/mojo_touch_target"
+        android:contentDescription="@string/accounts_skin"
+        android:src="@drawable/ic_ui_skin"
+        android:tint="@color/text_secondary" />
+
+    <ImageButton
         android:id="@+id/account_row_delete"
         style="@style/Widget.Mojo.IconButton"
         android:layout_width="@dimen/mojo_touch_target"

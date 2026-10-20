@@ -160,6 +160,7 @@ public class AccountManagerFragment extends Fragment implements ScreenTitleProvi
         TextView type = row.findViewById(R.id.account_row_type);
         TextView active = row.findViewById(R.id.account_row_active);
         Button use = row.findViewById(R.id.account_row_use);
+        ImageButton skin = row.findViewById(R.id.account_row_skin);
         ImageButton delete = row.findViewById(R.id.account_row_delete);
 
         String username = account.username == null || account.username.isEmpty()
@@ -181,8 +182,14 @@ public class AccountManagerFragment extends Fragment implements ScreenTitleProvi
         active.setVisibility(selected ? View.VISIBLE : View.GONE);
         use.setVisibility(selected ? View.GONE : View.VISIBLE);
         use.setOnClickListener(v -> switchAccount(index));
+        skin.setContentDescription(getString(R.string.accounts_skin_description, username));
+        skin.setOnClickListener(v -> openSkinEditor(index, account));
         delete.setOnClickListener(v -> confirmDelete(account, username));
         row.setContentDescription(username + ". " + type.getText());
+    }
+
+    private void openSkinEditor(int index, Account account) {
+        Tools.swapFragment(requireActivity(), SkinFragment.newInstance(index, account), SkinFragment.TAG);
     }
 
     private String authTypeLabel(AuthType type) {

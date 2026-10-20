@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/mojo_space_2"
+    android:background="@drawable/bg_card_flat"
+    android:gravity="center_vertical"
+    android:minHeight="72dp"
+    android:orientation="horizontal"
+    android:padding="@dimen/mojo_space_3">
+
+    <ImageView
+        android:id="@+id/skin_cape_image"
+        android:layout_width="56dp"
+        android:layout_height="64dp"
+        android:background="@drawable/bg_hero_icon"
+        android:contentDescription="@string/skin_cape_preview_description"
+        android:padding="@dimen/mojo_space_1"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_ui_cape" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/mojo_space_3"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/skin_cape_name"
+            style="@style/TextAppearance.Mojo.CardTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            tools:text="Migrator" />
+
+        <TextView
+            android:id="@+id/skin_cape_state"
+            style="@style/TextAppearance.Mojo.Meta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_secondary"
+            tools:text="Owned" />
+    </LinearLayout>
+</LinearLayout>
