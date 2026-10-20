@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:gravity="center_vertical"
+    android:minHeight="64dp"
+    android:orientation="horizontal"
+    android:paddingTop="@dimen/mojo_space_2"
+    android:paddingBottom="@dimen/mojo_space_2">
+
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/bg_hero_icon"
+        android:importantForAccessibility="no"
+        android:padding="@dimen/mojo_space_2"
+        android:src="@drawable/ic_ui_file" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/mojo_space_3"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/content_entry_name"
+            style="@style/TextAppearance.Mojo.Body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="middle"
+            android:maxLines="1"
+            tools:text="sodium-fabric-0.5.8.jar" />
+
+        <TextView
+            android:id="@+id/content_entry_meta"
+            style="@style/TextAppearance.Mojo.Meta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            tools:text="4.2 MB · Enabled" />
+    </LinearLayout>
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/content_entry_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="@dimen/mojo_touch_target"
+        android:minHeight="@dimen/mojo_touch_target"
+        tools:checked="true" />
+</LinearLayout>

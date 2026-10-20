@@ -48,6 +48,10 @@ public final class ModrinthQuery {
         return BASE + "/project/" + enc(idOrSlug);
     }
 
+    public static String versionFile(String sha1) {
+        return BASE + "/version_file/" + enc(sha1) + "?algorithm=sha1";
+    }
+
     public static String versions(String idOrSlug, String gameVersion, String loader) {
         StringBuilder url = new StringBuilder(BASE).append("/project/")
                 .append(enc(idOrSlug)).append("/version");

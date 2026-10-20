@@ -65,6 +65,18 @@ public class ModrinthClient {
         return project;
     }
 
+    /** Resolves a local file hash to the version that published it, or null for unknown files. */
+    public ModrinthModels.Version versionFromHash(String sha1) throws IOException {
+        if (sha1 == null || sha1.isEmpty()) return null;
+        try {
+            String json = get(ModrinthQuery.versionFile(sha1), false, VERSION_TTL_MS);
+            return Tools.GLOBAL_GSON.fromJson(json, ModrinthModels.Version.class);
+        } catch (ApiException e) {
+            if (e.statusCode == HttpURLConnection.HTTP_NOT_FOUND) return null;
+            throw e;
+        }
+    }
+
     public List<ModrinthModels.Version> versions(String idOrSlug, String gameVersion,
                                                  String loader, boolean forceRefresh)
             throws IOException {

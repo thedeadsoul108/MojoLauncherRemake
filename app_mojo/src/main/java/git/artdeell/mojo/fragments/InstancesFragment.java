@@ -28,6 +28,7 @@ import git.artdeell.mojo.Tools;
 import git.artdeell.mojo.extra.ExtraConstants;
 import git.artdeell.mojo.extra.ExtraCore;
 import git.artdeell.mojo.instances.Instance;
+import git.artdeell.mojo.instances.InstanceExporter;
 import git.artdeell.mojo.instances.InstanceIconProvider;
 import git.artdeell.mojo.instances.Instances;
 import git.artdeell.mojo.ui.ScreenTitleProvider;
@@ -430,6 +431,18 @@ public class InstancesFragment extends Fragment implements ScreenTitleProvider, 
         if (safe.isEmpty()) safe = "instance";
         if (safe.length() > 60) safe = safe.substring(0, 60);
         return safe;
+    }
+
+    @Override
+    public void onContent(@NonNull Instance instance) {
+        if (instance.getInstanceRoot() == null) {
+            Toast.makeText(requireContext(), R.string.instances_export_missing,
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+        Tools.swapFragment(requireActivity(),
+                InstanceContentFragment.newInstance(instance.getInstanceRoot()),
+                InstanceContentFragment.TAG);
     }
 
     @Override
