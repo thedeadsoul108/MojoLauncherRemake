@@ -30,7 +30,8 @@ jobs:
           path: app_mojo/libs
 
       - name: Get Mesa
-        uses: dawidd6/action-download-artifact@v6  
+        if: github.repository_owner == 'MojoLauncher'
+        uses: dawidd6/action-download-artifact@v6
         continue-on-error: true
         with:
           github_token: ${{ secrets.MESA_ACTIONS }}
@@ -104,6 +105,7 @@ jobs:
             out/MojoLauncher-release.apk
 
       - name: Upload AAB
+        if: github.repository_owner == 'MojoLauncher' && github.ref_name == 'v3_openjdk'
         uses: actions/upload-artifact@v4
         with:
           name: app-release-aab
