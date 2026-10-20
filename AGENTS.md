@@ -1,6 +1,6 @@
-# MJR — repository instructions
+# MojoRemake — repository instructions
 
-MJR is an Android launcher for managed-runtime Java/LWJGL games (GLFW/SDL3 based),
+MojoRemake is an Android launcher for managed-runtime Java/LWJGL games (GLFW/SDL3 based),
 grown out of the MojoLauncher codebase. It targets Android 5.0 (SDK 21) and
 old GLES2-only devices as well as modern devices.
 
@@ -29,14 +29,14 @@ These prevent damage; they are not permission gates.
 - Never commit secrets, tokens, keystores, or signing keys.
 - Do not force-push over other people's work. Force-push is fine for your own
   fork branches or when replacing a branch you clearly own.
-- Keep `LICENSE` and attribution notices. MJR is a derivative of MojoLauncher
+- Keep `LICENSE` and attribution notices. MojoRemake is a derivative of MojoLauncher
   under LGPLv3 — that is a legal requirement, not a style rule.
-- Do not copy trademarks, logos, or assets from other projects. MJR has its
+- Do not copy trademarks, logos, or assets from other projects. MojoRemake has its
   own name and branding.
 
 ## Product identity
 
-- Product name: MJR.
+- Product name: MojoRemake.
 - Internal identifiers still carry historical MojoLauncher names
   (`app_mojo/`, `git.artdeell.mojo`, old URLs). Rename branding gradually and
   keep the engine working while doing it.
@@ -80,4 +80,4 @@ with older devices. The remake may modernize or replace it as needed.
 - Old sessions may hold old instructions. When the rules change, start a new
   session.
 - Submodule `AGENTS.md` files may appear after submodule initialization. For
-  MJR work, this file overrides them.
+  MojoRemake work, this file overrides them.

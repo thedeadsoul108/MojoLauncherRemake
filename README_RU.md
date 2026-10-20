@@ -1,92 +1,97 @@
-<H1 align="center">MojoLauncher (также известный как MJLauncher)</H1>
+# MojoRemake
 
-<a href="./README.md">Readme in English</a>
+Неофициальный ремейк [MojoLauncher](https://github.com/MojoLauncher/MojoLauncher),
+который основан на [PojavLauncher](https://github.com/PojavLauncherTeam/PojavLauncher).
+MojoRemake сохраняет проверенный движок запуска игр для Android и получает новое
+имя и современный интерфейс в духе Modrinth.
 
-<img src="./app_mojo/src/main/assets/mojo.png" align="left" width="150" height="150" alt="MojoLauncher logo">
+MojoRemake запускает Minecraft: Java Edition на Android — от старых версий до
+актуальных снапшотов — с поддержкой Forge, Fabric и модов вроде OptiFine.
 
-[![Android CI](https://github.com/MojoLauncher/MojoLauncher/workflows/Android%20CI/badge.svg)](https://github.com/MojoLauncher/MojoLauncher/actions)
-[![GitHub commit activity](https://img.shields.io/github/commit-activity/m/MojoLauncher/MojoLauncher)](https://github.com/MojoLauncher/MojoLauncher/actions)
-[![Discord](https://img.shields.io/discord/1365346109131722753.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/VHdwQFsaGX)
-[![Telegram](https://img.shields.io/badge/Telegram-MojoLauncher%20%D0%A1%D0%9D%D0%93-26A5E4?logo=telegram&logoColor=white)](https://t.me/mojolauncher_chat)
+## Статус
 
-* MojoLauncher это лаунчер, основанный на [PojavLauncher](https://github.com/PojavLauncherTeam/PojavLauncher), позволяющий играть в Minecraft: Java Edition на устройствах Android!
+MojoRemake находится в активной разработке. Ребрендинг и новый интерфейс ещё
+делаются. Запуск игры, работа с runtime, рендереры, авторизация, модлоадеры и
+хранение инстансов унаследованы от MojoLauncher и должны продолжать работать
+на протяжении всего ремейка.
 
-* Он может запускать почти любую версию Minecraft, позволяя устанваливать через .jar загрузчики модов такие как [Forge](https://files.minecraftforge.net/) и [Fabric](http://fabricmc.net/), и моды по типу [OptiFine](https://optifine.net).
+## Возможности
 
-## Навигация
-- [Введение](#introduction)
-- [Как получить MojoLauncher](#getting-mojolauncher)
-- [Сборка](#building) 
-- [Текущие планы](#current-roadmap) 
-- [Лицензия](#license) 
-- [Внести свой вклад в проект](#contributing) 
-- [Благодарности & Сторонние компоненты и их лицензии](#credits--third-party-components-and-their-licenses-if-available)
+- Запуск почти всех версий Minecraft: Java Edition — от rd-132211 до текущих
+  снапшотов.
+- Forge и Fabric, установщики `.jar` и популярные моды вроде OptiFine.
+- Управление через инстансы вместо старых профилей.
+- Импорт модпаков mrpack и CurseForge.
+- Рендереры OpenLTW (контексты GLES3) и GL4ES (совместимость с GLES2).
+  Vulkan — через системные драйверы или Turnip на устройствах Qualcomm.
+- Поддержка аккаунтов из движка, включая Microsoft и стороннюю авторизацию.
+- Поддержка Android 5.0 (API 21) и новее, включая старые устройства с GLES2.
 
-## Введение 
-* MojoLauncher это лаунчер Minecraft: Java Edition для Android основанный на [PojavLauncher](https://github.com/PojavLauncherTeam/PojavLauncher)
-* Лаунчер может запускать почти все доступные версии Minecraft в диапазоне от rd-132211 до снапшотов 26.x (включая версии Combat Test). 
-* Моддинг через Forge и Fabric так же поддерживается. 
+## Сборки
 
-## Как получить MojoLauncher
+Стабильных релизов MojoRemake пока нет. Сборки создаются в GitHub Actions:
 
-Получить копию MojoLauncher можно четырьмя способами:
+- [Actions](https://github.com/thedeadsoul108/MojoLauncherRemake/actions)
 
-1. Можно скачать готовый билд с раздела [релизов](http://github.com/mojolauncher/mojolauncher/releases).
+## Сборка
 
-2. Можно скачать с Google Play нажав на кнопку ниже:
-[![Google Play](https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png)](https://play.google.com/store/apps/details?id=git.artdeell.mjlaunch)
+Клонируйте репозиторий вместе с сабмодулями:
 
-3. Можно скачать с ранние билды с [Github Actions](http://github.com/mojolauncher/mojolauncher/actions).
-
-4. Можно [собрать](#building) с исходного кода.
-## Сборка  
-* Скомпилируйте лаунчер (все необходимые компоненты скачаются автоматически)
-```
+```bash
+git clone --recursive https://github.com/thedeadsoul108/MojoLauncherRemake.git
+cd MojoLauncherRemake
 ./gradlew :app_mojo:assembleDebug
 ```
-При сборке на Windows:
-* Замените `./gradlew` на `.\gradlew.bat`
-* Убедитесь, что у вас стоит symlink `mojoexec`, `sdl`, `glfw` в `app_pojavlauncher/src/main/jni/`
 
-## Текущие планы
-- [x] Система инстансов на замену профилям версий
-- [x] Поддержка 1.21.5 "из коробки"
-- [x] Импорт mrpack/CurseForge zip
-- [x] LTW: добавить поддержку Compute расширений
-- [ ] LTW: исправить проблемы с Create
-- [ ] LTW: использовать форматы с поддержкой Color Attachment для объектов фреймбуфера (FBO)
-- [ ] Менеджер модов/модпаков
-- [ ] Импорт инстансов формата MultiMC
-- [ ] Поддержка Vintage Story
-- [ ] Реализовать общий стандарт библиотек
+В Windows используйте `.\gradlew.bat`.
 
-## Известные проблемы
-- Некоторые физические мышки могут иметь низкую скорость курсора
-- На Holy GL4ES большие алиасы текстур могут быть искажены (из-за чего в некоторых модпаках могут быть растянутые или излишне квадратные текстуры)
-- Скорее всего есть ещё, поэтому у нас есть баг-трекер ;) 
+Для полной сборки нужны сабмодули `glfw`, `sdl`, `mojoexec` и `NoBlocklist`.
+Флаг `--recursive` скачивает их сразу; позже можно выполнить:
+
+```bash
+git submodule update --init --recursive
+```
+
+CI использует JDK 17 и Gradle 8.14.5. См. `.github/workflows/android.yml`.
+
+## Структура проекта
+
+- `app_mojo/` — Android-приложение и Java-часть лаунчера.
+- `app_mojo/src/main/jni/` — JNI/C-код (`pojavexec`), связывающий SDL, GLFW,
+  AWT и mojoexec.
+- `glfw/`, `sdl/`, `mojoexec/` — нативные сабмодули для WSI и обмена
+  EGL/Vulkan.
+- `forge_installer/` — поддержка установщика Forge.
+- `NoBlocklist/` — вспомогательный сабмодуль.
+- `docs/` — заметки по проекту и прогресс.
 
 ## Лицензия
-- MojoLauncher лицензирован под [GNU LGPLv3](https://github.com/MojoLauncher/MojoLauncher/blob/v3_openjdk/LICENSE).
 
-## Внести свой вклад в проект
-Мы привествуем желающих внести свой вклад в проект! Нам не помешает любая помощь, не только код. Например, вы можете помочь в разработке и формировании вики. Вы так же можете помочь [перевести проект](https://mojolauncher.ru/translate/translator.html) на ваш язык!
+MojoRemake распространяется под [GNU LGPLv3](LICENSE), унаследованной от
+MojoLauncher. Оригинальные копирайты и указание авторства должны сохраняться.
 
+## Благодарности
 
-Любые изменения в коде этого репозитория должны быть отправлены в виде pull request-а. Описание должно объяснять что делает код и предоставлять шаги для его запуска.
+MojoRemake построен на работе проектов MojoLauncher и PojavLauncher и их
+участников.
 
-## Благодарности & Сторонние компоненты и их лицензии (если таковые имеются)
-- [PojavLauncher](https://github.com/PojavLauncherTeam/PojavLauncher): [GNU LGPLv3 License](https://github.com/PojavLauncherTeam/PojavLauncher/blob/v3_openjdk/LICENSE)
+- [MojoLauncher](https://github.com/MojoLauncher/MojoLauncher) — GNU LGPLv3.
+- [PojavLauncher](https://github.com/PojavLauncherTeam/PojavLauncher) — GNU LGPLv3.
+
+### Сторонние компоненты и лицензии
+
 - Android Support Libraries: [Apache License 2.0](https://android.googlesource.com/platform/prebuilts/maven_repo/android/+/master/NOTICE.txt).
-- [GL4ES](https://github.com/PojavLauncherTeam/gl4es): [MIT License](https://github.com/ptitSeb/gl4es/blob/master/LICENSE).<br>
-- [OpenJDK](https://github.com/PojavLauncherTeam/openjdk-multiarch-jdk8u): [GNU GPLv2 License](https://openjdk.java.net/legal/gplv2+ce.html).<br>
-- [GLFW](https://github.com/MojoLauncher/glfw): [zlib license](https://github.com/MojoLauncher/glfw/blob/glfw34/LICENSE.md)
-- [LWJGL2-GLFW](https://github.com/MojoLauncher/lwjgl2-glfw): 3-Clause BSD license
+- [Holy GL4ES](https://github.com/artdeell/gl4es_extra_extra/): [MIT License](https://github.com/ptitSeb/gl4es/blob/master/LICENSE).
+- [OpenJDK](https://github.com/PojavLauncherTeam/openjdk-multiarch-jdk8u): [GNU GPLv2 License](https://openjdk.java.net/legal/gplv2+ce.html).
+- [GLFW](https://github.com/MojoLauncher/glfw): [zlib license](https://github.com/MojoLauncher/glfw/blob/glfw34/LICENSE.md).
+- [SDL](https://github.com/MojoLauncher/MojoSDL): [zlib license](https://github.com/MojoLauncher/MojoSDL/blob/main/LICENSE.txt).
+- [LWJGL2-GLFW](https://github.com/MojoLauncher/lwjgl2-glfw): 3-Clause BSD license.
 - [LWJGL3](https://github.com/LWJGL/lwjgl3): [BSD-3 License](https://github.com/LWJGL/lwjgl3/blob/master/LICENSE.md).
-- [mojoexec](https://github.com/MojoLauncher/mojoexec): [MIT License](https://github.com/MojoLauncher/mojoexec/blob/master/LICENSE)
+- [mojoexec](https://github.com/MojoLauncher/mojoexec): [MIT License](https://github.com/MojoLauncher/mojoexec/blob/master/LICENSE).
 - [Mesa 3D Graphics Library](https://gitlab.freedesktop.org/mesa/mesa): [MIT License](https://docs.mesa3d.org/license.html).
-- [pro-grade](https://github.com/pro-grade/pro-grade) (Менеджер контейнеризации Java): [Apache License 2.0](https://github.com/pro-grade/pro-grade/blob/master/LICENSE.txt).
-- [bhook](https://github.com/bytedance/bhook) (Используется для получения кода ошибки): [MIT license](https://github.com/bytedance/bhook/blob/main/LICENSE).
-- [Authlib-Injector](https://github.com/yushijinhun/authlib-injector) (Используется для авторизации через ely.by): [AGPL-3.0](https://github.com/yushijinhun/authlib-injector/blob/develop/LICENSE).
-- [alsoft](https://github.com/kcat/openal-soft/) (Библиотека вывода звука): [GNU LIBRARY GENERAL PUBLIC LICENSE](https://github.com/kcat/openal-soft/blob/master/COPYING) и [modified PFFFT](https://github.com/kcat/openal-soft/blob/master/LICENSE-pffft).
+- [pro-grade](https://github.com/pro-grade/pro-grade) (песочница Java): [Apache License 2.0](https://github.com/pro-grade/pro-grade/blob/master/LICENSE.txt).
+- [bhook](https://github.com/bytedance/bhook) (перехват кода выхода): [MIT License](https://github.com/bytedance/bhook/blob/main/LICENSE).
+- [Authlib-Injector](https://github.com/yushijinhun/authlib-injector) (авторизация через ely.by): [AGPL-3.0](https://github.com/yushijinhun/authlib-injector/blob/develop/LICENSE).
+- [alsoft](https://github.com/kcat/openal-soft/) (вывод звука): [GNU Library General Public License](https://github.com/kcat/openal-soft/blob/master/COPYING) и [modified PFFFT](https://github.com/kcat/openal-soft/blob/master/LICENSE-pffft).
 - [oboe](https://github.com/google/oboe): [Apache License 2.0](https://github.com/google/oboe/blob/main/LICENSE).
-- Отдельная благодарность к [Mineskin](https://mineskin.eu/) за предоставление аватаров Minecraft.
+- Спасибо [Mineskin](https://mineskin.eu/) за аватары Minecraft.
