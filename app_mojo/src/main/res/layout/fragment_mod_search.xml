@@ -20,6 +20,80 @@
             android:layout_height="wrap_content"
             android:text="@string/browse_subtitle" />
 
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/mojo_space_3"
+            android:clipToPadding="false"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/browse_type_chips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/browse_type_mods"
+                    style="@style/Widget.Mojo.Chip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/mojo_touch_target"
+                    android:layout_marginEnd="@dimen/mojo_space_2"
+                    android:background="@drawable/bg_chip_selectable"
+                    android:paddingStart="@dimen/mojo_space_4"
+                    android:paddingEnd="@dimen/mojo_space_4"
+                    android:text="@string/browse_type_mods"
+                    android:textColor="@color/chip_text" />
+
+                <TextView
+                    android:id="@+id/browse_type_modpacks"
+                    style="@style/Widget.Mojo.Chip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/mojo_touch_target"
+                    android:layout_marginEnd="@dimen/mojo_space_2"
+                    android:background="@drawable/bg_chip_selectable"
+                    android:paddingStart="@dimen/mojo_space_4"
+                    android:paddingEnd="@dimen/mojo_space_4"
+                    android:text="@string/browse_type_modpacks"
+                    android:textColor="@color/chip_text" />
+
+                <TextView
+                    android:id="@+id/browse_type_resourcepacks"
+                    style="@style/Widget.Mojo.Chip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/mojo_touch_target"
+                    android:layout_marginEnd="@dimen/mojo_space_2"
+                    android:background="@drawable/bg_chip_selectable"
+                    android:paddingStart="@dimen/mojo_space_4"
+                    android:paddingEnd="@dimen/mojo_space_4"
+                    android:text="@string/browse_type_resourcepacks"
+                    android:textColor="@color/chip_text" />
+
+                <TextView
+                    android:id="@+id/browse_type_shaders"
+                    style="@style/Widget.Mojo.Chip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/mojo_touch_target"
+                    android:layout_marginEnd="@dimen/mojo_space_2"
+                    android:background="@drawable/bg_chip_selectable"
+                    android:paddingStart="@dimen/mojo_space_4"
+                    android:paddingEnd="@dimen/mojo_space_4"
+                    android:text="@string/browse_type_shaders"
+                    android:textColor="@color/chip_text" />
+
+                <TextView
+                    android:id="@+id/browse_type_datapacks"
+                    style="@style/Widget.Mojo.Chip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/mojo_touch_target"
+                    android:background="@drawable/bg_chip_selectable"
+                    android:paddingStart="@dimen/mojo_space_4"
+                    android:paddingEnd="@dimen/mojo_space_4"
+                    android:text="@string/browse_type_datapacks"
+                    android:textColor="@color/chip_text" />
+            </LinearLayout>
+        </HorizontalScrollView>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -60,8 +134,59 @@
                 android:tint="@color/text_secondary" />
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/mojo_space_2"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <Spinner
+                android:id="@+id/browse_sort_spinner"
+                style="@style/Widget.Mojo.Spinner"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/mojo_input_height"
+                android:layout_weight="1"
+                android:contentDescription="@string/browse_sort_description"
+                android:spinnerMode="dropdown" />
+
+            <Button
+                android:id="@+id/browse_import_button"
+                style="@style/Widget.Mojo.Button.Text"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/mojo_touch_target"
+                android:layout_marginStart="@dimen/mojo_space_2"
+                android:text="@string/browse_import" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/browse_instance_banner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/mojo_space_2"
+            android:background="@drawable/bg_card_flat"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="@dimen/mojo_space_3">
+
+            <TextView
+                android:id="@+id/browse_instance_text"
+                style="@style/TextAppearance.Mojo.Meta"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                tools:text="Installing into Fabulously Optimized" />
+
+            <Button
+                android:id="@+id/browse_instance_action"
+                style="@style/Widget.Mojo.Button.Text"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/mojo_touch_target"
+                android:text="@string/browse_choose_instance" />
+        </LinearLayout>
+
         <ProgressBar
-            android:id="@+id/search_mod_progressbar"
+            android:id="@+id/browse_progress"
             style="@style/Widget.Mojo.LinearProgress"
             android:layout_width="match_parent"
             android:layout_height="6dp"
@@ -69,97 +194,89 @@
             android:indeterminate="true"
             android:visibility="gone"
             tools:visibility="visible" />
-
-        <TextView
-            style="@style/TextAppearance.Mojo.Meta"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/mojo_space_2"
-            android:text="@string/browse_source_note"
-            android:textColor="@color/text_muted" />
     </LinearLayout>
 
-    <FrameLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/browse_refresh"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="@dimen/mojo_space_2"
         android:layout_weight="1">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/search_mod_list"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:paddingStart="@dimen/mojo_screen_padding"
-            android:paddingTop="@dimen/mojo_space_1"
-            android:paddingEnd="@dimen/mojo_screen_padding"
-            android:paddingBottom="@dimen/mojo_space_4"
-            tools:listitem="@layout/view_mod" />
+            android:layout_height="match_parent">
 
-        <LinearLayout
-            android:id="@+id/browse_state"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:padding="@dimen/mojo_space_6"
-            android:visibility="gone"
-            tools:visibility="visible">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/search_mod_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingStart="@dimen/mojo_screen_padding"
+                android:paddingTop="@dimen/mojo_space_2"
+                android:paddingEnd="@dimen/mojo_screen_padding"
+                android:paddingBottom="@dimen/mojo_space_4"
+                tools:listitem="@layout/view_content_project" />
 
-            <ImageView
-                android:id="@+id/browse_state_icon"
-                android:layout_width="@dimen/mojo_hero_icon"
-                android:layout_height="@dimen/mojo_hero_icon"
-                android:background="@drawable/bg_hero_icon"
-                android:importantForAccessibility="no"
-                android:padding="@dimen/mojo_space_3"
-                android:src="@drawable/ic_ui_browse"
-                android:tint="@color/accent" />
-
-            <TextView
-                android:id="@+id/browse_state_title"
-                style="@style/TextAppearance.Mojo.SectionTitle"
+            <LinearLayout
+                android:id="@+id/browse_skeleton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/mojo_space_4"
-                android:gravity="center"
-                tools:text="@string/browse_empty_title" />
-
-            <TextView
-                android:id="@+id/browse_state_body"
-                style="@style/TextAppearance.Mojo.Body"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/mojo_space_2"
-                android:gravity="center"
-                android:textColor="@color/text_secondary"
-                tools:text="@string/browse_empty_body" />
-
-            <Button
-                android:id="@+id/browse_state_action"
-                style="@style/Widget.Mojo.Button.Secondary"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/mojo_button_height"
-                android:layout_marginTop="@dimen/mojo_space_5"
-                android:text="@string/browse_retry"
-                android:visibility="gone"
+                android:orientation="vertical"
+                android:paddingStart="@dimen/mojo_screen_padding"
+                android:paddingTop="@dimen/mojo_space_2"
+                android:paddingEnd="@dimen/mojo_screen_padding"
                 tools:visibility="visible" />
-        </LinearLayout>
-    </FrameLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/surface"
-        android:orientation="vertical"
-        android:padding="@dimen/mojo_space_3">
+            <LinearLayout
+                android:id="@+id/browse_state"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="@dimen/mojo_space_6"
+                android:visibility="gone"
+                tools:visibility="gone">
 
-        <Button
-            android:id="@+id/mineButton_import_local_modpack"
-            style="@style/Widget.Mojo.Button.Secondary"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/mojo_button_height"
-            android:text="@string/browse_import" />
-    </LinearLayout>
+                <ImageView
+                    android:id="@+id/browse_state_icon"
+                    android:layout_width="@dimen/mojo_hero_icon"
+                    android:layout_height="@dimen/mojo_hero_icon"
+                    android:background="@drawable/bg_hero_icon"
+                    android:importantForAccessibility="no"
+                    android:padding="@dimen/mojo_space_3"
+                    android:src="@drawable/ic_ui_browse"
+                    android:tint="@color/accent" />
+
+                <TextView
+                    android:id="@+id/browse_state_title"
+                    style="@style/TextAppearance.Mojo.SectionTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/mojo_space_4"
+                    android:gravity="center"
+                    tools:text="@string/browse_empty_title" />
+
+                <TextView
+                    android:id="@+id/browse_state_body"
+                    style="@style/TextAppearance.Mojo.Body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/mojo_space_2"
+                    android:gravity="center"
+                    android:textColor="@color/text_secondary"
+                    tools:text="@string/browse_empty_body" />
+
+                <Button
+                    android:id="@+id/browse_state_action"
+                    style="@style/Widget.Mojo.Button.Secondary"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/mojo_button_height"
+                    android:layout_marginTop="@dimen/mojo_space_5"
+                    android:text="@string/browse_retry"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+            </LinearLayout>
+        </FrameLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </LinearLayout>

@@ -58,7 +58,7 @@ import git.artdeell.mojo.fragments.NeoforgeInstallFragment;
 import git.artdeell.mojo.fragments.OptiFineInstallFragment;
 import git.artdeell.mojo.fragments.ProfileTypeSelectFragment;
 import git.artdeell.mojo.fragments.QuiltInstallFragment;
-import git.artdeell.mojo.fragments.SearchModFragment;
+import git.artdeell.mojo.fragments.BrowseFragment;
 import git.artdeell.mojo.fragments.SelectAuthFragment;
 import git.artdeell.mojo.fragments.SettingsFragment;
 import git.artdeell.mojo.instances.Instance;
@@ -153,7 +153,7 @@ public class LauncherActivity extends BaseActivity {
                 || fragment instanceof InstancesFragment
                 || fragment instanceof DownloadsFragment
                 || fragment instanceof SettingsFragment
-                || fragment instanceof SearchModFragment
+                || fragment instanceof BrowseFragment
                 || fragment instanceof AccountManagerFragment;
     }
 
@@ -492,7 +492,7 @@ public class LauncherActivity extends BaseActivity {
     private Fragment createRootFragment(int tab) {
         switch (tab) {
             case TAB_INSTANCES: return new InstancesFragment();
-            case TAB_BROWSE: return new SearchModFragment();
+            case TAB_BROWSE: return new BrowseFragment();
             case TAB_DOWNLOADS: return new DownloadsFragment();
             case TAB_SETTINGS: return new SettingsFragment();
             case TAB_HOME:
@@ -506,8 +506,8 @@ public class LauncherActivity extends BaseActivity {
      */
     public void requestBrowseImport() {
         Fragment browse = getSupportFragmentManager().findFragmentByTag(ROOT_TAGS[TAB_BROWSE]);
-        if(mCurrentTab == TAB_BROWSE && browse instanceof SearchModFragment && browse.isVisible()) {
-            ((SearchModFragment) browse).beginLocalImport();
+        if(mCurrentTab == TAB_BROWSE && browse instanceof BrowseFragment && browse.isVisible()) {
+            ((BrowseFragment) browse).beginLocalImport();
             return;
         }
         mBrowseImportRequested = true;

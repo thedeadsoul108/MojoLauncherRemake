@@ -17,6 +17,7 @@ import com.kdt.mcgui.ProgressLayout;
 
 import git.artdeell.mojo.LauncherActivity;
 import git.artdeell.mojo.R;
+import git.artdeell.mojo.content.ContentInstaller;
 import git.artdeell.mojo.progresskeeper.ProgressKeeper;
 import git.artdeell.mojo.ui.ScreenTitleProvider;
 
@@ -152,6 +153,9 @@ public class DownloadsFragment extends Fragment implements ScreenTitleProvider {
     }
 
     private String taskTitle(String key) {
+        if (ContentInstaller.isContentProgressKey(key)) {
+            return getString(R.string.downloads_task_content);
+        }
         switch (key) {
             case ProgressLayout.DOWNLOAD_GAME:
                 return getString(R.string.downloads_task_download_game);

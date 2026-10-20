@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/mojo_space_2"
+    android:background="@drawable/bg_card_ripple"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="horizontal"
+    android:padding="@dimen/mojo_space_3">
+
+    <ImageView
+        android:id="@+id/content_project_icon"
+        android:layout_width="@dimen/mojo_instance_icon"
+        android:layout_height="@dimen/mojo_instance_icon"
+        android:background="@drawable/bg_hero_icon"
+        android:clipToOutline="true"
+        android:importantForAccessibility="no"
+        android:padding="@dimen/mojo_space_2"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_ui_box"
+        android:tint="@color/text_muted" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/mojo_space_3"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/content_project_title"
+            style="@style/TextAppearance.Mojo.CardTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
+            tools:text="Sodium" />
+
+        <TextView
+            android:id="@+id/content_project_author"
+            style="@style/TextAppearance.Mojo.Meta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            tools:text="CaffeineMC" />
+
+        <TextView
+            android:id="@+id/content_project_description"
+            style="@style/TextAppearance.Mojo.Meta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/mojo_space_1"
+            android:ellipsize="end"
+            android:maxLines="2"
+            tools:text="A modern rendering engine for Minecraft which greatly improves performance" />
+
+        <TextView
+            android:id="@+id/content_project_stats"
+            style="@style/TextAppearance.Mojo.Badge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/mojo_space_1"
+            android:textColor="@color/text_muted"
+            tools:text="12,345 downloads" />
+    </LinearLayout>
+</LinearLayout>
