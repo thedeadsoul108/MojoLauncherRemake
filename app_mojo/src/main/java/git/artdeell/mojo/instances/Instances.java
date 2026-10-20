@@ -183,6 +183,43 @@ public class Instances {
     }
 
     /**
+     * Copy an instance directory and its metadata into a new library entry. The selected
+     * instance is intentionally left untouched so a duplicate cannot replace the running one.
+     * @param source the instance to copy
+     * @param newName display name for the copy
+     * @return the new instance
+     * @throws IOException if copying or metadata writing fails
+     */
+    public static Instance duplicateInstance(Instance source, String newName) throws IOException {
+        if (source == null || source.mInstanceRoot == null) {
+            throw new IOException("Instance directory is null");
+        }
+        File sourceRoot = source.mInstanceRoot.getCanonicalFile();
+        File instancesRoot = sInstancePath.getCanonicalFile();
+        if (!instancesRoot.equals(sourceRoot.getParentFile())) {
+            throw new IOException("Refusing to duplicate a directory outside the instances folder");
+        }
+        File targetRoot = findNewInstanceRoot(null).getCanonicalFile();
+        try {
+            FileUtils.ensureDirectory(targetRoot);
+            org.apache.commons.io.FileUtils.copyDirectory(sourceRoot, targetRoot);
+            Instance copy = read(targetRoot, Instance.class);
+            if (copy == null) throw new IOException("Could not read the duplicated instance");
+            copy.name = newName;
+            copy.write();
+            return copy;
+        } catch (IOException | RuntimeException e) {
+            try {
+                org.apache.commons.io.FileUtils.deleteDirectory(targetRoot);
+            } catch (IOException ignored) {
+                // Preserve the original failure.
+            }
+            if (e instanceof IOException) throw (IOException) e;
+            throw new IOException(e);
+        }
+    }
+
+    /**
      * Load a specific instance from its directory.
      * @param instanceRoot instance directory
      * @return the loaded instance, or null if it is missing or unreadable

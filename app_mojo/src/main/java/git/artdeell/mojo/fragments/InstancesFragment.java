@@ -1,6 +1,7 @@
 package git.artdeell.mojo.fragments;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -12,6 +13,8 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -33,6 +36,7 @@ import git.artdeell.mojo.utils.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -51,6 +55,7 @@ public class InstancesFragment extends Fragment implements ScreenTitleProvider, 
     private static final int SORT_NAME = 1;
     private static final int SORT_RECENT = 2;
     private static final int SORT_VERSION = 3;
+    private static final String STATE_PENDING_EXPORT = "pending_export";
 
     private final List<Instance> mAllInstances = new ArrayList<>();
     private final Map<File, Long> mLastModified = new HashMap<>();
@@ -69,6 +74,12 @@ public class InstancesFragment extends Fragment implements ScreenTitleProvider, 
     private File mSelectedRoot;
     private int mSortMode = SORT_NAME;
     private boolean mLoadPending;
+    private String mPendingExportPath;
+    private String mPendingExportName;
+
+    private final ActivityResultLauncher<String> mExportLauncher = registerForActivityResult(
+            new ActivityResultContracts.CreateDocument("application/zip"),
+            this::onExportDestination);
 
     public InstancesFragment() {
         super(R.layout.fragment_instances);
@@ -91,6 +102,10 @@ public class InstancesFragment extends Fragment implements ScreenTitleProvider, 
         mEmptyImport = view.findViewById(R.id.instances_empty_import);
         mCount = view.findViewById(R.id.instances_count);
         mSearch = view.findViewById(R.id.instances_search);
+        if (savedInstanceState != null) {
+            mPendingExportPath = savedInstanceState.getString(STATE_PENDING_EXPORT);
+            mPendingExportName = savedInstanceState.getString(STATE_PENDING_EXPORT + "_name");
+        }
         ImageButton sortButton = view.findViewById(R.id.instances_sort);
         Button create = view.findViewById(R.id.instances_create);
         Button importButton = view.findViewById(R.id.instances_import);
@@ -132,8 +147,15 @@ public class InstancesFragment extends Fragment implements ScreenTitleProvider, 
     }
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(STATE_PENDING_EXPORT, mPendingExportPath);
+        outState.putString(STATE_PENDING_EXPORT + "_name", mPendingExportName);
+    }
+
+    @Override
     public void onDestroyView() {
-        mList.setAdapter(null);
+        if (mList != null) mList.setAdapter(null);
         super.onDestroyView();
     }
 
@@ -328,6 +350,86 @@ public class InstancesFragment extends Fragment implements ScreenTitleProvider, 
                 }
             });
         });
+    }
+
+    @Override
+    public void onDuplicate(@NonNull Instance instance) {
+        final String displayName = UiUtils.displayName(requireContext(), instance);
+        final String copyName = getString(R.string.instances_copy_name, displayName);
+        MojoApplication.sExecutorService.execute(() -> {
+            boolean success = true;
+            try {
+                Instances.duplicateInstance(instance, copyName);
+            } catch (IOException | RuntimeException e) {
+                success = false;
+            }
+            final boolean finalSuccess = success;
+            Tools.runOnUiThread(() -> {
+                if (!isAdded() || getView() == null) return;
+                Toast.makeText(requireContext(), finalSuccess
+                                ? getString(R.string.instances_duplicate_done, displayName)
+                                : getString(R.string.instances_duplicate_failed),
+                        finalSuccess ? Toast.LENGTH_SHORT : Toast.LENGTH_LONG).show();
+                if (finalSuccess) loadInstances();
+            });
+        });
+    }
+
+    @Override
+    public void onExport(@NonNull Instance instance) {
+        String displayName = UiUtils.displayName(requireContext(), instance);
+        String name = exportName(displayName);
+        mPendingExportName = displayName;
+        mPendingExportPath = instance.getInstanceRoot() == null
+                ? null : instance.getInstanceRoot().getAbsolutePath();
+        if (mPendingExportPath == null) {
+            Toast.makeText(requireContext(), R.string.instances_export_missing,
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+        mExportLauncher.launch(name + ".zip");
+    }
+
+    private void onExportDestination(@Nullable Uri destination) {
+        if (!isAdded()) return;
+        final String path = mPendingExportPath;
+        final String friendlyName = mPendingExportName;
+        mPendingExportPath = null;
+        mPendingExportName = null;
+        if (destination == null) return;
+        if (path == null) {
+            Toast.makeText(requireContext(), R.string.instances_export_missing,
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+        final Context appContext = requireContext().getApplicationContext();
+        final String displayName = friendlyName == null ? new File(path).getName() : friendlyName;
+        MojoApplication.sExecutorService.execute(() -> {
+            boolean success = true;
+            try (OutputStream output = appContext.getContentResolver()
+                    .openOutputStream(destination)) {
+                if (output == null) throw new IOException("Could not open the export file");
+                InstanceExporter.zipDirectory(new File(path), output);
+            } catch (IOException | RuntimeException e) {
+                success = false;
+            }
+            final boolean finalSuccess = success;
+            Tools.runOnUiThread(() -> {
+                if (!isAdded() || getView() == null) return;
+                Toast.makeText(requireContext(), finalSuccess
+                                ? getString(R.string.instances_export_done, displayName)
+                                : getString(R.string.instances_export_failed),
+                        finalSuccess ? Toast.LENGTH_SHORT : Toast.LENGTH_LONG).show();
+            });
+        });
+    }
+
+    private static String exportName(String name) {
+        String safe = name == null ? "" : name.trim();
+        safe = safe.replaceAll("[\\\\/:*?\"<>|]", "_");
+        if (safe.isEmpty()) safe = "instance";
+        if (safe.length() > 60) safe = safe.substring(0, 60);
+        return safe;
     }
 
     @Override

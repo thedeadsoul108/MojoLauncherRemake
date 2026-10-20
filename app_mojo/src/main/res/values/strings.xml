@@ -992,4 +992,16 @@
     <string name="skin_manage_elyby">Manage on ely.by</string>
     <string name="accounts_skin">Skin</string>
     <string name="accounts_skin_description">Change skin for %1$s</string>
+
+    <!-- Instance management -->
+    <string name="instances_duplicate">Duplicate</string>
+    <string name="instances_export">Export</string>
+    <string name="instances_copy_name">Copy of %1$s</string>
+    <string name="instances_duplicate_done">%1$s duplicated</string>
+    <string name="instances_duplicate_failed">Could not duplicate the instance</string>
+    <string name="instances_export_done">%1$s exported</string>
+    <string name="instances_export_failed">Could not export the instance</string>
+    <string name="instances_export_missing">The instance is no longer available</string>
+    <string name="editor_notes_label">Notes</string>
+    <string name="editor_notes_hint">Optional notes about this instance</string>
 </resources>

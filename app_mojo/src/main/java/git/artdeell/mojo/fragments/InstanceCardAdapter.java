@@ -29,13 +29,17 @@ public class InstanceCardAdapter extends RecyclerView.Adapter<InstanceCardAdapte
     private static final int MENU_EDIT = 1;
     private static final int MENU_LAUNCH = 2;
     private static final int MENU_FOLDER = 3;
-    private static final int MENU_DELETE = 4;
+    private static final int MENU_DUPLICATE = 4;
+    private static final int MENU_EXPORT = 5;
+    private static final int MENU_DELETE = 6;
 
     public interface Listener {
         void onSelect(@NonNull Instance instance);
         void onEdit(@NonNull Instance instance);
         void onLaunch(@NonNull Instance instance);
         void onOpenFolder(@NonNull Instance instance);
+        void onDuplicate(@NonNull Instance instance);
+        void onExport(@NonNull Instance instance);
         void onDelete(@NonNull Instance instance);
     }
 
@@ -130,12 +134,16 @@ public class InstanceCardAdapter extends RecyclerView.Adapter<InstanceCardAdapte
             menu.getMenu().add(0, MENU_EDIT, 0, R.string.instances_edit);
             menu.getMenu().add(0, MENU_LAUNCH, 1, R.string.instances_launch);
             menu.getMenu().add(0, MENU_FOLDER, 2, R.string.instances_open_folder);
-            menu.getMenu().add(0, MENU_DELETE, 3, R.string.instances_delete);
+            menu.getMenu().add(0, MENU_DUPLICATE, 3, R.string.instances_duplicate);
+            menu.getMenu().add(0, MENU_EXPORT, 4, R.string.instances_export);
+            menu.getMenu().add(0, MENU_DELETE, 5, R.string.instances_delete);
             menu.setOnMenuItemClickListener(item -> {
                 int id = item.getItemId();
                 if (id == MENU_EDIT) mListener.onEdit(instance);
                 else if (id == MENU_LAUNCH) mListener.onLaunch(instance);
                 else if (id == MENU_FOLDER) mListener.onOpenFolder(instance);
+                else if (id == MENU_DUPLICATE) mListener.onDuplicate(instance);
+                else if (id == MENU_EXPORT) mListener.onExport(instance);
                 else if (id == MENU_DELETE) mListener.onDelete(instance);
                 else return false;
                 return true;

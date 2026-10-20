@@ -71,6 +71,7 @@ public class InstanceEditorFragment extends Fragment implements ScreenTitleProvi
     private ImageView mIcon;
     private EditText mName;
     private EditText mJvm;
+    private EditText mNotes;
     private TextView mNameHelper;
     private TextView mVersionValue;
     private TextView mLoaderValue;
@@ -134,6 +135,7 @@ public class InstanceEditorFragment extends Fragment implements ScreenTitleProvi
         mIcon = view.findViewById(R.id.editor_icon);
         mName = view.findViewById(R.id.editor_name);
         mJvm = view.findViewById(R.id.editor_jvm);
+        mNotes = view.findViewById(R.id.editor_notes);
         mNameHelper = view.findViewById(R.id.editor_name_helper);
         mVersionValue = view.findViewById(R.id.editor_version_value);
         mLoaderValue = view.findViewById(R.id.editor_loader_value);
@@ -187,6 +189,18 @@ public class InstanceEditorFragment extends Fragment implements ScreenTitleProvi
             public void afterTextChanged(Editable s) {}
         });
         mJvm.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (!mBinding) markDirty();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+        mNotes.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
@@ -258,6 +272,7 @@ public class InstanceEditorFragment extends Fragment implements ScreenTitleProvi
         mIcon.setImageDrawable(InstanceIconProvider.fetchIcon(getResources(), instance));
         mName.setText(instance.getDisplayName());
         mJvm.setText(nullToEmpty(instance.jvmArgs));
+        mNotes.setText(nullToEmpty(instance.notes));
         mSelectedVersion = nullToEmpty(instance.versionId);
         mVersionValue.setText(UiUtils.versionName(requireContext(), mSelectedVersion));
         mLoaderValue.setText(UiUtils.loaderName(requireContext(), mSelectedVersion));
@@ -323,6 +338,7 @@ public class InstanceEditorFragment extends Fragment implements ScreenTitleProvi
         Bundle edits = new Bundle();
         edits.putString("name", mName.getText().toString());
         edits.putString("jvm", mJvm.getText().toString());
+        edits.putString("notes", mNotes.getText().toString());
         edits.putString("version", mSelectedVersion);
         edits.putBoolean("shared", mSharedData.isChecked());
         edits.putInt("runtime", mRuntime.getSelectedItemPosition());
@@ -337,6 +353,8 @@ public class InstanceEditorFragment extends Fragment implements ScreenTitleProvi
         if (name != null) mName.setText(name);
         String jvm = edits.getString("jvm");
         if (jvm != null) mJvm.setText(jvm);
+        String notes = edits.getString("notes");
+        if (notes != null) mNotes.setText(notes);
         String version = edits.getString("version");
         if (version != null && !version.isEmpty()) {
             mSelectedVersion = version;
@@ -385,6 +403,7 @@ public class InstanceEditorFragment extends Fragment implements ScreenTitleProvi
         mSaving = true;
         mSave.setEnabled(false);
         final String jvmArgs = mJvm.getText().toString().trim();
+        final String notes = mNotes.getText().toString().trim();
         final String defaultControlLabel = getString(R.string.editor_control_default);
         final String control = mSelectedControlLayout != null
                 ? mSelectedControlLayout : mControlValue.getText().toString().trim();
@@ -407,6 +426,7 @@ public class InstanceEditorFragment extends Fragment implements ScreenTitleProvi
                 mInstance.name = newName;
                 mInstance.versionId = versionId;
                 mInstance.jvmArgs = jvmArgs.isEmpty() ? null : jvmArgs;
+                mInstance.notes = notes.isEmpty() ? null : notes;
                 mInstance.controlLayout = control.isEmpty() || control.equals(defaultControlLabel)
                         ? null : control;
                 mInstance.sharedData = sharedData;

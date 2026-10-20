@@ -100,6 +100,27 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/mojo_space_1"
                         android:text="@string/editor_name_helper" />
+
+                    <TextView
+                        style="@style/TextAppearance.Mojo.Meta"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/mojo_space_4"
+                        android:text="@string/editor_notes_label" />
+
+                    <EditText
+                        android:id="@+id/editor_notes"
+                        style="@style/Widget.Mojo.Input"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/mojo_space_1"
+                        android:gravity="top|start"
+                        android:hint="@string/editor_notes_hint"
+                        android:inputType="textMultiLine|textCapSentences"
+                        android:maxLines="4"
+                        android:minHeight="80dp"
+                        android:paddingTop="@dimen/mojo_space_3"
+                        android:paddingBottom="@dimen/mojo_space_3" />
                 </LinearLayout>
 
                 <!-- Version and loader -->
