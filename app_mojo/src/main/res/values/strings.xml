@@ -734,7 +734,7 @@
     <string name="browse_unknown_author">Unknown author</string>
     <string name="browse_download_count">%1$s downloads</string>
     <string name="browse_detail_version">Version</string>
-    <string name="browse_detail_no_versions">No versions match this instance's Minecraft version and loader.</string>
+    <string name="browse_detail_no_versions">No versions match the selected Minecraft version and loader.</string>
     <string name="browse_install">Install</string>
     <string name="browse_install_modpack">Install modpack</string>
     <string name="browse_modpack_hint">Modpacks install into a new instance</string>
