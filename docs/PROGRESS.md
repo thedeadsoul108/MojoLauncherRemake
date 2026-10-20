@@ -51,30 +51,46 @@ derivative of MojoLauncher under LGPLv3.
     different CI runs can be installed side by side.
   - Storage provider authorities and the custom-controls target package follow
     the final variant application ID.
-- [x] No game-engine or UI code has been modified yet; only build/CI versioning.
+- [x] UI/UX remake implemented and documented (`docs/UI_REMAKE_PLAN.md`):
+  - New dark design system (colors, spacing, type, widgets) and original
+    vector icons/splash mark with an adaptive launcher icon.
+  - New shell in `LauncherActivity`: top bar with back/title/account chip,
+    Home/Instances/Browse/Downloads/Settings tabs, bottom nav on phones and a
+    navigation rail at `screenWidthDp >= 600`.
+  - Home dashboard, instance library with search/sort and empty state,
+    instance creation flow, rebuilt editor with dirty-state guard, rebuilt
+    Browse with 350ms debounce and import, Downloads screen, custom Settings
+    hub, About screen, and account manager.
+  - Branding swept to MojoRemake; upstream Discord/Telegram/Play links removed.
+  - Notification permission is requested contextually from Downloads/Settings,
+    never at first launch; insets stay owned by `Tools.setInsetsMode`.
+- [x] UI verified in CI, run
+  [`39418819416`](https://github.com/thedeadsoul108/MojoLauncherRemake/actions/runs/39418819416)
+  (build #8, commit `3350c68`):
+  - `MojoRemake-v1.0.1-b8-full-debug.apk` —
+    `git.artdeell.mjlaunch.debug.b8`, `versionName v1.0.1`
+  - `MojoRemake-v1.0.1-b8-noruntime-debug.apk` —
+    `git.artdeell.mjlaunch.noruntime.debug.b8`,
+    `versionName v1.0.1-noruntime`
+  - Both: `versionCode 10001008`, `minSdk 21`, `targetSdk 36`, label
+    `MojoRemake`, and the new shell layouts/resources present in the APK.
+- [x] Commits: `50aee53` (design system/branding), `4c7c62a` (shell and
+  screens), `3b32803` (plan), `f359a7c` and `3350c68` (AAPT style-parent
+  fixes).
 
 ## Next steps
 
-1. **UI/UX remake (main work)**
-   - Read `prompt.txt` at the repository root (local file, intentionally not
-     committed) for the full first-session brief.
-   - Shell: `LauncherActivity`, `BaseActivity`, `MainMenuFragment`,
-     `app_mojo/src/main/res/layout/`.
-   - Theme and colors: `app_mojo/src/main/res/values/`.
-   - Keep game/instance flows reachable while the UI is replaced.
-   - Write `docs/UI_REMAKE_PLAN.md`, then implement in the same session.
-2. **Minimal rebrand (part of UI work)**
-   - Display name and strings: `app_mojo/src/main/res/values/strings.xml`
-     (`app_short_name`), `app_mojo/src/main/AndroidManifest.xml`.
-   - App identity: `app_mojo/build.gradle` (`applicationId`, `namespace`
-     stays `git.artdeell.mojo` for now), `settings.gradle` (`rootProject.name`).
-   - URLs and constants: `app_mojo/src/main/java/git/artdeell/mojo/Tools.java`.
-   - Icon and splash assets in `app_mojo/src/main/res/`.
-   - README/NOTICE/privacy docs.
-   - Do not change the base application ID or the CI debug/flavor suffixes.
-3. **Feature work after the shell is stable**
-   - Instance list/home, mod browser/installer UX, account flow, settings,
-     downloads/progress, and error states.
+1. **Device smoke test** (the only remaining verification gap): first launch,
+   local/Microsoft/Ely.by login, create + edit instance, modpack
+   import, download progress, game launch, rotation, and gesture-nav insets on
+   Android 5/7/10/14.
+2. **Localization**: the new screens are English-only; other locales fall back
+   to English by design (`tools:ignore="MissingTranslation"`). Translate when
+   the string set is frozen.
+3. **Final art**: replace the provisional original vector launcher icon/splash
+   with final artwork when available; keep the current files as the fallback.
+4. **Polish pass after device feedback**: tablet rail spacing, TalkBack labels,
+   and any OEM-specific inset behavior.
 
 ## Build notes
 

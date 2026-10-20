@@ -1,6 +1,6 @@
 # MojoRemake UI remake plan
 
-Status: implementing in the first UI session (2026-10-20).
+Status: implemented; CI-verified on 2026-10-20 (run 39418819416, build #8).
 
 This document records the audit that drove the remake, the target shell and
 screens, the design system, the migration order, and the acceptance criteria.
