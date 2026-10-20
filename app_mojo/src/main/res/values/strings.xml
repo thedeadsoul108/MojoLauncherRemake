@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- App name part -->
-    <string name="app_short_name">MJLauncher</string>
+    <string name="app_short_name" translatable="false">MojoRemake</string>
 
     <!-- Action bar part -->
 
@@ -21,7 +21,7 @@
     <string name="alerttitle_installmod">Select a mod installer</string>
 
     <!-- Error messages -->
-    <string name="error_fatal">MJLauncher has unexpectedly crashed</string>
+    <string name="error_fatal">MojoRemake has unexpectedly crashed</string>
     <string name="error_no_version">No version!</string>
     <string name="error_show_more">Show more</string>
     <string name="error_show_less">Show less</string>
@@ -245,7 +245,7 @@
     <string name="color_default_hex" translatable="false">FFFF0000</string>
     <string name="notif_channel_name">General</string>
     <string name="notif_channel_id" translatable="false">channel_id</string>
-    <string name="lazy_service_default_title">MJ Foreground Service</string>
+    <string name="lazy_service_default_title">MojoRemake Foreground Service</string>
     <string name="mcl_setting_veroption_installed">Installed</string>
     <string name="use_global_default">(Use global default)</string>
     <string name="default_control">Default controlmap</string>
@@ -276,7 +276,7 @@
     <string name="preference_gyro_sample_rate_description">If you have performance issues with gyroscope controls, increase this.</string>
     <string name="microsoft_login_retry_later">Too many requests, please try again later.</string>
     <string name="microsoft_login_generic">Error: %s</string>
-    <string name="storage_required">MJLauncher requires external storage to be attached. Please reconnect it and restart the app.</string>
+    <string name="storage_required">MojoRemake requires external storage to be attached. Please reconnect it and restart the app.</string>
     <string name="mcl_setting_title_buttonallcaps">Only use capital letters in button labels</string>
     <string name="mcl_setting_subtitle_buttonallcaps">Disable this if you want to use lowercase letters in your controls.</string>
     <string name="create_instance">Create new instance</string>
@@ -348,7 +348,7 @@
     <string name="modpack_download_downloading_mods">Downloading mods (%.2f MB / %.2f MB)</string>
     <string name="modpack_download_downloading_mods_fc">Downloading mods (File %d out of %d)</string>
     <string name="modpack_download_applying_overrides">Applying overrides (%d/%d)</string>
-    <string name="modpack_install_notification_title">MJ Modpack Installer</string>
+    <string name="modpack_install_notification_title">MojoRemake Modpack Installer</string>
     <string name="modpack_install_notification_success">Click here to finish modpack installation</string>
     <string name="modpack_install_notification_data_not_available">Failed to download mod loader information</string>
     <string name="modpack_install_modloader_download_failed">Failed to download the mod loader files</string>
@@ -375,13 +375,13 @@
     <string name="notif_download_finished_desc">Click here to start it!</string>
     <string name="preference_category_gestures">Gestures</string>
     <string name="preference_category_buttons">Buttons</string>
-    <string name="preference_category_experimental_settings">Experimental fuckury</string>
+    <string name="preference_category_experimental_settings">Experimental features</string>
     <string name="preference_category_java_tweaks">Java Tweaks</string>
     <string name="preference_category_main_categories">Categories</string>
     <string name="preference_category_miscellaneous">Miscellaneous settings</string>
     <string name="preference_category_video">Video settings</string>
     <string name="notification_permission_dialog_title">Permission request</string>
-    <string name="notification_permission_dialog_text">MJLauncher requires a permission to post notifications to prevent game/modpack downloads from stopping when you leave the app. Without this permission, Android may shut down your downloads when you put MJLauncher in background mode.</string>
+    <string name="notification_permission_dialog_text">MojoRemake requires a permission to post notifications to prevent game/modpack downloads from stopping when you leave the app. Without this permission, Android may shut down your downloads when you put MojoRemake in background mode.</string>
     <string name="notification_permission_toast">You can always change your mind later by going into Settings</string>
     <string name="preference_ask_for_notification_title">Allow notifications</string>
     <string name="preference_ask_for_notification_description">Click to re-request the notification permission, required for game/modpack background downloads to work properly.</string>
@@ -433,10 +433,10 @@
     <string name="controller_remapper_expand_entry">Expand to change keycodes</string>
     <string name="preference_remap_controller_title">Change controller key bindings</string>
     <string name="preference_remap_controller_description">Allows you to modify the keyboard keys bound to each controller button</string>
-    <string name="mcl_button_social_media">Discord</string>
+    <string name="mcl_button_social_media">Project homepage</string>
     <string name="ltw_render_distance_warning_msg">Your GPU is not capable of rendering above 7 render distance without Sodium or other similar mods. The render distance will be automatically reduced when you click "OK".</string>
     <string name="mcl_button_open_directory">Open game directory</string>
-    <string name="social_media_invite" translatable="false">https://discord.gg/VHdwQFsaGX</string>
+    <string name="social_media_invite" translatable="false">https://github.com/thedeadsoul108/MojoLauncherRemake</string>
     <string name="local_login_bad_username_title">Unsuitable username</string>
     <string name="local_login_bad_username_text">The username must be between 3–16 characters long, and must only contain latin letters, numbers 0–9 and underscores.</string>
     <string name="quick_setting_title">Quick settings</string>
@@ -528,7 +528,7 @@
     <string name="mjdl_json_error_title">Game metadata error</string>
     <string name="mjdl_json_error_subtitle_1">The data for this version is not available. Check your Internet connection or reinstall it.</string>
     <string name="mjdl_json_error_subtitle_3">The data for this version is corrupt. Turn on game manifest verification and try downloading again.</string>
-    <string name="mjdl_json_error_subtitle_2">The data for this version is malformed. Please report this on our GitHub or on the Discord. (%s)</string>
+    <string name="mjdl_json_error_subtitle_2">The data for this version is malformed. Please report this on our GitHub issue tracker. (%s)</string>
     <string name="mjdl_native_error_title">Game library error</string>
     <string name="mjdl_native_error_subtitle_1">The library %s requires code for %s, but it is not included.</string>
     <string name="mjdl_native_error_subtitle_2">Failed to extract native libraries</string>
@@ -539,8 +539,335 @@
     <string name="mjdl_disk_error_subtitle_2">Failed to save instance after updating the Java Runtime.</string>
     <string name="mjdl_download_error_title">Download error</string>
     <string name="mjdl_download_error_subtitle">Download failed. Check your internet connection and make sure that you have enough free disk space.</string>
-    <string name="mjdl_download_error_subtitle_2">File verification failed. Please try again. If this error keeps happening, contact us on GitHub or on Discord.</string>
+    <string name="mjdl_download_error_subtitle_2">File verification failed. Please try again. If this error keeps happening, report it on our GitHub issue tracker.</string>
     <string name="bta_configuring">Configuring BTA…</string>
     <string name="pref_blocklist_disable_title">Disable server blocklist</string>
     <string name="pref_blocklist_disable_description">Prevent the MC server blocklist from loading. This allows you to play on blocked servers (like 6b6t.org)</string>
+
+    <!-- MojoRemake shell -->
+    <string name="nav_home">Home</string>
+    <string name="nav_instances">Instances</string>
+    <string name="nav_browse">Browse</string>
+    <string name="nav_downloads">Downloads</string>
+    <string name="nav_settings">Settings</string>
+    <string name="top_bar_back">Back</string>
+    <string name="top_bar_account">Account</string>
+    <string name="account_chip_signed_out">Sign in</string>
+    <string name="account_chip_no_account">No account</string>
+    <string name="account_chip_description">Account: %1$s</string>
+    <string name="account_chip_add_description">Add account</string>
+    <string name="app_logo_description">MojoRemake logo</string>
+    <string name="progress_open_downloads">Open downloads</string>
+    <string name="progress_tasks_running">%1$d running</string>
+
+    <!-- Home -->
+    <string name="home_eyebrow">YOUR LAUNCHER</string>
+    <string name="home_title">Ready when you are</string>
+    <string name="home_subtitle">Launch a world, tune an instance, or find something new.</string>
+    <string name="home_selected_label">SELECTED INSTANCE</string>
+    <string name="home_selected_badge">Selected</string>
+    <string name="home_no_instance_title">No instance yet</string>
+    <string name="home_no_instance_body">Create an instance to start playing. You can add mods and modpacks at any time.</string>
+    <string name="home_create_instance">Create instance</string>
+    <string name="home_play">Play</string>
+    <string name="home_configure">Configure</string>
+    <string name="home_quick_actions">Shortcuts</string>
+    <string name="home_quick_create_title">New instance</string>
+    <string name="home_quick_create_body">Vanilla or modded</string>
+    <string name="home_quick_browse_title">Browse modpacks</string>
+    <string name="home_quick_browse_body">Find something new</string>
+    <string name="home_quick_import_title">Import modpack</string>
+    <string name="home_quick_import_body">From a local file</string>
+    <string name="home_quick_settings_title">Settings</string>
+    <string name="home_quick_settings_body">Tune the launcher</string>
+    <string name="home_recent_title">Your instances</string>
+    <string name="home_recent_all">View all</string>
+    <string name="home_recent_empty">Instances you create will show up here.</string>
+    <string name="home_account_title">Account</string>
+    <string name="home_tasks_title">Downloads</string>
+    <string name="home_tasks_count">%1$d active</string>
+    <string name="home_tasks_open">View downloads</string>
+    <string name="home_footer">MojoRemake · Open source Minecraft launcher</string>
+    <string name="home_instance_meta">%1$s · %2$s</string>
+
+    <!-- Instance library -->
+    <string name="instances_search_hint">Search instances</string>
+    <string name="instances_subtitle">All instances on this device. Tap one to make it active.</string>
+    <string name="instances_sort">Sort</string>
+    <string name="instances_sort_name">Name</string>
+    <string name="instances_sort_recent">Recently updated</string>
+    <string name="instances_sort_version">Version</string>
+    <string name="instances_empty_title">Your library is empty</string>
+    <string name="instances_empty_body">Create an instance to install Minecraft, or import a modpack you already have.</string>
+    <string name="instances_no_results_title">No matching instances</string>
+    <string name="instances_no_results_body">Try a different search or clear the filter.</string>
+    <string name="instances_error_title">Could not load instances</string>
+    <string name="instances_error_body">Check that launcher storage is available, then try again.</string>
+    <string name="instances_count">%1$d instances</string>
+    <string name="instances_count_one">1 instance</string>
+    <string name="instances_selected">Selected</string>
+    <string name="instances_select">Use this instance</string>
+    <string name="instances_launch">Launch</string>
+    <string name="instances_edit">Edit</string>
+    <string name="instances_open_folder">Open folder</string>
+    <string name="instances_delete">Delete</string>
+    <string name="instances_deleted">%1$s deleted</string>
+    <string name="instances_selected_toast">%1$s is now selected</string>
+    <string name="instances_create">Create instance</string>
+    <string name="instances_import">Import modpack</string>
+    <string name="instances_missing_name">Unnamed instance</string>
+    <string name="instances_meta">%1$s · %2$s</string>
+    <string name="instances_loader_vanilla">Vanilla</string>
+    <string name="instances_more">More options</string>
+    <string name="instance_icon_description">Icon for %1$s</string>
+    <string name="instance_card_description">%1$s, %2$s</string>
+    <string name="instances_loading">Loading instances…</string>
+
+    <!-- Create instance -->
+    <string name="create_title">Create instance</string>
+    <string name="create_subtitle">Start from a clean install, a mod loader, or a modpack.</string>
+    <string name="create_section_start">Start fresh</string>
+    <string name="create_section_loaders">Mod loaders</string>
+    <string name="create_section_modpacks">Modpacks</string>
+    <string name="create_vanilla_title">Vanilla Minecraft</string>
+    <string name="create_vanilla_body">Choose an official version and play without mods.</string>
+    <string name="create_optifine_title">OptiFine</string>
+    <string name="create_optifine_body">Add OptiFine for shaders and performance options.</string>
+    <string name="create_fabric_body">Lightweight mod loader for modern versions.</string>
+    <string name="create_quilt_body">Fabric-compatible loader with extra features.</string>
+    <string name="create_legacy_fabric_body">Fabric for legacy Minecraft versions.</string>
+    <string name="create_forge_body">The classic mod loader for large modpacks.</string>
+    <string name="create_neoforge_body">Modern Forge-compatible loader.</string>
+    <string name="create_bta_body">Better than Adventure! for b1.7.3.</string>
+    <string name="create_modpack_title">Browse modpacks</string>
+    <string name="create_modpack_body">Install a modpack from Modrinth or CurseForge.</string>
+    <string name="create_import_title">Import a modpack</string>
+    <string name="create_import_body">Install a local .mrpack or CurseForge zip.</string>
+    <string name="create_default_name">New instance</string>
+
+    <!-- Instance editor -->
+    <string name="editor_title">Instance settings</string>
+    <string name="editor_loading">Loading instance…</string>
+    <string name="editor_instance_missing">This instance could not be found.</string>
+    <string name="editor_section_general">General</string>
+    <string name="editor_section_version">Version and loader</string>
+    <string name="editor_section_performance">Performance</string>
+    <string name="editor_section_storage">Storage</string>
+    <string name="editor_section_danger">Danger zone</string>
+    <string name="editor_name_label">Instance name</string>
+    <string name="editor_name_hint">My instance</string>
+    <string name="editor_name_helper">Shown in your library. Changing it also renames the instance folder.</string>
+    <string name="editor_name_required">Enter an instance name.</string>
+    <string name="editor_name_invalid">Use a name without slashes or reserved characters.</string>
+    <string name="editor_icon_description">Change instance icon</string>
+    <string name="editor_change_icon">Change icon</string>
+    <string name="editor_icon_failed">Could not load that image.</string>
+    <string name="editor_version_label">Minecraft version</string>
+    <string name="editor_version_hint">Select a version</string>
+    <string name="editor_loader_label">Mod loader</string>
+    <string name="editor_control_label">Control layout</string>
+    <string name="editor_control_default">Default control layout</string>
+    <string name="editor_runtime_label">Java runtime</string>
+    <string name="editor_renderer_label">Renderer</string>
+    <string name="editor_jvm_label">JVM arguments</string>
+    <string name="editor_jvm_hint">Use the global JVM arguments</string>
+    <string name="editor_shared_data_title">Shared game data</string>
+    <string name="editor_shared_data_body">Store worlds and resource packs in the shared folder instead of this instance.</string>
+    <string name="editor_save">Save changes</string>
+    <string name="editor_saved">Instance saved</string>
+    <string name="editor_save_failed">Could not save the instance.</string>
+    <string name="editor_unsaved_title">Discard changes?</string>
+    <string name="editor_unsaved_body">Your changes have not been saved.</string>
+    <string name="editor_discard">Discard</string>
+    <string name="editor_keep_editing">Keep editing</string>
+    <string name="editor_delete_button">Delete instance</string>
+    <string name="editor_delete_body">This permanently deletes worlds, mods, resource packs and every other file in this instance.</string>
+    <string name="editor_delete_confirm_title">Delete %1$s?</string>
+    <string name="editor_delete_confirm_body">This permanently deletes all worlds, mods and other data in this instance. This cannot be undone.</string>
+    <string name="editor_deleted">Instance deleted</string>
+    <string name="editor_delete_failed">Could not delete the instance.</string>
+    <string name="editor_runtime_loading">Loading runtimes…</string>
+    <string name="editor_select">Select</string>
+    <string name="editor_loader_vanilla">Vanilla</string>
+
+    <!-- Browse -->
+    <string name="browse_subtitle">Modpacks from Modrinth and CurseForge, ready to install.</string>
+    <string name="browse_search_hint">Search modpacks</string>
+    <string name="browse_import">Import local modpack</string>
+    <string name="browse_source_note">Results from Modrinth and CurseForge</string>
+    <string name="browse_filter_title">Filter modpacks</string>
+    <string name="browse_filter_version">Minecraft version</string>
+    <string name="browse_filter_clear">Clear</string>
+    <string name="browse_filter_apply">Apply</string>
+    <string name="browse_empty_title">Find your next modpack</string>
+    <string name="browse_empty_body">Search by name, or browse the most popular modpacks right now.</string>
+    <string name="browse_no_results_title">No modpacks found</string>
+    <string name="browse_no_results_body">Try another search or choose a different Minecraft version.</string>
+    <string name="browse_error_title">Could not load modpacks</string>
+    <string name="browse_error_body">Check your connection and try again.</string>
+    <string name="browse_retry">Try again</string>
+    <string name="browse_clear_search">Clear search</string>
+    <string name="browse_import_started">Preparing modpack import…</string>
+    <string name="browse_import_empty">That file is not a supported modpack.</string>
+    <string name="browse_import_failed">Could not import the modpack.</string>
+    <string name="browse_version_any">Any version</string>
+    <string name="browse_filter_description">Filter results</string>
+    <string name="browse_import_description">Import local modpack</string>
+
+    <!-- Downloads -->
+    <string name="downloads_subtitle">Active downloads and installs.</string>
+    <string name="downloads_active_title">In progress</string>
+    <string name="downloads_empty_title">Nothing in progress</string>
+    <string name="downloads_empty_body">Game files, runtimes, modpacks and instances will appear here while they install.</string>
+    <string name="downloads_notification_title">Keep downloads running</string>
+    <string name="downloads_notification_body">Allow notifications so Android does not stop downloads when MojoRemake is in the background.</string>
+    <string name="downloads_notification_allow">Allow notifications</string>
+    <string name="downloads_notification_open_settings">Open app settings</string>
+    <string name="downloads_notification_enabled">Notifications are allowed</string>
+    <string name="downloads_notification_note">Downloads continue while the app is in the background.</string>
+    <string name="downloads_task_generic">Working…</string>
+    <string name="downloads_task_download_game">Downloading game files</string>
+    <string name="downloads_task_runtime">Installing Java runtime</string>
+    <string name="downloads_task_modpack">Installing modpack</string>
+    <string name="downloads_task_auth">Signing in</string>
+    <string name="downloads_task_versions">Loading version list</string>
+    <string name="downloads_task_instance">Creating instance</string>
+    <string name="downloads_task_migration">Importing launcher data</string>
+    <string name="downloads_task_extract">Extracting files</string>
+    <string name="downloads_task_count">%1$d active</string>
+    <string name="downloads_progress_percent">%1$d%%</string>
+
+    <!-- Settings -->
+    <string name="settings_subtitle">Tune the launcher to your device.</string>
+    <string name="settings_section_accounts">Account</string>
+    <string name="settings_section_gameplay">Gameplay</string>
+    <string name="settings_section_tools">Tools</string>
+    <string name="settings_section_about">About</string>
+    <string name="settings_accounts_title">Accounts</string>
+    <string name="settings_accounts_summary">Manage Microsoft, Ely.by and local accounts</string>
+    <string name="settings_account_current">Signed in as %1$s</string>
+    <string name="settings_notifications_title">Background downloads</string>
+    <string name="settings_notifications_allowed">Notifications allowed</string>
+    <string name="settings_notifications_off">Notifications off · tap to enable</string>
+    <string name="settings_language_title">Language</string>
+    <string name="settings_language_summary">Force English or use the system language</string>
+    <string name="settings_language_system">System default</string>
+    <string name="settings_language_english">English</string>
+    <string name="settings_custom_controls_title">Custom controls</string>
+    <string name="settings_custom_controls_summary">Edit the on-screen control layout</string>
+    <string name="settings_gamepad_title">Gamepad mapping</string>
+    <string name="settings_gamepad_summary">Remap controller buttons and axes</string>
+    <string name="settings_open_folder_title">Open game folder</string>
+    <string name="settings_open_folder_summary">Browse worlds, mods and logs</string>
+    <string name="settings_share_logs_title">Share log file</string>
+    <string name="settings_share_logs_summary">Send latestlog.txt to someone who can help</string>
+    <string name="settings_execute_jar_title">Execute a .jar</string>
+    <string name="settings_execute_jar_summary">Run a Java archive with the installed runtime</string>
+    <string name="settings_about_title">About MojoRemake</string>
+    <string name="settings_about_summary">Version, credits and licenses</string>
+    <string name="settings_github_title">Project homepage</string>
+    <string name="settings_github_summary">Source code and issue tracker</string>
+    <string name="settings_version_footer">MojoRemake %1$s · %2$s</string>
+    <string name="settings_notification_denied_summary">Tap to enable in Android settings</string>
+    <string name="settings_no_instance">No instance selected</string>
+    <string name="settings_jar_busy">Wait for current tasks to finish.</string>
+    <string name="settings_language_toast">Restart MojoRemake to apply the language change.</string>
+    <string name="settings_language_title_screen">Language</string>
+
+    <!-- About -->
+    <string name="about_title">About</string>
+    <string name="about_tagline">A clean, capable Minecraft: Java Edition launcher for Android.</string>
+    <string name="about_version_label">Version</string>
+    <string name="about_build_label">Build</string>
+    <string name="about_package_label">Package</string>
+    <string name="about_license_label">License</string>
+    <string name="about_license_value">GNU GPL v3.0</string>
+    <string name="about_license_body">MojoRemake is free software. You may redistribute and modify it under the terms of the GNU General Public License, version 3 or later.</string>
+    <string name="about_credits_title">Credits</string>
+    <string name="about_credits_body">Built on the work of PojavLauncher, Boardwalk, LWJGL, OpenJDK and many other open-source projects. Thank you to everyone who contributes to them.</string>
+    <string name="about_disclaimer">Minecraft is a trademark of Mojang Studios. MojoRemake is not affiliated with or endorsed by Mojang or Microsoft.</string>
+    <string name="about_source">Source code</string>
+    <string name="about_issues">Report an issue</string>
+    <string name="about_license_link">Read the license</string>
+    <string name="about_logo_description">MojoRemake app icon</string>
+    <string name="about_build_value">%1$s · %2$s · %3$s</string>
+
+    <!-- Accounts -->
+    <string name="accounts_title">Accounts</string>
+    <string name="accounts_subtitle">The selected account is used when launching the game.</string>
+    <string name="accounts_add">Add account</string>
+    <string name="accounts_empty_title">No accounts yet</string>
+    <string name="accounts_empty_body">Add a Microsoft, Ely.by or local account to play.</string>
+    <string name="accounts_active">Active</string>
+    <string name="accounts_switch">Use account</string>
+    <string name="accounts_switch_toast">%1$s is now active</string>
+    <string name="accounts_remove_title">Remove account?</string>
+    <string name="accounts_remove_body">Remove %1$s from this device? You can add it again later.</string>
+    <string name="accounts_removed">%1$s removed</string>
+    <string name="accounts_remove">Remove account</string>
+    <string name="accounts_avatar_description">Avatar for %1$s</string>
+    <string name="accounts_count">%1$d accounts</string>
+    <string name="accounts_add_description">Add account</string>
+    <string name="accounts_loading">Loading accounts…</string>
+
+    <!-- Auth -->
+    <string name="auth_title">Add account</string>
+    <string name="auth_subtitle">Choose how you want to sign in.</string>
+    <string name="auth_microsoft_body">Play online with a Microsoft/Xbox account.</string>
+    <string name="auth_elyby_body">Sign in with an Ely.by account.</string>
+    <string name="auth_local_body">Play offline with a local username.</string>
+    <string name="auth_online_badge">Online</string>
+    <string name="auth_offline_badge">Offline</string>
+    <string name="auth_legal_note">Account details stay on this device.</string>
+    <string name="local_login_title">Local account</string>
+    <string name="local_login_subtitle">Pick a username for offline play.</string>
+    <string name="local_login_note">Local accounts cannot join servers that require authentication.</string>
+    <string name="local_login_button">Create account</string>
+
+    <!-- Contextual notifications -->
+    <string name="notif_cta_title">Turn on notifications</string>
+    <string name="notif_cta_body">Allow notifications so game and modpack downloads keep running when you leave the app.</string>
+    <string name="notif_cta_allow">Allow</string>
+    <string name="notif_cta_not_now">Not now</string>
+    <string name="notif_cta_granted">Notifications enabled</string>
+    <string name="notif_cta_denied">Notifications are off. Enable them in Android settings to keep downloads running.</string>
+    <string name="notif_cta_settings">Open settings</string>
+    <string name="notif_permission_denied_title">Notifications are off</string>
+    <string name="notif_permission_denied_body">Android will not show the permission prompt again. Enable notifications for MojoRemake in system settings.</string>
+
+    <!-- Common UI -->
+    <string name="action_back">Back</string>
+    <string name="action_more">More options</string>
+    <string name="action_retry">Retry</string>
+    <string name="action_clear">Clear</string>
+    <string name="action_apply">Apply</string>
+    <string name="action_select">Select</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_save">Save</string>
+    <string name="action_create">Create</string>
+    <string name="action_open">Open</string>
+    <string name="action_close">Close</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="action_search">Search</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_allow">Allow</string>
+    <string name="action_not_now">Not now</string>
+    <string name="common_loading">Loading…</string>
+    <string name="common_error">Something went wrong</string>
+    <string name="common_unknown">Unknown</string>
+    <string name="common_optional">Optional</string>
+    <string name="common_selected">Selected</string>
+    <string name="content_desc_instance_icon">Instance icon</string>
+    <string name="content_desc_account_avatar">Account avatar</string>
+    <string name="content_desc_selected">Selected</string>
+    <string name="content_desc_not_selected">Not selected</string>
+    <string name="content_desc_more">More options</string>
+    <string name="content_desc_back">Back</string>
+    <string name="content_desc_clear">Clear search</string>
+    <string name="content_desc_filter">Filter results</string>
+    <string name="content_desc_search">Search</string>
+    <string name="content_desc_sort">Sort instances</string>
+    <string name="content_desc_notifications">Manage download notifications</string>
+    <string name="content_desc_accounts">Accounts</string>
 </resources>

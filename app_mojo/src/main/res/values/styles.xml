@@ -1,24 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Light or not? -->
+    <!-- Base application theme. Dark-only for now. -->
     <style name="MojoLauncher" parent="@style/Theme.AppCompat.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:windowContentOverlay">@null</item>
-        <item name="android:statusBarColor">@color/background_status_bar</item>
-        <item name="android:navigationBarColor">@color/background_app</item>
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
-        <item name="android:textSize">@dimen/_12ssp</item>
-        <item name="dialogCornerRadius">0dp</item>
+        <item name="android:windowBackground">@color/bg</item>
+        <item name="android:statusBarColor">@color/bg</item>
+        <item name="android:navigationBarColor">@color/bg</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        <item name="android:textColorHint">@color/text_muted</item>
+        <item name="android:colorAccent">@color/accent</item>
+        <item name="colorAccent">@color/accent</item>
+        <item name="colorPrimary">@color/surface</item>
+        <item name="colorPrimaryDark">@color/bg</item>
+        <item name="colorControlActivated">@color/accent</item>
+        <item name="colorControlNormal">@color/text_secondary</item>
+        <item name="colorControlHighlight">@color/ripple_light</item>
+        <item name="android:colorControlActivated">@color/accent</item>
+        <item name="android:colorControlNormal">@color/text_secondary</item>
+        <item name="android:colorControlHighlight">@color/ripple_light</item>
+        <item name="android:textSize">15sp</item>
+        <item name="dialogCornerRadius">16dp</item>
         <item name="android:seekBarStyle">@style/MojoLauncher.SeekBar</item>
         <item name="seekBarStyle">@style/MojoLauncher.SeekBar</item>
         <item name="android:switchStyle">@style/MojoLauncher.Switch</item>
         <item name="switchStyle">@style/MojoLauncher.Switch</item>
         <item name="buttonStyle">@style/MojoLauncher.Button</item>
         <item name="android:buttonStyleToggle">@style/MojoLauncher.Button.Toggle</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.Mojo</item>
+        <item name="android:windowSplashScreenBackground">@color/bg</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_splash_logo</item>
+        <item name="android:windowSplashScreenIconBackgroundColor">@color/bg</item>
     </style>
 
     <style name="MojoLauncher.AppTheme" parent="MojoLauncher"/>
+
+    <style name="PreferenceThemeOverlay.Mojo" parent="PreferenceThemeOverlay.v14.Material">
+        <item name="colorAccent">@color/accent</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        <item name="android:colorControlActivated">@color/accent</item>
+        <item name="android:colorControlNormal">@color/text_secondary</item>
+    </style>
 
     <style name="MojoLauncher.SeekBar" parent="Widget.AppCompat.SeekBar">
         <item name="android:progressDrawable">@drawable/minepb_progress</item>
@@ -44,7 +73,184 @@
         <item name="android:background">@drawable/button_flat_toggle</item>
     </style>
 
+    <!-- MojoRemake typography -->
+    <style name="TextAppearance.Mojo" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:lineSpacingMultiplier">1.35</item>
+    </style>
 
+    <style name="TextAppearance.Mojo.Display" parent="TextAppearance.Mojo">
+        <item name="android:textSize">30sp</item>
+        <item name="android:fontFamily">sans-serif-bold</item>
+    </style>
+
+    <style name="TextAppearance.Mojo.ScreenTitle" parent="TextAppearance.Mojo">
+        <item name="android:textSize">24sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="TextAppearance.Mojo.SectionTitle" parent="TextAppearance.Mojo">
+        <item name="android:textSize">18sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="TextAppearance.Mojo.CardTitle" parent="TextAppearance.Mojo">
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="TextAppearance.Mojo.Body" parent="TextAppearance.Mojo">
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="TextAppearance.Mojo.Meta" parent="TextAppearance.Mojo">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/text_secondary</item>
+    </style>
+
+    <style name="TextAppearance.Mojo.Badge" parent="TextAppearance.Mojo">
+        <item name="android:textSize">12sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="TextAppearance.Mojo.Button" parent="TextAppearance.Mojo">
+        <item name="android:textSize">15sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <!-- MojoRemake components -->
+    <style name="Widget.Mojo.Button.Primary" parent="Widget.AppCompat.Button">
+        <item name="android:background">@drawable/bg_button_primary</item>
+        <item name="android:textColor">@color/on_accent</item>
+        <item name="android:textAppearance">@style/TextAppearance.Mojo.Button</item>
+        <item name="android:minHeight">@dimen/mojo_button_height</item>
+        <item name="android:minWidth">@dimen/mojo_touch_target</item>
+        <item name="android:paddingStart">@dimen/mojo_space_5</item>
+        <item name="android:paddingEnd">@dimen/mojo_space_5</item>
+        <item name="android:paddingTop">@dimen/mojo_space_3</item>
+        <item name="android:paddingBottom">@dimen/mojo_space_3</item>
+        <item name="android:gravity">center</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+    <style name="Widget.Mojo.Button.Secondary" parent="Widget.AppCompat.Button">
+        <item name="android:background">@drawable/bg_button_secondary</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textAppearance">@style/TextAppearance.Mojo.Button</item>
+        <item name="android:minHeight">@dimen/mojo_button_height</item>
+        <item name="android:minWidth">@dimen/mojo_touch_target</item>
+        <item name="android:paddingStart">@dimen/mojo_space_5</item>
+        <item name="android:paddingEnd">@dimen/mojo_space_5</item>
+        <item name="android:paddingTop">@dimen/mojo_space_3</item>
+        <item name="android:paddingBottom">@dimen/mojo_space_3</item>
+        <item name="android:gravity">center</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+    <style name="Widget.Mojo.Button.Text" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:textColor">@color/accent</item>
+        <item name="android:textAppearance">@style/TextAppearance.Mojo.Button</item>
+        <item name="android:minHeight">@dimen/mojo_touch_target</item>
+        <item name="android:paddingStart">@dimen/mojo_space_3</item>
+        <item name="android:paddingEnd">@dimen/mojo_space_3</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+    <style name="Widget.Mojo.Button.Danger" parent="Widget.AppCompat.Button">
+        <item name="android:background">@drawable/bg_button_danger</item>
+        <item name="android:textColor">@color/danger</item>
+        <item name="android:textAppearance">@style/TextAppearance.Mojo.Button</item>
+        <item name="android:minHeight">@dimen/mojo_button_height</item>
+        <item name="android:paddingStart">@dimen/mojo_space_5</item>
+        <item name="android:paddingEnd">@dimen/mojo_space_5</item>
+        <item name="android:gravity">center</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+    <style name="Widget.Mojo.IconButton" parent="Widget.AppCompat.ImageButton">
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:minWidth">@dimen/mojo_touch_target</item>
+        <item name="android:minHeight">@dimen/mojo_touch_target</item>
+        <item name="android:padding">@dimen/mojo_space_3</item>
+        <item name="android:scaleType">centerInside</item>
+    </style>
+
+    <style name="Widget.Mojo.Input" parent="Widget.AppCompat.EditText">
+        <item name="android:background">@drawable/bg_input</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textColorHint">@color/text_muted</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:minHeight">@dimen/mojo_input_height</item>
+        <item name="android:paddingStart">@dimen/mojo_space_4</item>
+        <item name="android:paddingEnd">@dimen/mojo_space_4</item>
+        <item name="android:paddingTop">@dimen/mojo_space_3</item>
+        <item name="android:paddingBottom">@dimen/mojo_space_3</item>
+    </style>
+
+    <style name="Widget.Mojo.Spinner" parent="Widget.AppCompat.Spinner">
+        <item name="android:background">@drawable/bg_input</item>
+        <item name="android:minHeight">@dimen/mojo_input_height</item>
+        <item name="android:paddingStart">@dimen/mojo_space_4</item>
+        <item name="android:paddingEnd">@dimen/mojo_space_4</item>
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+    </style>
+
+    <style name="Widget.Mojo.Card">
+        <item name="android:background">@drawable/bg_card</item>
+        <item name="android:padding">@dimen/mojo_card_padding</item>
+    </style>
+
+    <style name="Widget.Mojo.SectionCard">
+        <item name="android:background">@drawable/bg_card</item>
+        <item name="android:padding">@dimen/mojo_card_padding</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="Widget.Mojo.Chip">
+        <item name="android:background">@drawable/bg_chip</item>
+        <item name="android:textAppearance">@style/TextAppearance.Mojo.Badge</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:minHeight">28dp</item>
+        <item name="android:paddingStart">@dimen/mojo_space_3</item>
+        <item name="android:paddingEnd">@dimen/mojo_space_3</item>
+        <item name="android:paddingTop">@dimen/mojo_space_1</item>
+        <item name="android:paddingBottom">@dimen/mojo_space_1</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="Widget.Mojo.Chip.Accent" parent="Widget.Mojo.Chip">
+        <item name="android:background">@drawable/bg_chip_accent</item>
+        <item name="android:textColor">@color/on_accent</item>
+    </style>
+
+    <style name="Widget.Mojo.Divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@color/border</item>
+    </style>
+
+    <style name="Widget.Mojo.ProgressBar" parent="Widget.AppCompat.ProgressBar">
+        <item name="android:progressTint">@color/accent</item>
+        <item name="android:progressBackgroundTint">@color/border</item>
+        <item name="android:indeterminateTint">@color/accent</item>
+    </style>
+
+    <style name="Widget.Mojo.LinearProgress" parent="Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:progressTint">@color/accent</item>
+        <item name="android:progressBackgroundTint">@color/border</item>
+        <item name="android:indeterminateTint">@color/accent</item>
+        <item name="android:maxHeight">6dp</item>
+        <item name="android:minHeight">6dp</item>
+    </style>
+
+    <!-- Legacy styles retained for engine screens -->
     <style name="LauncherFragment_Divider">
         <item name="android:layout_width">@dimen/padding_tiny</item>
         <item name="android:layout_height">0dp</item>

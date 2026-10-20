@@ -90,14 +90,14 @@ public final class Tools {
     public static final String MAVEN_CENTRAL = "https://maven-central-eu.storage-download.googleapis.com/maven2/";
     public  static final float BYTE_TO_MB = 1024 * 1024;
     public static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
-    public static String APP_NAME = "MojoLauncher";
+    public static String APP_NAME = "MojoRemake";
 
     public static final Gson GLOBAL_GSON = new GsonBuilder()
             .registerTypeAdapter(MavenName.class, new MavenNameAdapter())
             .setPrettyPrinting()
             .create();
 
-    public static final String URL_HOME = "https://mojolauncher.ru";
+    public static final String URL_HOME = "https://github.com/thedeadsoul108/MojoLauncherRemake";
     public static String NATIVE_LIB_DIR;
     public static String DIR_DATA; //Initialized later to get context
     public static File DIR_CACHE;
