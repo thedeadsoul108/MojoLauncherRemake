@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:gravity="center_vertical"
+    android:minHeight="72dp"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/mojo_space_3"
+    android:paddingTop="@dimen/mojo_space_2"
+    android:paddingEnd="@dimen/mojo_space_1"
+    android:paddingBottom="@dimen/mojo_space_2">
+
+    <ImageView
+        android:id="@+id/account_row_avatar"
+        android:layout_width="@dimen/mojo_instance_icon_small"
+        android:layout_height="@dimen/mojo_instance_icon_small"
+        android:background="@drawable/bg_avatar"
+        android:importantForAccessibility="no"
+        android:padding="3dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_ui_person"
+        android:tint="@color/text_secondary" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/mojo_space_3"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/account_row_name"
+                style="@style/TextAppearance.Mojo.CardTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
+                tools:text="MojoPlayer" />
+
+            <TextView
+                android:id="@+id/account_row_active"
+                style="@style/TextAppearance.Mojo.Badge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/mojo_space_2"
+                android:background="@drawable/bg_badge_accent"
+                android:paddingStart="@dimen/mojo_space_2"
+                android:paddingEnd="@dimen/mojo_space_2"
+                android:paddingTop="1dp"
+                android:paddingBottom="1dp"
+                android:text="@string/accounts_active"
+                android:textColor="@color/accent"
+                android:visibility="gone"
+                tools:visibility="visible" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/account_row_type"
+            style="@style/TextAppearance.Mojo.Meta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            tools:text="Microsoft account" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/account_row_use"
+        style="@style/Widget.Mojo.Button.Text"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/mojo_touch_target"
+        android:minHeight="@dimen/mojo_touch_target"
+        android:minWidth="64dp"
+        android:text="@string/accounts_switch" />
+
+    <ImageButton
+        android:id="@+id/account_row_delete"
+        style="@style/Widget.Mojo.IconButton"
+        android:layout_width="@dimen/mojo_touch_target"
+        android:layout_height="@dimen/mojo_touch_target"
+        android:contentDescription="@string/accounts_remove"
+        android:src="@drawable/ic_ui_delete"
+        android:tint="@color/danger" />
+</LinearLayout>

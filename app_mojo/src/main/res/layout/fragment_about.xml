@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.kdt.DefocusableScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/mojo_screen_padding"
+        android:paddingTop="@dimen/mojo_space_8"
+        android:paddingEnd="@dimen/mojo_screen_padding"
+        android:paddingBottom="@dimen/mojo_space_8">
+
+        <ImageView
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:background="@drawable/bg_hero_icon"
+            android:contentDescription="@string/about_logo_description"
+            android:padding="@dimen/mojo_space_4"
+            android:src="@drawable/ic_brand_mark" />
+
+        <TextView
+            style="@style/TextAppearance.Mojo.Display"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/mojo_space_4"
+            android:text="@string/app_short_name" />
+
+        <TextView
+            style="@style/TextAppearance.Mojo.Body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/mojo_space_2"
+            android:gravity="center"
+            android:text="@string/about_tagline"
+            android:textColor="@color/text_secondary" />
+
+        <LinearLayout
+            style="@style/Widget.Mojo.SectionCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/mojo_space_6"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingTop="@dimen/mojo_space_2"
+                android:paddingBottom="@dimen/mojo_space_2">
+
+                <TextView
+                    style="@style/TextAppearance.Mojo.Body"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/about_version_label"
+                    android:textColor="@color/text_secondary" />
+
+                <TextView
+                    android:id="@+id/about_version"
+                    style="@style/TextAppearance.Mojo.Body"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="v1.0.1" />
+            </LinearLayout>
+
+            <View style="@style/Widget.Mojo.Divider" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingTop="@dimen/mojo_space_2"
+                android:paddingBottom="@dimen/mojo_space_2">
+
+                <TextView
+                    style="@style/TextAppearance.Mojo.Body"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/about_build_label"
+                    android:textColor="@color/text_secondary" />
+
+                <TextView
+                    android:id="@+id/about_build"
+                    style="@style/TextAppearance.Mojo.Body"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="debug · full" />
+            </LinearLayout>
+
+            <View style="@style/Widget.Mojo.Divider" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingTop="@dimen/mojo_space_2"
+                android:paddingBottom="@dimen/mojo_space_2">
+
+                <TextView
+                    style="@style/TextAppearance.Mojo.Body"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/about_package_label"
+                    android:textColor="@color/text_secondary" />
+
+                <TextView
+                    android:id="@+id/about_package"
+                    style="@style/TextAppearance.Mojo.Meta"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="middle"
+                    android:gravity="end"
+                    android:maxLines="1"
+                    tools:text="git.artdeell.mjlaunch.debug" />
+            </LinearLayout>
+
+            <View style="@style/Widget.Mojo.Divider" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingTop="@dimen/mojo_space_2"
+                android:paddingBottom="@dimen/mojo_space_2">
+
+                <TextView
+                    style="@style/TextAppearance.Mojo.Body"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/about_license_label"
+                    android:textColor="@color/text_secondary" />
+
+                <TextView
+                    style="@style/TextAppearance.Mojo.Body"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/about_license_value" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            style="@style/TextAppearance.Mojo.Meta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/mojo_space_4"
+            android:text="@string/about_license_body" />
+
+        <LinearLayout
+            style="@style/Widget.Mojo.SectionCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/mojo_space_4"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/TextAppearance.Mojo.CardTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/about_credits_title" />
+
+            <TextView
+                style="@style/TextAppearance.Mojo.Meta"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/mojo_space_2"
+                android:text="@string/about_credits_body" />
+        </LinearLayout>
+
+        <TextView
+            style="@style/TextAppearance.Mojo.Meta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/mojo_space_4"
+            android:text="@string/about_disclaimer"
+            android:textColor="@color/text_muted" />
+
+        <Button
+            android:id="@+id/about_source"
+            style="@style/Widget.Mojo.Button.Secondary"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/mojo_button_height"
+            android:layout_marginTop="@dimen/mojo_space_5"
+            android:text="@string/about_source" />
+
+        <Button
+            android:id="@+id/about_issues"
+            style="@style/Widget.Mojo.Button.Secondary"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/mojo_button_height"
+            android:layout_marginTop="@dimen/mojo_space_2"
+            android:text="@string/about_issues" />
+
+        <Button
+            android:id="@+id/about_license_link"
+            style="@style/Widget.Mojo.Button.Text"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/mojo_button_height"
+            android:layout_marginTop="@dimen/mojo_space_1"
+            android:text="@string/about_license_link" />
+    </LinearLayout>
+</com.kdt.DefocusableScrollView>

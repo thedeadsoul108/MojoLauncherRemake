@@ -183,12 +183,77 @@ public class Instances {
     }
 
     /**
+     * Load a specific instance from its directory.
+     * @param instanceRoot instance directory
+     * @return the loaded instance, or null if it is missing or unreadable
+     */
+    public static Instance loadInstance(File instanceRoot) {
+        if(instanceRoot == null) return null;
+        Instance instance = read(instanceRoot, Instance.class);
+        if(instance == null) return null;
+        instance.sanitize();
+        return instance;
+    }
+
+    /**
+     * @return the directory of the selected instance, or null if none is selected
+     */
+    public static File getSelectedInstanceRoot() {
+        return selectedInstanceLocation();
+    }
+
+    /**
+     * Forget the selected instance without deleting anything.
+     */
+    public static void clearSelectedInstance() {
+        LauncherPreferences.DEFAULT_PREF.edit()
+                .remove(LauncherPreferences.PREF_KEY_CURRENT_INSTANCE)
+                .apply();
+    }
+
+    /**
+     * Make sure the persisted selection still points at a readable instance. If it does not,
+     * select the first available instance, or clear the selection when the library is empty.
+     */
+    public static void ensureValidSelection() {
+        if(selectedInstanceLocation() != null) return;
+        try {
+            List<Instance> instances = loadAllInstances();
+            if(instances.isEmpty()) {
+                clearSelectedInstance();
+            }else{
+                setSelectedInstance(instances.get(0));
+            }
+        }catch (IOException e) {
+            Log.e("Instances", "Failed to repair the selected instance", e);
+        }
+    }
+
+    /**
+     * Delete an instance directory. Only directories directly inside the instances folder are
+     * accepted so a malformed or malicious path cannot remove unrelated data.
+     * @param instanceRoot the instance directory
+     * @throws IOException if the directory is invalid or cannot be removed
+     */
+    public static void deleteInstance(File instanceRoot) throws IOException {
+        if(instanceRoot == null) throw new IOException("Instance directory is null");
+        File canonicalRoot = instanceRoot.getCanonicalFile();
+        File canonicalParent = sInstancePath.getCanonicalFile();
+        if(!canonicalParent.equals(canonicalRoot.getParentFile()))
+            throw new IOException("Refusing to delete a directory outside the instances folder");
+        File selectedRoot = selectedInstanceLocation();
+        org.apache.commons.io.FileUtils.deleteDirectory(canonicalRoot);
+        if(canonicalRoot.equals(selectedRoot)) clearSelectedInstance();
+    }
+
+    /**
      * Load the currently selected instance. Note that this method must not be used along with any code
      * which uses getImmutableInstanceList()
      * @return currently selected instance
      */
     public static Instance loadSelectedInstance() {
         File selectedInstanceLocation = selectedInstanceLocation();
+        if(selectedInstanceLocation == null) return null;
         Instance instance = read(selectedInstanceLocation, Instance.class);
         if(instance == null) return null;
         instance.sanitize();

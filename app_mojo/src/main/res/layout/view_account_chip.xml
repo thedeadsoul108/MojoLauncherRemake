@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <ImageView
+        android:id="@+id/account_chip_avatar"
+        android:layout_width="@dimen/mojo_avatar_size"
+        android:layout_height="@dimen/mojo_avatar_size"
+        android:background="@drawable/bg_avatar"
+        android:importantForAccessibility="no"
+        android:padding="3dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_ui_person_add"
+        android:tint="@color/text_primary" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/mojo_space_2"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/account_chip_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:maxWidth="120dp"
+            android:textColor="@color/text_primary"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            tools:text="MojoPlayer" />
+
+        <TextView
+            android:id="@+id/account_chip_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:maxWidth="120dp"
+            android:textColor="@color/text_muted"
+            android:textSize="10sp"
+            tools:text="Local account" />
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginStart="@dimen/mojo_space_1"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_ui_chevron_down"
+        android:tint="@color/text_muted" />
+</merge>

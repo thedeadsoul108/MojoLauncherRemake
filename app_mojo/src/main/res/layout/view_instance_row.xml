@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:gravity="center_vertical"
+    android:minHeight="64dp"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/mojo_space_2"
+    android:paddingTop="@dimen/mojo_space_2"
+    android:paddingEnd="@dimen/mojo_space_2"
+    android:paddingBottom="@dimen/mojo_space_2">
+
+    <ImageView
+        android:id="@+id/instance_row_icon"
+        android:layout_width="@dimen/mojo_instance_icon_small"
+        android:layout_height="@dimen/mojo_instance_icon_small"
+        android:background="@drawable/bg_hero_icon"
+        android:importantForAccessibility="no"
+        android:padding="@dimen/mojo_space_1"
+        android:scaleType="fitCenter"
+        tools:src="@drawable/ic_ui_instance_default" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/mojo_space_3"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/instance_row_name"
+            style="@style/TextAppearance.Mojo.CardTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            tools:text="Create: Astral" />
+
+        <TextView
+            android:id="@+id/instance_row_meta"
+            style="@style/TextAppearance.Mojo.Meta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            tools:text="1.20.1 · Fabric" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/instance_row_badge"
+        style="@style/TextAppearance.Mojo.Badge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/mojo_space_2"
+        android:background="@drawable/bg_badge_accent"
+        android:paddingStart="@dimen/mojo_space_2"
+        android:paddingEnd="@dimen/mojo_space_2"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:text="@string/instances_selected"
+        android:textColor="@color/accent"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+    <ImageView
+        android:layout_width="@dimen/mojo_icon_size_small"
+        android:layout_height="@dimen/mojo_icon_size_small"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_ui_chevron_right"
+        android:tint="@color/text_muted" />
+</LinearLayout>

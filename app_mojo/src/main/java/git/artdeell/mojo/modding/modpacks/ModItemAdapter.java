@@ -71,14 +71,29 @@ public class ModItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     public void performSearchQuery(SearchFilters searchFilters) {
-        if(mTaskInProgress != null) {
-            mTaskInProgress.cancel(true);
-            mTaskInProgress = null;
-        }
+        cancelSearch();
+        clearResults();
         this.mSearchFilters = searchFilters;
         this.mLastPage = false;
         mTaskInProgress = new SelfReferencingFuture(new SearchApiTask(mSearchFilters, null))
                 .startOnExecutor(MojoApplication.sExecutorService);
+    }
+
+    /** Cancel the search in flight, if any. Safe to call from the UI thread. */
+    public void cancelSearch() {
+        if(mTaskInProgress != null) {
+            mTaskInProgress.cancel(true);
+            mTaskInProgress = null;
+        }
+    }
+
+    /** Drop every result so a new search never shows stale entries. */
+    @SuppressLint("NotifyDataSetChanged")
+    public void clearResults() {
+        mModItems = MOD_ITEMS_EMPTY;
+        mCurrentResult = null;
+        mLastPage = true;
+        notifyDataSetChanged();
     }
 
     @NonNull

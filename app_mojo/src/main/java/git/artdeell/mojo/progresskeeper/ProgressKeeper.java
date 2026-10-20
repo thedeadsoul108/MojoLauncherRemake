@@ -1,14 +1,16 @@
 package git.artdeell.mojo.progresskeeper;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ProgressKeeper {
-    private static final HashMap<String, List<ProgressListener>> sProgressListeners = new HashMap<>();
-    private static final HashMap<String, ProgressState> sProgressStates = new HashMap<>();
+    private static final Map<String, ProgressState> sProgressStates = new LinkedHashMap<>();
+    private static final Map<String, List<ProgressListener>> sProgressListeners = new java.util.HashMap<>();
     private static final List<TaskCountListener> sTaskCountListeners = new ArrayList<>();
+    private static final List<GlobalProgressListener> sGlobalListeners = new ArrayList<>();
 
     public static synchronized void submitProgress(String progressRecord, int progress, int resid, Object... va) {
         ProgressState progressState = sProgressStates.get(progressRecord);
@@ -34,6 +36,7 @@ public class ProgressKeeper {
                     else if(shouldCallEnded) listener.onProgressEnded();
                     else listener.onProgressUpdated(progress, resid, va);
             }
+        dispatchGlobalProgress();
     }
 
     private static void updateTaskCount(int count) {
@@ -112,5 +115,74 @@ public class ProgressKeeper {
 
     public static boolean hasOngoingTasks() {
         return getTaskCount() > 0;
+    }
+
+    /**
+     * @return an immutable snapshot of every currently active task, in creation order
+     */
+    public static synchronized List<TaskSnapshot> getTaskSnapshots() {
+        List<TaskSnapshot> snapshots = new ArrayList<>(sProgressStates.size());
+        for(Map.Entry<String, ProgressState> entry : sProgressStates.entrySet()) {
+            ProgressState state = entry.getValue();
+            snapshots.add(new TaskSnapshot(entry.getKey(), state.progress, state.resid, state.varArg));
+        }
+        return snapshots;
+    }
+
+    /**
+     * Register a listener that receives the complete task snapshot whenever tasks start, update,
+     * or end. This is intended for screens that list every active task (Downloads). The listener
+     * may be called on any thread, so it must post before touching views.
+     */
+    public static void addGlobalProgressListener(GlobalProgressListener listener) {
+        synchronized (sGlobalListeners) {
+            if(!sGlobalListeners.contains(listener)) sGlobalListeners.add(listener);
+        }
+        listener.onTasksChanged(getTaskSnapshots());
+    }
+
+    public static void removeGlobalProgressListener(GlobalProgressListener listener) {
+        synchronized (sGlobalListeners) {
+            sGlobalListeners.remove(listener);
+        }
+    }
+
+    private static void dispatchGlobalProgress() {
+        List<GlobalProgressListener> listeners;
+        synchronized (sGlobalListeners) {
+            if(sGlobalListeners.isEmpty()) return;
+            listeners = new ArrayList<>(sGlobalListeners);
+        }
+        List<TaskSnapshot> snapshots = getTaskSnapshots();
+        for(GlobalProgressListener listener : listeners) {
+            listener.onTasksChanged(snapshots);
+        }
+    }
+
+    private static class ProgressState {
+        int progress;
+        int resid;
+        Object[] varArg;
+    }
+
+    /**
+     * A read-only copy of one active progress record.
+     */
+    public static class TaskSnapshot {
+        public final String key;
+        public final int progress;
+        public final int resid;
+        public final Object[] args;
+
+        private TaskSnapshot(String key, int progress, int resid, Object[] args) {
+            this.key = key;
+            this.progress = progress;
+            this.resid = resid;
+            this.args = args;
+        }
+    }
+
+    public interface GlobalProgressListener {
+        void onTasksChanged(List<TaskSnapshot> tasks);
     }
 }

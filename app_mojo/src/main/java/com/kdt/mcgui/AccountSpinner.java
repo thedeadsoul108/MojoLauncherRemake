@@ -53,6 +53,8 @@ public class AccountSpinner extends AppCompatSpinner implements LoginListener, A
     private final ValueAnimator mLoginStepAnimator = ValueAnimator.ofFloat(mMaxSteps);
     private final Paint mLoginBarPaint = new Paint();
     private float mLoginStep;
+    /* The shell keeps this spinner hidden and opens account management explicitly. */
+    private boolean mAutoCreateAccountOnEmpty = true;
 
     class LoginExtraListener implements ExtraListener<String> {
         private final AuthType mAuthType;
@@ -184,10 +186,18 @@ public class AccountSpinner extends AppCompatSpinner implements LoginListener, A
         onAttachedToWindow();
     }
 
+    /**
+     * Controls whether selecting the empty entry opens the auth chooser. The launcher shell
+     * disables this on its hidden spinner so account creation stays explicit.
+     */
+    public void setAutoCreateAccountOnEmpty(boolean autoCreate) {
+        mAutoCreateAccountOnEmpty = autoCreate;
+    }
+
     private void createAccount() {
         setSelection(0);
         dismissPopup();
-        ExtraCore.setValue(ExtraConstants.SELECT_AUTH_METHOD, true);
+        if(mAutoCreateAccountOnEmpty) ExtraCore.setValue(ExtraConstants.SELECT_AUTH_METHOD, true);
     }
 
     @Override
@@ -206,6 +216,7 @@ public class AccountSpinner extends AppCompatSpinner implements LoginListener, A
         Toast.makeText(getContext(), R.string.main_login_done, Toast.LENGTH_SHORT).show();
         Accounts.setCurrent(account);
         reload();
+        ExtraCore.setValue(ExtraConstants.ACCOUNT_CHANGED, true);
     }
 
 
@@ -242,7 +253,7 @@ public class AccountSpinner extends AppCompatSpinner implements LoginListener, A
         Account account = mAdapter.getItem(i);
         if(account == null) {
             if(i == 0) {
-                createAccount();
+                if(mAutoCreateAccountOnEmpty) createAccount();
             }else {
                 Tools.showError(adapterView.getContext(), new NullPointerException());
             }

@@ -19,6 +19,20 @@ public class DisplayInstance {
         return new File(mInstanceRoot, "icon.webp");
     }
 
+    /**
+     * @return the directory that stores this instance's metadata and game data
+     */
+    public File getInstanceRoot() {
+        return mInstanceRoot;
+    }
+
+    /**
+     * @return the user-visible name, or an empty string when it has not been set
+     */
+    public String getDisplayName() {
+        return name == null ? "" : name.trim();
+    }
+
     private void sanitizeIcon() {
         if(!InstanceIconProvider.hasStaticIcon(icon)) {
             icon = InstanceIconProvider.FALLBACK_ICON_NAME;

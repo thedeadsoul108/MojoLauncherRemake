@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/mojo_space_2"
+    android:background="@drawable/bg_card"
+    android:orientation="vertical"
+    android:padding="@dimen/mojo_card_padding">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/download_task_title"
+            style="@style/TextAppearance.Mojo.CardTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            tools:text="Downloading game files" />
+
+        <TextView
+            android:id="@+id/download_task_percent"
+            style="@style/TextAppearance.Mojo.Badge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/mojo_space_2"
+            android:textColor="@color/accent"
+            tools:text="42%" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/download_task_message"
+        style="@style/TextAppearance.Mojo.Meta"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        tools:text="minecraft.jar" />
+
+    <ProgressBar
+        android:id="@+id/download_task_progress"
+        style="@style/Widget.Mojo.LinearProgress"
+        android:layout_width="match_parent"
+        android:layout_height="6dp"
+        android:layout_marginTop="@dimen/mojo_space_3"
+        android:max="100" />
+</LinearLayout>

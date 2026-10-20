@@ -73,6 +73,12 @@ public class ProgressLayout extends ConstraintLayout implements View.OnClickList
         }
     }
 
+    /** Expand or collapse the inline task list without re-dispatching a click. */
+    public void toggleExpanded() {
+        mLinearLayout.setVisibility(mLinearLayout.getVisibility() == GONE ? VISIBLE : GONE);
+        mFlipArrow.setRotation(mLinearLayout.getVisibility() == GONE ? 0 : 180);
+    }
+
     public boolean hasProcesses(){
         return ProgressKeeper.getTaskCount() > 0;
     }
@@ -83,7 +89,7 @@ public class ProgressLayout extends ConstraintLayout implements View.OnClickList
         mLinearLayout = findViewById(R.id.progress_linear_layout);
         mTaskNumberDisplayer = findViewById(R.id.progress_textview);
         mFlipArrow = findViewById(R.id.progress_flip_arrow);
-        setBackgroundColor(getResources().getColor(R.color.background_bottom_bar));
+        setBackgroundResource(R.drawable.bg_progress_bar);
         setOnClickListener(this);
     }
 
@@ -110,8 +116,7 @@ public class ProgressLayout extends ConstraintLayout implements View.OnClickList
 
     @Override
     public void onClick(View v) {
-        mLinearLayout.setVisibility(mLinearLayout.getVisibility() == GONE ? VISIBLE : GONE);
-        mFlipArrow.setRotation(mLinearLayout.getVisibility() == GONE? 0 : 180);
+        toggleExpanded();
     }
 
     @Override

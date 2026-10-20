@@ -1,50 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<com.kdt.DefocusableScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_app"
-    android:paddingHorizontal="@dimen/fragment_padding_medium">
-    <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/bg"
+    android:fillViewport="true">
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:background="@drawable/background_card"
-        android:gravity="center"
         android:orientation="vertical"
-        android:paddingVertical="@dimen/padding_extra_extra_large">
+        android:paddingStart="@dimen/mojo_screen_padding"
+        android:paddingTop="@dimen/mojo_space_6"
+        android:paddingEnd="@dimen/mojo_screen_padding"
+        android:paddingBottom="@dimen/mojo_space_8">
 
-        <com.kdt.mcgui.MineButton
-            android:id="@+id/button_microsoft_authentication"
+        <TextView
+            style="@style/TextAppearance.Mojo.Display"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/auth_select_microsoft"
-            android:textSize="@dimen/_12ssp"
-            android:layout_marginHorizontal="@dimen/_25sdp"
-            android:layout_marginBottom="@dimen/_20sdp"
-            app:layout_constraintTop_toTopOf="parent"
-            />
+            android:text="@string/auth_title"
+            android:textSize="26sp" />
 
-        <com.kdt.mcgui.MineButton
-            android:id="@+id/button_elyby_authentication"
+        <TextView
+            style="@style/TextAppearance.Mojo.Body"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/auth_select_elyby"
-            android:textSize="@dimen/_12ssp"
-            android:layout_marginHorizontal="@dimen/_25sdp"
-            android:layout_marginTop="@dimen/_20sdp"
-            app:layout_constraintTop_toBottomOf="@+id/button_microsoft_authentication" />
+            android:layout_marginTop="@dimen/mojo_space_2"
+            android:text="@string/auth_subtitle"
+            android:textColor="@color/text_secondary" />
 
-        <com.kdt.mcgui.MineButton
-            android:id="@+id/button_local_authentication"
+        <LinearLayout
+            style="@style/Widget.Mojo.SectionCard"
+            android:layout_marginTop="@dimen/mojo_space_6"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/button_microsoft_authentication"
+                style="@style/Widget.Mojo.Button.Primary"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/mojo_button_height"
+                android:contentDescription="@string/auth_microsoft_body"
+                android:text="@string/auth_select_microsoft" />
+
+            <TextView
+                style="@style/TextAppearance.Mojo.Meta"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/mojo_space_2"
+                android:text="@string/auth_microsoft_body" />
+
+            <Button
+                android:id="@+id/button_elyby_authentication"
+                style="@style/Widget.Mojo.Button.Secondary"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/mojo_button_height"
+                android:layout_marginTop="@dimen/mojo_space_5"
+                android:contentDescription="@string/auth_elyby_body"
+                android:text="@string/auth_select_elyby" />
+
+            <TextView
+                style="@style/TextAppearance.Mojo.Meta"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/mojo_space_2"
+                android:text="@string/auth_elyby_body" />
+
+            <Button
+                android:id="@+id/button_local_authentication"
+                style="@style/Widget.Mojo.Button.Secondary"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/mojo_button_height"
+                android:layout_marginTop="@dimen/mojo_space_5"
+                android:contentDescription="@string/auth_local_body"
+                android:text="@string/auth_select_local" />
+
+            <TextView
+                style="@style/TextAppearance.Mojo.Meta"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/mojo_space_2"
+                android:text="@string/auth_local_body" />
+        </LinearLayout>
+
+        <TextView
+            style="@style/TextAppearance.Mojo.Meta"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/auth_select_local"
-            android:textSize="@dimen/_12ssp"
-            android:layout_marginHorizontal="@dimen/_25sdp"
-            android:layout_marginTop="@dimen/_20sdp"
-            app:layout_constraintTop_toBottomOf="@+id/button_elyby_authentication" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</FrameLayout>
+            android:layout_marginTop="@dimen/mojo_space_5"
+            android:gravity="center"
+            android:text="@string/auth_legal_note"
+            android:textColor="@color/text_muted"
+            tools:text="@string/auth_legal_note" />
+    </LinearLayout>
+</com.kdt.DefocusableScrollView>

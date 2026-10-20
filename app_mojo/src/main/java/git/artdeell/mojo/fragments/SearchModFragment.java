@@ -1,43 +1,47 @@
 package git.artdeell.mojo.fragments;
 
-import static git.artdeell.mojo.Tools.runOnUiThread;
-
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.math.MathUtils;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.kdt.mcgui.ProgressLayout;
 
-import git.artdeell.mojo.R;
-
+import git.artdeell.mojo.LauncherActivity;
 import git.artdeell.mojo.MojoApplication;
+import git.artdeell.mojo.R;
 import git.artdeell.mojo.Tools;
 import git.artdeell.mojo.modding.modpacks.ModItemAdapter;
 import git.artdeell.mojo.modding.modpacks.api.CommonApi;
 import git.artdeell.mojo.modding.modpacks.api.ModpackApi;
 import git.artdeell.mojo.modding.modpacks.models.SearchFilters;
-import git.artdeell.mojo.utils.profiles.VersionSelectorDialog;
 import git.artdeell.mojo.progresskeeper.ProgressKeeper;
 import git.artdeell.mojo.progresskeeper.TaskCountListener;
+import git.artdeell.mojo.ui.ScreenTitleProvider;
+import git.artdeell.mojo.utils.profiles.VersionSelectorDialog;
 
 import org.apache.commons.io.IOUtils;
 
@@ -47,194 +51,267 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-
-public class SearchModFragment extends Fragment implements ModItemAdapter.SearchResultCallback {
-
+/**
+ * Browse tab. Keeps the existing Modrinth/CurseForge pipeline but adds debounced search, explicit
+ * loading/empty/error states and a clear action.
+ */
+public class SearchModFragment extends Fragment implements ModItemAdapter.SearchResultCallback,
+        ScreenTitleProvider {
     public static final String TAG = "SearchModFragment";
-    private View mOverlay;
-    private float mOverlayTopCache; // Padding cache reduce resource lookup
 
-    private final RecyclerView.OnScrollListener mOverlayPositionListener = new RecyclerView.OnScrollListener() {
-        @Override
-        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-            mOverlay.setY(MathUtils.clamp(mOverlay.getY() - dy, -mOverlay.getHeight(), mOverlayTopCache));
-        }
-    };
+    private static final long SEARCH_DEBOUNCE_MS = 350L;
+
+    private final SearchFilters mSearchFilters = new SearchFilters();
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
 
     private EditText mSearchEditText;
-    private ImageButton mFilterButton;
-    private RecyclerView mRecyclerview;
+    private ImageButton mClearButton;
+    private RecyclerView mRecyclerView;
     private ModItemAdapter mModItemAdapter;
     private ProgressBar mSearchProgressBar;
-    private TextView mStatusTextView;
-    private ColorStateList mDefaultTextColor;
-    private ModpackApi modpackApi;
-
-    private final SearchFilters mSearchFilters;
-
+    private View mStateContainer;
+    private ImageView mStateIcon;
+    private TextView mStateTitle;
+    private TextView mStateBody;
+    private Button mStateAction;
     private Button mImportButton;
+    private ModpackApi mModpackApi;
     private TaskCountListener mTaskCountListener;
 
-    ActivityResultLauncher<String> mImportLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(),
-            uri -> {
+    private final Runnable mSearchRunnable = () -> {
+        if (mSearchEditText != null) searchMods(mSearchEditText.getText().toString());
+    };
+
+    private final ActivityResultLauncher<String> mImportLauncher =
+            registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
                 if (uri == null) return;
                 Context context = getContext();
-                ContentResolver contentResolver = getContext().getContentResolver();
-                MojoApplication.sExecutorService.execute(() -> {
-                    performLocalInstall(uri, context, contentResolver);
-                });
+                if (context == null) return;
+                ContentResolver contentResolver = context.getContentResolver();
+                MojoApplication.sExecutorService.execute(() ->
+                        performLocalInstall(uri, context, contentResolver));
             });
 
-    public void performLocalInstall(Uri uri, Context context, ContentResolver contentResolver) {
-            String fileName = Tools.getFileName(context, uri);
-            if (fileName == null) return;
-            File outFile = new File(Tools.DIR_CACHE, fileName + ".cf");
-            ProgressLayout.setProgress(ProgressLayout.INSTALL_MODPACK, R.string.multirt_progress_caching);
-            try (InputStream inputStream = contentResolver.openInputStream(uri);
-                 OutputStream outputStream = new FileOutputStream(outFile)) {
-                if (inputStream == null) return;
-                IOUtils.copy(inputStream, outputStream);
-                outputStream.flush();
-            } catch (IOException e) {
-                Tools.showErrorRemote("Error", e);
-                ProgressLayout.clearProgress(ProgressLayout.INSTALL_MODPACK);
-                return;
-            }
-            try {
-                modpackApi.installLocalModpack(fileName, outFile, null);
-            } catch (IOException e) {
-                Tools.showErrorRemote("Error", e);
-            } finally {
-                outFile.delete();
-                ProgressLayout.clearProgress(ProgressLayout.INSTALL_MODPACK);
-            }
+    public SearchModFragment() {
+        super(R.layout.fragment_mod_search);
+        mSearchFilters.isModpack = true;
     }
 
-    public SearchModFragment(){
-        super(R.layout.fragment_mod_search);
-        mSearchFilters = new SearchFilters();
-        mSearchFilters.isModpack = true;
+    @Override
+    public int getScreenTitle() {
+        return R.string.nav_browse;
     }
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        modpackApi = new CommonApi(context.getString(R.string.curseforge_api_key));
+        mModpackApi = new CommonApi(context.getString(R.string.curseforge_api_key));
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        // You can only access resources after attaching to current context
-        mModItemAdapter = new ModItemAdapter(getResources(), modpackApi, this);
+        super.onViewCreated(view, savedInstanceState);
+        mModItemAdapter = new ModItemAdapter(getResources(), mModpackApi, this);
         ProgressKeeper.addTaskCountListener(mModItemAdapter);
-        mOverlayTopCache = getResources().getDimension(R.dimen.fragment_padding_medium);
 
-        mOverlay = view.findViewById(R.id.search_mod_overlay);
         mSearchEditText = view.findViewById(R.id.search_mod_edittext);
+        mClearButton = view.findViewById(R.id.search_mod_clear);
         mSearchProgressBar = view.findViewById(R.id.search_mod_progressbar);
-        mRecyclerview = view.findViewById(R.id.search_mod_list);
-        mStatusTextView = view.findViewById(R.id.search_mod_status_text);
-        mFilterButton = view.findViewById(R.id.search_mod_filter);
+        mRecyclerView = view.findViewById(R.id.search_mod_list);
+        mStateContainer = view.findViewById(R.id.browse_state);
+        mStateIcon = view.findViewById(R.id.browse_state_icon);
+        mStateTitle = view.findViewById(R.id.browse_state_title);
+        mStateBody = view.findViewById(R.id.browse_state_body);
+        mStateAction = view.findViewById(R.id.browse_state_action);
+        mImportButton = view.findViewById(R.id.mineButton_import_local_modpack);
 
-        mDefaultTextColor = mStatusTextView.getTextColors();
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        mRecyclerView.setAdapter(mModItemAdapter);
 
-        mRecyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRecyclerview.setAdapter(mModItemAdapter);
-
-        mRecyclerview.addOnScrollListener(mOverlayPositionListener);
+        view.findViewById(R.id.search_mod_filter).setOnClickListener(v -> displayFilterDialog());
+        mClearButton.setOnClickListener(v -> {
+            mSearchEditText.setText("");
+            searchMods("");
+        });
+        mImportButton.setOnClickListener(v -> beginLocalImport());
 
         mSearchEditText.setOnEditorActionListener((v, actionId, event) -> {
-            searchMods(mSearchEditText.getText().toString());
-            mSearchEditText.clearFocus();
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                mHandler.removeCallbacks(mSearchRunnable);
+                searchMods(mSearchEditText.getText().toString());
+                hideKeyboard();
+                mSearchEditText.clearFocus();
+                return true;
+            }
             return false;
         });
+        mSearchEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
-        mOverlay.post(()->{
-           int overlayHeight = mOverlay.getHeight();
-           mRecyclerview.setPadding(mRecyclerview.getPaddingLeft(),
-                   mRecyclerview.getPaddingTop() + overlayHeight,
-                   mRecyclerview.getPaddingRight(),
-                   mRecyclerview.getPaddingBottom());
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mClearButton.setVisibility(s.length() > 0 ? View.VISIBLE : View.GONE);
+                mHandler.removeCallbacks(mSearchRunnable);
+                mHandler.postDelayed(mSearchRunnable, SEARCH_DEBOUNCE_MS);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
         });
-        mFilterButton.setOnClickListener(v -> displayFilterDialog());
-        mImportButton = view.findViewById(R.id.mineButton_import_local_modpack);
-        mImportButton.setOnClickListener(v -> {
-            mImportLauncher.launch("*/*");
-        });
+
         mTaskCountListener = taskCount -> {
-            runOnUiThread(() -> mImportButton.setEnabled(taskCount == 0));
+            Tools.runOnUiThread(() -> mImportButton.setEnabled(taskCount == 0));
             return false;
         };
         ProgressKeeper.addTaskCountListener(mTaskCountListener);
 
-        searchMods(null);
+        showState(R.drawable.ic_ui_browse, R.string.browse_empty_title,
+                R.string.browse_empty_body, 0, null);
+        searchMods("");
+
+        if (getActivity() instanceof LauncherActivity) {
+            LauncherActivity activity = (LauncherActivity) getActivity();
+            if (activity.consumeBrowseImportRequest()) {
+                view.post(this::beginLocalImport);
+            }
+        }
     }
 
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
+        mHandler.removeCallbacks(mSearchRunnable);
         ProgressKeeper.removeTaskCountListener(mModItemAdapter);
-        mRecyclerview.removeOnScrollListener(mOverlayPositionListener);
-        if (mTaskCountListener != null) { ProgressKeeper.removeTaskCountListener(mTaskCountListener); }
+        ProgressKeeper.removeTaskCountListener(mTaskCountListener);
+        mModItemAdapter.cancelSearch();
+        mRecyclerView.setAdapter(null);
+        super.onDestroyView();
     }
 
-    @Override
-    public void onSearchFinished() {
-        mSearchProgressBar.setVisibility(View.GONE);
-        mStatusTextView.setVisibility(View.GONE);
+    /** Called by the shell when another screen asks to import a local modpack. */
+    public void beginLocalImport() {
+        if (mImportButton == null) return;
+        if (ProgressKeeper.getTaskCount() > 0) {
+            Toast.makeText(requireContext(), R.string.tasks_ongoing, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        mImportLauncher.launch("*/*");
     }
 
-    @Override
-    public void onSearchError(int error) {
-        mSearchProgressBar.setVisibility(View.GONE);
-        mStatusTextView.setVisibility(View.VISIBLE);
-        switch (error) {
-            case ERROR_INTERNAL:
-                mStatusTextView.setTextColor(Color.RED);
-                mStatusTextView.setText(R.string.search_modpack_error);
-                break;
-            case ERROR_NO_RESULTS:
-                mStatusTextView.setTextColor(mDefaultTextColor);
-                mStatusTextView.setText(R.string.search_modpack_no_result);
-                break;
+    private void performLocalInstall(Uri uri, Context context, ContentResolver contentResolver) {
+        String fileName = Tools.getFileName(context, uri);
+        if (fileName == null || fileName.isEmpty()) {
+            Tools.runOnUiThread(() -> Toast.makeText(context, R.string.browse_import_empty,
+                    Toast.LENGTH_LONG).show());
+            return;
+        }
+        File outFile = new File(Tools.DIR_CACHE, fileName + ".cf");
+        ProgressLayout.setProgress(ProgressLayout.INSTALL_MODPACK, -1,
+                R.string.multirt_progress_caching);
+        try (InputStream inputStream = contentResolver.openInputStream(uri);
+             OutputStream outputStream = new FileOutputStream(outFile)) {
+            if (inputStream == null) {
+                ProgressLayout.clearProgress(ProgressLayout.INSTALL_MODPACK);
+                return;
+            }
+            IOUtils.copy(inputStream, outputStream);
+            outputStream.flush();
+        } catch (IOException e) {
+            Tools.showErrorRemote(context.getString(R.string.browse_import_failed), e);
+            ProgressLayout.clearProgress(ProgressLayout.INSTALL_MODPACK);
+            outFile.delete();
+            return;
+        }
+        try {
+            mModpackApi.installLocalModpack(fileName, outFile, null);
+        } catch (IOException e) {
+            Tools.showErrorRemote(context.getString(R.string.browse_import_failed), e);
+        } finally {
+            outFile.delete();
+            ProgressLayout.clearProgress(ProgressLayout.INSTALL_MODPACK);
         }
     }
 
     private void searchMods(String name) {
         mSearchProgressBar.setVisibility(View.VISIBLE);
+        mStateContainer.setVisibility(View.GONE);
+        mRecyclerView.setVisibility(View.VISIBLE);
         mSearchFilters.name = name == null ? "" : name;
         mModItemAdapter.performSearchQuery(mSearchFilters);
+    }
+
+    @Override
+    public void onSearchFinished() {
+        mSearchProgressBar.setVisibility(View.GONE);
+        mStateContainer.setVisibility(View.GONE);
+        mRecyclerView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onSearchError(int error) {
+        mSearchProgressBar.setVisibility(View.GONE);
+        if (error == ERROR_NO_RESULTS) {
+            showState(R.drawable.ic_ui_search, R.string.browse_no_results_title,
+                    R.string.browse_no_results_body, 0, null);
+        } else {
+            showState(R.drawable.ic_ui_warning, R.string.browse_error_title,
+                    R.string.browse_error_body, R.string.browse_retry,
+                    v -> searchMods(mSearchEditText.getText().toString()));
+        }
+    }
+
+    private void showState(int icon, int title, int body, int actionText,
+                           View.OnClickListener action) {
+        mRecyclerView.setVisibility(View.GONE);
+        mStateContainer.setVisibility(View.VISIBLE);
+        mStateIcon.setImageResource(icon);
+        mStateTitle.setText(title);
+        mStateBody.setText(body);
+        if (actionText == 0 || action == null) {
+            mStateAction.setVisibility(View.GONE);
+            mStateAction.setOnClickListener(null);
+        } else {
+            mStateAction.setVisibility(View.VISIBLE);
+            mStateAction.setText(actionText);
+            mStateAction.setOnClickListener(action);
+        }
     }
 
     private void displayFilterDialog() {
         AlertDialog dialog = new AlertDialog.Builder(requireContext())
                 .setView(R.layout.dialog_mod_filters)
                 .create();
-
-        // setup the view behavior
         dialog.setOnShowListener(dialogInterface -> {
-            TextView mSelectedVersion = dialog.findViewById(R.id.search_mod_selected_mc_version_textview);
-            Button mSelectVersionButton = dialog.findViewById(R.id.search_mod_mc_version_button);
-            Button mApplyButton = dialog.findViewById(R.id.search_mod_apply_filters);
+            TextView selectedVersion = dialog.findViewById(R.id.search_mod_selected_mc_version_textview);
+            Button selectVersionButton = dialog.findViewById(R.id.search_mod_mc_version_button);
+            Button applyButton = dialog.findViewById(R.id.search_mod_apply_filters);
+            Button clearButton = dialog.findViewById(R.id.search_mod_clear_filters);
+            if (selectedVersion == null || selectVersionButton == null || applyButton == null) return;
 
-            assert mSelectVersionButton != null;
-            assert mSelectedVersion != null;
-            assert mApplyButton != null;
-
-            // Setup the expendable list behavior
-            mSelectVersionButton.setOnClickListener(v -> VersionSelectorDialog.open(v.getContext(), true, (id, snapshot)-> mSelectedVersion.setText(id)));
-
-            // Apply visually all the current settings
-            mSelectedVersion.setText(mSearchFilters.mcVersion);
-
-            // Apply the new settings
-            mApplyButton.setOnClickListener(v -> {
-                mSearchFilters.mcVersion = mSelectedVersion.getText().toString();
+            selectedVersion.setText(mSearchFilters.mcVersion == null ? "" : mSearchFilters.mcVersion);
+            selectVersionButton.setOnClickListener(v -> VersionSelectorDialog.open(v.getContext(), true,
+                    (id, snapshot) -> selectedVersion.setText(id)));
+            applyButton.setOnClickListener(v -> {
+                String version = selectedVersion.getText().toString().trim();
+                mSearchFilters.mcVersion = version.isEmpty() ? null : version;
                 searchMods(mSearchEditText.getText().toString());
                 dialogInterface.dismiss();
             });
+            if (clearButton != null) {
+                clearButton.setOnClickListener(v -> {
+                    mSearchFilters.mcVersion = null;
+                    selectedVersion.setText("");
+                    searchMods(mSearchEditText.getText().toString());
+                    dialogInterface.dismiss();
+                });
+            }
         });
-
         dialog.show();
+    }
+
+    private void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) requireContext()
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) imm.hideSoftInputFromWindow(mSearchEditText.getWindowToken(), 0);
     }
 }

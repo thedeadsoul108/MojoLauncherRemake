@@ -3,222 +3,473 @@ package git.artdeell.mojo.fragments;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatSpinner;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 
+import git.artdeell.mojo.LauncherActivity;
+import git.artdeell.mojo.MojoApplication;
 import git.artdeell.mojo.R;
 import git.artdeell.mojo.Tools;
 import git.artdeell.mojo.extra.ExtraConstants;
 import git.artdeell.mojo.extra.ExtraCore;
 import git.artdeell.mojo.game.renderer.RendererCache;
 import git.artdeell.mojo.instances.Instance;
+import git.artdeell.mojo.instances.InstanceIconProvider;
 import git.artdeell.mojo.instances.Instances;
 import git.artdeell.mojo.multirt.MultiRTUtils;
 import git.artdeell.mojo.multirt.RTSpinnerAdapter;
 import git.artdeell.mojo.multirt.Runtime;
-import git.artdeell.mojo.instances.InstanceIconProvider;
-import git.artdeell.mojo.utils.profiles.VersionSelectorDialog;
+import git.artdeell.mojo.ui.ScreenTitleProvider;
+import git.artdeell.mojo.ui.UiUtils;
 import git.artdeell.mojo.utils.CropperUtils;
+import git.artdeell.mojo.utils.profiles.VersionSelectorDialog;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class InstanceEditorFragment extends Fragment implements CropperUtils.CropperReceiver {
+/**
+ * Sectioned instance editor with a dirty-state guard. Instance metadata is read and written on
+ * the executor; the UI only ever touches already-loaded values.
+ */
+public class InstanceEditorFragment extends Fragment implements ScreenTitleProvider,
+        CropperUtils.CropperReceiver {
     public static final String TAG = "InstanceEditorFragment";
+    public static final String ARG_INSTANCE_ROOT = "instance_root";
 
     private Instance mInstance;
+    private String mSelectedVersion = "";
     private String mSelectedControlLayout;
-    private Button mSaveButton, mDeleteButton, mControlSelectButton, mVersionSelectButton;
-    private Spinner mDefaultRuntime, mDefaultRenderer;
-    private EditText mDefaultName, mDefaultJvmArgument;
-    private TextView mDefaultVersion, mDefaultControl;
-    private ImageView mInstanceIcon;
-    private CheckBox mSharedDataCheckbox;
+    private int mInitialRuntimePosition = -1;
+    private int mInitialRendererPosition = -1;
+    private boolean mDirty;
+    private boolean mBinding;
+    private boolean mSaving;
     private int mRecommendedIconSize;
-    private final ActivityResultLauncher<?> mCropperLauncher = CropperUtils.registerCropper(this, this);
+    private Bundle mPendingEdits;
 
-    private List<String> mRenderNames;
+    private ImageView mIcon;
+    private EditText mName;
+    private EditText mJvm;
+    private TextView mNameHelper;
+    private TextView mVersionValue;
+    private TextView mLoaderValue;
+    private TextView mControlValue;
+    private AppCompatSpinner mRuntime;
+    private AppCompatSpinner mRenderer;
+    private SwitchCompat mSharedData;
+    private Button mSave;
+    private View mContent;
+    private View mLoading;
+    private OnBackPressedCallback mBackCallback;
 
-    public InstanceEditorFragment(){
+    private List<String> mRenderNames = new ArrayList<>();
+    private List<Runtime> mRuntimes = new ArrayList<>();
+
+    private final ActivityResultLauncher<?> mCropperLauncher =
+            CropperUtils.registerCropper(this, this);
+
+    public InstanceEditorFragment() {
         super(R.layout.fragment_instance_editor);
     }
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Paths, which can be changed
-        String value = (String) ExtraCore.consumeValue(ExtraConstants.FILE_SELECTOR);
-        if(value != null){
-            mSelectedControlLayout = value;
-        }
-        return super.onCreateView(inflater, container, savedInstanceState);
+    public int getScreenTitle() {
+        return R.string.editor_title;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         bindViews(view);
+        setupListeners(view);
 
-        RendererCache list = RendererCache.getCompatibleRenderers(view.getContext());
-        mRenderNames = list.rendererIds;
-        List<String> renderList = new ArrayList<>(list.rendererDisplayNames.length + 1);
-        renderList.addAll(Arrays.asList(list.rendererDisplayNames));
-        renderList.add(view.getContext().getString(R.string.global_default));
-        mDefaultRenderer.setAdapter(new ArrayAdapter<>(view.getContext(), R.layout.item_simple_list_1, renderList));
+        String controlValue = (String) ExtraCore.consumeValue(ExtraConstants.FILE_SELECTOR);
+        if (controlValue != null) mSelectedControlLayout = controlValue;
 
-        // Set up behaviors
-        mSaveButton.setOnClickListener(v -> {
-            InstanceIconProvider.dropIcon(mInstance);
-            save();
-            Tools.backToMainMenu(requireActivity());
+        mBackCallback = new OnBackPressedCallback(false) {
+            @Override
+            public void handleOnBackPressed() {
+                showDiscardDialog();
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher()
+                .addCallback(getViewLifecycleOwner(), mBackCallback);
+
+        getParentFragmentManager().setFragmentResultListener(
+                DeleteConfirmDialogFragment.RESULT_KEY, this,
+                (requestKey, result) -> {
+                    if (result.getBoolean("success") && getActivity() instanceof LauncherActivity) {
+                        ((LauncherActivity) getActivity())
+                                .selectRootTab(LauncherActivity.TAB_INSTANCES);
+                    }
+                });
+
+        loadInstance();
+    }
+
+    private void bindViews(View view) {
+        mContent = view.findViewById(R.id.editor_content);
+        mLoading = view.findViewById(R.id.editor_loading);
+        mIcon = view.findViewById(R.id.editor_icon);
+        mName = view.findViewById(R.id.editor_name);
+        mJvm = view.findViewById(R.id.editor_jvm);
+        mNameHelper = view.findViewById(R.id.editor_name_helper);
+        mVersionValue = view.findViewById(R.id.editor_version_value);
+        mLoaderValue = view.findViewById(R.id.editor_loader_value);
+        mControlValue = view.findViewById(R.id.editor_control_value);
+        mRuntime = view.findViewById(R.id.editor_runtime);
+        mRenderer = view.findViewById(R.id.editor_renderer);
+        mSharedData = view.findViewById(R.id.editor_shared_data);
+        mSave = view.findViewById(R.id.editor_save);
+    }
+
+    private void setupListeners(View view) {
+        view.findViewById(R.id.editor_change_icon).setOnClickListener(v -> {
+            mRecommendedIconSize = Math.max(mIcon.getWidth(), mIcon.getHeight());
+            CropperUtils.startCropper(mCropperLauncher);
         });
-
-        mDeleteButton.setOnClickListener(v -> {
-            DeleteConfirmDialogFragment dialogFragment = new DeleteConfirmDialogFragment();
-            dialogFragment.show(getChildFragmentManager(), "delete_dialog_confirm");
-        });
-
-        View.OnClickListener controlSelectListener = getControlSelectListener();
-        mControlSelectButton.setOnClickListener(controlSelectListener);
-        mDefaultControl.setOnClickListener(controlSelectListener);
-
-        // Setup the expendable list behavior
-        View.OnClickListener versionSelectListener = getVersionSelectListener();
-        mVersionSelectButton.setOnClickListener(versionSelectListener);
-        mDefaultVersion.setOnClickListener(versionSelectListener);
-
-        // Set up the icon change click listener
-        mInstanceIcon.setOnClickListener(v -> {
-            // Fill recommended size on click to ge the most up to date data
-            mRecommendedIconSize = Math.max(v.getWidth(), v.getHeight());
+        mIcon.setOnClickListener(v -> {
+            mRecommendedIconSize = Math.max(mIcon.getWidth(), mIcon.getHeight());
             CropperUtils.startCropper(mCropperLauncher);
         });
 
-        mSharedDataCheckbox.setOnCheckedChangeListener((v,checked) ->{
-            mInstance.sharedData = checked;
-            int text = R.string.instance_shared_data_off;
-            if(checked) text = R.string.instance_shared_data_on;
-            mSharedDataCheckbox.setText(text);
-        });
+        view.findViewById(R.id.editor_version_row).setOnClickListener(v ->
+                VersionSelectorDialog.open(requireContext(), false, (id, snapshot) -> {
+                    mSelectedVersion = id;
+                    mVersionValue.setText(UiUtils.versionName(requireContext(), id));
+                    mLoaderValue.setText(UiUtils.loaderName(requireContext(), id));
+                    markDirty();
+                }));
 
-        Instance selectedInstance = Instances.loadSelectedInstance();
-        Context context = view.getContext();
-        if(selectedInstance == null) {
-            Toast.makeText(context, R.string.no_instance, Toast.LENGTH_LONG).show();
-            getParentFragmentManager().popBackStack();
-        }else {
-            loadValues(selectedInstance, context);
-        }
-    }
-
-    private View.OnClickListener getControlSelectListener() {
-        return v -> {
-            Bundle bundle = new Bundle(3);
+        View.OnClickListener controlListener = v -> {
+            // The editor view is recreated when the picker is popped, so keep the in-progress
+            // edits on the retained fragment instance instead of silently dropping them.
+            mPendingEdits = captureEdits();
+            Bundle bundle = new Bundle(2);
             bundle.putBoolean(FileSelectorFragment.BUNDLE_SELECT_FOLDER, false);
             bundle.putString(FileSelectorFragment.BUNDLE_ROOT_PATH, Tools.CTRLMAP_PATH);
-
-            Tools.swapFragment(requireActivity(),
-                    FileSelectorFragment.class, FileSelectorFragment.TAG, bundle);
+            Tools.swapFragment(requireActivity(), FileSelectorFragment.class,
+                    FileSelectorFragment.TAG, bundle);
         };
+        view.findViewById(R.id.editor_control_row).setOnClickListener(controlListener);
+
+        mName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (!mBinding) markDirty();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+        mJvm.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (!mBinding) markDirty();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+        mSharedData.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (!mBinding) markDirty();
+        });
+        mSave.setOnClickListener(v -> save());
+        view.findViewById(R.id.editor_delete).setOnClickListener(v -> {
+            if (mInstance == null) return;
+            DeleteConfirmDialogFragment dialog = DeleteConfirmDialogFragment.newInstance(
+                    mInstance.getInstanceRoot(), mName.getText().toString());
+            dialog.show(getParentFragmentManager(), DeleteConfirmDialogFragment.TAG);
+        });
     }
 
-    private View.OnClickListener getVersionSelectListener() {
-        return v -> VersionSelectorDialog.open(v.getContext(), false, (id, snapshot)-> mDefaultVersion.setText(id));
+    private void loadInstance() {
+        Bundle args = getArguments();
+        String rootPath = args == null ? null : args.getString(ARG_INSTANCE_ROOT);
+        Context appContext = requireContext().getApplicationContext();
+        final android.content.res.Resources resources = getResources();
+        MojoApplication.sExecutorService.execute(() -> {
+            Instance instance = null;
+            List<Runtime> runtimes = new ArrayList<>();
+            RendererCache renderers = null;
+            try {
+                if (rootPath != null) {
+                    instance = Instances.loadInstance(new File(rootPath));
+                } else {
+                    instance = Instances.loadSelectedInstance();
+                }
+                if (instance != null) {
+                    runtimes.addAll(MultiRTUtils.getRuntimes());
+                    renderers = RendererCache.getCompatibleRenderers(appContext);
+                    InstanceIconProvider.prewarm(resources,
+                            java.util.Collections.singletonList(instance));
+                }
+            } catch (Exception e) {
+                Log.w("InstanceEditor", "Failed to load instance", e);
+            }
+            Instance finalInstance = instance;
+            List<Runtime> finalRuntimes = runtimes;
+            RendererCache finalRenderers = renderers;
+            Tools.runOnUiThread(() -> {
+                if (!isAdded() || getView() == null) return;
+                if (finalInstance == null) {
+                    Toast.makeText(requireContext(), R.string.editor_instance_missing,
+                            Toast.LENGTH_LONG).show();
+                    getParentFragmentManager().popBackStack();
+                    return;
+                }
+                mRuntimes = finalRuntimes;
+                bindInstance(finalInstance, finalRenderers);
+            });
+        });
     }
 
-    private static String nullToEmpty(String in) {
-        if(in == null) return "";
-        return in;
-    }
-
-    private void loadValues(@NonNull Instance instance, @NonNull Context context){
+    private void bindInstance(@NonNull Instance instance, @Nullable RendererCache renderers) {
+        mBinding = true;
         mInstance = instance;
-        mInstanceIcon.setImageDrawable(
-                InstanceIconProvider.fetchIcon(getResources(), instance)
-        );
 
-        // Runtime spinner
-        List<Runtime> runtimes = MultiRTUtils.getRuntimes();
-        int jvmIndex = -1;
-        if(instance.selectedRuntime != null) {
-            jvmIndex = runtimes.indexOf(new Runtime(instance.selectedRuntime));
+        mIcon.setImageDrawable(InstanceIconProvider.fetchIcon(getResources(), instance));
+        mName.setText(instance.getDisplayName());
+        mJvm.setText(nullToEmpty(instance.jvmArgs));
+        mSelectedVersion = nullToEmpty(instance.versionId);
+        mVersionValue.setText(UiUtils.versionName(requireContext(), mSelectedVersion));
+        mLoaderValue.setText(UiUtils.loaderName(requireContext(), mSelectedVersion));
+        mSharedData.setChecked(instance.sharedData);
+
+        String control = mSelectedControlLayout != null
+                ? mSelectedControlLayout : nullToEmpty(instance.controlLayout);
+        mControlValue.setText(control.isEmpty()
+                ? getString(R.string.editor_control_default) : control);
+
+        RTSpinnerAdapter runtimeAdapter = new RTSpinnerAdapter(requireContext(), mRuntimes);
+        mRuntime.setAdapter(runtimeAdapter);
+        int runtimeIndex = -1;
+        if (instance.selectedRuntime != null) {
+            runtimeIndex = mRuntimes.indexOf(new Runtime(instance.selectedRuntime));
         }
-        mDefaultRuntime.setAdapter(new RTSpinnerAdapter(context, runtimes));
-        if(jvmIndex == -1) jvmIndex = runtimes.size() - 1;
-        mDefaultRuntime.setSelection(jvmIndex);
+        mRuntime.setSelection(runtimeIndex == -1 ? mRuntimes.size() - 1 : runtimeIndex);
 
-        // Renderer spinner
+        List<String> renderList = new ArrayList<>();
+        if (renderers != null) {
+            mRenderNames = new ArrayList<>(renderers.rendererIds);
+            renderList.addAll(Arrays.asList(renderers.rendererDisplayNames));
+        } else {
+            mRenderNames = new ArrayList<>();
+        }
+        renderList.add(getString(R.string.global_default));
+        mRenderer.setAdapter(new ArrayAdapter<>(requireContext(),
+                android.R.layout.simple_spinner_dropdown_item, renderList));
         int rendererIndex = mRenderNames.indexOf(instance.getLaunchRenderer());
-        if(rendererIndex == -1) {
-            rendererIndex = mDefaultRenderer.getAdapter().getCount() - 1;
-        }
-        mDefaultRenderer.setSelection(rendererIndex);
+        mRenderer.setSelection(rendererIndex == -1 ? renderList.size() - 1 : rendererIndex);
 
-        mDefaultVersion.setText(instance.versionId);
-        mDefaultJvmArgument.setText(nullToEmpty(instance.jvmArgs));
-        mDefaultName.setText(nullToEmpty(instance.name));
-        mDefaultControl.setText(mSelectedControlLayout == null ? nullToEmpty(instance.controlLayout) : mSelectedControlLayout);
-        mSharedDataCheckbox.setChecked(instance.sharedData);
+        AdapterView.OnItemSelectedListener dirtyListener = new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (mBinding) return;
+                int initial = parent == mRuntime ? mInitialRuntimePosition : mInitialRendererPosition;
+                if (position != initial) markDirty();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        };
+        mRuntime.setOnItemSelectedListener(dirtyListener);
+        mRenderer.setOnItemSelectedListener(dirtyListener);
+
+        mInitialRuntimePosition = mRuntime.getSelectedItemPosition();
+        mInitialRendererPosition = mRenderer.getSelectedItemPosition();
+
+        mDirty = false;
+        mBinding = false;
+        if (mBackCallback != null) mBackCallback.setEnabled(false);
+        if (mPendingEdits != null) {
+            Bundle pending = mPendingEdits;
+            mPendingEdits = null;
+            applyEdits(pending);
+        }
+
+        mContent.setVisibility(View.VISIBLE);
+        mLoading.setVisibility(View.GONE);
     }
 
-    private void bindViews(@NonNull View view){
-        mDefaultControl = view.findViewById(R.id.vprof_editor_ctrl_spinner);
-        mDefaultRuntime = view.findViewById(R.id.vprof_editor_spinner_runtime);
-        mDefaultRenderer = view.findViewById(R.id.vprof_editor_instance_renderer);
-        mDefaultVersion = view.findViewById(R.id.vprof_editor_version_spinner);
-
-        mDefaultName = view.findViewById(R.id.vprof_editor_instance_name);
-        mDefaultJvmArgument = view.findViewById(R.id.vprof_editor_jre_args);
-
-        mSaveButton = view.findViewById(R.id.vprof_editor_save_button);
-        mDeleteButton = view.findViewById(R.id.vprof_editor_delete_button);
-        mControlSelectButton = view.findViewById(R.id.vprof_editor_ctrl_button);
-        mVersionSelectButton = view.findViewById(R.id.vprof_editor_version_button);
-        mInstanceIcon = view.findViewById(R.id.vprof_editor_instance_icon);
-        mSharedDataCheckbox = view.findViewById(R.id.vprof_editor_data_checkbox_container);
+    private Bundle captureEdits() {
+        Bundle edits = new Bundle();
+        edits.putString("name", mName.getText().toString());
+        edits.putString("jvm", mJvm.getText().toString());
+        edits.putString("version", mSelectedVersion);
+        edits.putBoolean("shared", mSharedData.isChecked());
+        edits.putInt("runtime", mRuntime.getSelectedItemPosition());
+        edits.putInt("renderer", mRenderer.getSelectedItemPosition());
+        edits.putBoolean("dirty", mDirty);
+        return edits;
     }
 
-    private void save(){
-        //First, check for potential issues in the inputs
-        mInstance.versionId = mDefaultVersion.getText().toString();
-        mInstance.controlLayout = mDefaultControl.getText().toString();
-        mInstance.jvmArgs = mDefaultJvmArgument.getText().toString();
-
-        String newName = mDefaultName.getText().toString();
-        if(mInstance.controlLayout.isEmpty()) mInstance.controlLayout = null;
-        if(mInstance.jvmArgs.isEmpty()) mInstance.jvmArgs = null;
-
-        Runtime selectedRuntime = (Runtime) mDefaultRuntime.getSelectedItem();
-        mInstance.selectedRuntime = (selectedRuntime.name.equals("<Default>") || selectedRuntime.versionString == null)
-                ? null : selectedRuntime.name;
-
-        if(mDefaultRenderer.getSelectedItemPosition() == mRenderNames.size()) mInstance.renderer = null;
-        else mInstance.renderer = mRenderNames.get(mDefaultRenderer.getSelectedItemPosition());
-
-        try {
-            if(!newName.isEmpty() && !newName.equals(mInstance.name))
-                Instances.renameInstanceDirectory(mInstance, newName);
-            mInstance.name = newName;
-            mInstance.write();
-        }catch (Exception e) {
-            Tools.showErrorRemote(e);
+    private void applyEdits(@NonNull Bundle edits) {
+        mBinding = true;
+        String name = edits.getString("name");
+        if (name != null) mName.setText(name);
+        String jvm = edits.getString("jvm");
+        if (jvm != null) mJvm.setText(jvm);
+        String version = edits.getString("version");
+        if (version != null && !version.isEmpty()) {
+            mSelectedVersion = version;
+            mVersionValue.setText(UiUtils.versionName(requireContext(), version));
+            mLoaderValue.setText(UiUtils.loaderName(requireContext(), version));
         }
+        mSharedData.setChecked(edits.getBoolean("shared", mSharedData.isChecked()));
+        int runtime = edits.getInt("runtime", mRuntime.getSelectedItemPosition());
+        if (runtime >= 0 && runtime < mRuntimes.size()) mRuntime.setSelection(runtime);
+        int renderer = edits.getInt("renderer", mRenderer.getSelectedItemPosition());
+        if (renderer >= 0 && renderer < mRenderer.getCount()) mRenderer.setSelection(renderer);
+        mInitialRuntimePosition = mRuntime.getSelectedItemPosition();
+        mInitialRendererPosition = mRenderer.getSelectedItemPosition();
+        mBinding = false;
+        // Restore the dirty flag captured before the picker opened. Opening and cancelling the
+        // picker must not turn an untouched editor into an unsaved one.
+        mDirty = edits.getBoolean("dirty", true);
+        if (mBackCallback != null) mBackCallback.setEnabled(mDirty);
+    }
+
+    private void markDirty() {
+        if (mDirty) return;
+        mDirty = true;
+        if (mBackCallback != null) mBackCallback.setEnabled(true);
+    }
+
+    private void save() {
+        if (mInstance == null || mSaving) return;
+        final String newName = mName.getText().toString().trim();
+        if (newName.isEmpty()) {
+            showNameError(R.string.editor_name_required, true);
+            return;
+        }
+        if (newName.contains("/") || newName.contains("\\") || newName.contains(":")
+                || newName.contains("*") || newName.contains("?") || newName.contains("\"")
+                || newName.contains("<") || newName.contains(">") || newName.contains("|")
+                || newName.equals(".") || newName.equals("..")) {
+            showNameError(R.string.editor_name_invalid, true);
+            return;
+        }
+        if (mSelectedVersion.isEmpty()) {
+            Toast.makeText(requireContext(), R.string.error_no_version, Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        mSaving = true;
+        mSave.setEnabled(false);
+        final String jvmArgs = mJvm.getText().toString().trim();
+        final String defaultControlLabel = getString(R.string.editor_control_default);
+        final String control = mSelectedControlLayout != null
+                ? mSelectedControlLayout : mControlValue.getText().toString().trim();
+        final boolean sharedData = mSharedData.isChecked();
+        final String versionId = mSelectedVersion;
+        final int runtimePosition = mRuntime.getSelectedItemPosition();
+        final Runtime runtime = runtimePosition >= 0 && runtimePosition < mRuntimes.size()
+                ? mRuntimes.get(runtimePosition) : null;
+        final int rendererPosition = mRenderer.getSelectedItemPosition();
+
+        MojoApplication.sExecutorService.execute(() -> {
+            boolean success = true;
+            try {
+                // Drop the icon under the current directory before a possible rename, then again
+                // after the save so a changed loader/icon value is re-read on the next bind.
+                InstanceIconProvider.dropIcon(mInstance);
+                if (!newName.equals(mInstance.name)) {
+                    Instances.renameInstanceDirectory(mInstance, newName);
+                }
+                mInstance.name = newName;
+                mInstance.versionId = versionId;
+                mInstance.jvmArgs = jvmArgs.isEmpty() ? null : jvmArgs;
+                mInstance.controlLayout = control.isEmpty() || control.equals(defaultControlLabel)
+                        ? null : control;
+                mInstance.sharedData = sharedData;
+                mInstance.selectedRuntime = runtime == null
+                        || runtime.name.equals("<Default>") || runtime.versionString == null
+                        ? null : runtime.name;
+                if (rendererPosition == mRenderNames.size()) {
+                    mInstance.renderer = null;
+                } else if (rendererPosition >= 0 && rendererPosition < mRenderNames.size()) {
+                    mInstance.renderer = mRenderNames.get(rendererPosition);
+                }
+                mInstance.write();
+                InstanceIconProvider.dropIcon(mInstance);
+            } catch (IOException | RuntimeException e) {
+                success = false;
+            }
+            boolean finalSuccess = success;
+            Tools.runOnUiThread(() -> {
+                mSaving = false;
+                if (!isAdded() || getView() == null) return;
+                mSave.setEnabled(true);
+                if (!finalSuccess) {
+                    Toast.makeText(requireContext(), R.string.editor_save_failed,
+                            Toast.LENGTH_LONG).show();
+                    return;
+                }
+                mDirty = false;
+                if (mBackCallback != null) mBackCallback.setEnabled(false);
+                if (mInstance != null) {
+                    mSelectedVersion = mInstance.versionId;
+                    InstanceIconProvider.dropIcon(mInstance);
+                }
+                Toast.makeText(requireContext(), R.string.editor_saved, Toast.LENGTH_SHORT).show();
+                if (getActivity() instanceof LauncherActivity) {
+                    ((LauncherActivity) getActivity())
+                            .selectRootTab(LauncherActivity.TAB_INSTANCES);
+                }
+            });
+        });
+    }
+
+    private void showNameError(int message, boolean error) {
+        mNameHelper.setText(message);
+        mNameHelper.setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(),
+                error ? R.color.danger : R.color.text_secondary));
+        mName.requestFocus();
+    }
+
+    private void showDiscardDialog() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.editor_unsaved_title)
+                .setMessage(R.string.editor_unsaved_body)
+                .setPositiveButton(R.string.editor_discard, (dialog, which) -> {
+                    mDirty = false;
+                    if (mBackCallback != null) mBackCallback.setEnabled(false);
+                    getParentFragmentManager().popBackStack();
+                })
+                .setNegativeButton(R.string.editor_keep_editing, null)
+                .show();
+    }
+
+    private static String nullToEmpty(String value) {
+        return value == null ? "" : value;
     }
 
     @Override
@@ -233,13 +484,16 @@ public class InstanceEditorFragment extends Fragment implements CropperUtils.Cro
 
     @Override
     public void onCropped(Bitmap contentBitmap) {
-        mInstanceIcon.setImageBitmap(contentBitmap);
-        Log.i("bitmap", "w="+contentBitmap.getWidth() +" h="+contentBitmap.getHeight());
-        try {
-            mInstance.encodeNewIcon(contentBitmap);
-        }catch (IOException e) {
-            Tools.showErrorRemote(e);
-        }
+        if (mInstance == null || mIcon == null) return;
+        mIcon.setImageBitmap(contentBitmap);
+        MojoApplication.sExecutorService.execute(() -> {
+            try {
+                mInstance.encodeNewIcon(contentBitmap);
+                InstanceIconProvider.dropIcon(mInstance);
+            } catch (IOException e) {
+                Tools.showErrorRemote(e);
+            }
+        });
     }
 
     @Override

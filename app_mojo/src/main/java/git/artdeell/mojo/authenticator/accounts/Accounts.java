@@ -81,6 +81,13 @@ public class Accounts {
 		return LauncherPreferences.DEFAULT_PREF.getString(PROFILE_PREF_FILE, "");
 	}
 
+	/**
+	 * @return whether a stored account is currently selected
+	 */
+	public static boolean hasSelectedAccount() {
+		return !getSelectedAccount().isEmpty();
+	}
+
     public static Account getCurrent() {
 		String selectedAccount = getSelectedAccount();
 		return loadAccount(new File(Tools.DIR_ACCOUNT_NEW, selectedAccount));
@@ -107,6 +114,10 @@ public class Accounts {
 		LauncherPreferences.DEFAULT_PREF
 				.edit().putString(PROFILE_PREF_FILE, account.mSaveLocation.getName())
 				.apply();
+	}
+
+	public static void clearCurrent() {
+		LauncherPreferences.DEFAULT_PREF.edit().remove(PROFILE_PREF_FILE).apply();
 	}
 
 	public static void delete(Account account) {

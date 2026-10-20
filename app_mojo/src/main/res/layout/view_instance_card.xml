@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/mojo_space_2"
+    android:background="@drawable/bg_instance_card"
+    android:clickable="true"
+    android:focusable="true"
+    android:gravity="center_vertical"
+    android:minHeight="88dp"
+    android:orientation="horizontal"
+    android:padding="@dimen/mojo_card_padding">
+
+    <ImageView
+        android:id="@+id/instance_card_icon"
+        android:layout_width="@dimen/mojo_instance_icon"
+        android:layout_height="@dimen/mojo_instance_icon"
+        android:background="@drawable/bg_hero_icon"
+        android:importantForAccessibility="no"
+        android:padding="@dimen/mojo_space_2"
+        android:scaleType="fitCenter"
+        tools:src="@drawable/ic_ui_instance_default" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/mojo_space_4"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/instance_card_name"
+                style="@style/TextAppearance.Mojo.CardTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
+                tools:text="Create: Astral" />
+
+            <TextView
+                android:id="@+id/instance_card_badge"
+                style="@style/TextAppearance.Mojo.Badge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_badge_accent"
+                android:paddingStart="@dimen/mojo_space_2"
+                android:paddingEnd="@dimen/mojo_space_2"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp"
+                android:text="@string/instances_selected"
+                android:textColor="@color/accent"
+                android:visibility="gone"
+                tools:visibility="visible" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/instance_card_meta"
+            style="@style/TextAppearance.Mojo.Meta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            tools:text="1.20.1 · Fabric" />
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/instance_card_more"
+        style="@style/Widget.Mojo.IconButton"
+        android:layout_width="@dimen/mojo_touch_target"
+        android:layout_height="@dimen/mojo_touch_target"
+        android:contentDescription="@string/instances_more"
+        android:src="@drawable/ic_ui_more_vert"
+        android:tint="@color/text_secondary" />
+</LinearLayout>

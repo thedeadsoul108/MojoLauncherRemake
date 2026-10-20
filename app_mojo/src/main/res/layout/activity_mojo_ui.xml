@@ -1,54 +1,177 @@
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/shell_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/transparent">
+    android:background="@color/bg"
+    android:orientation="vertical">
 
-    <com.kdt.mcgui.AccountSpinner
-        android:id="@+id/account_spinner"
+    <!-- Top app bar -->
+    <LinearLayout
+        android:id="@+id/top_bar"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_52sdp"
+        android:layout_height="@dimen/mojo_top_bar_height"
+        android:background="@drawable/bg_top_bar"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/mojo_space_1"
+        android:paddingEnd="@dimen/mojo_space_2">
 
-        android:dropDownWidth="@dimen/_250sdp"
-        android:dropDownVerticalOffset="@dimen/_52sdp"
-        android:paddingEnd="@dimen/_52sdp"
+        <ImageButton
+            android:id="@+id/top_bar_back"
+            style="@style/Widget.Mojo.IconButton"
+            android:layout_width="@dimen/mojo_touch_target"
+            android:layout_height="@dimen/mojo_touch_target"
+            android:contentDescription="@string/action_back"
+            android:src="@drawable/ic_ui_back"
+            android:tint="@color/text_primary"
+            android:visibility="gone" />
 
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="RtlSymmetry" />
-    <!-- Ignore because it's  done to fit the ImageButton within spinner background -->
+        <ImageView
+            android:id="@+id/top_bar_mark"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="@dimen/mojo_space_2"
+            android:contentDescription="@string/app_logo_description"
+            android:src="@drawable/ic_brand_mark" />
 
-    <ImageButton
-        android:id="@+id/setting_button"
-        android:layout_width="@dimen/_52sdp"
-        android:layout_height="@dimen/_52sdp"
-        android:background="?attr/selectableItemBackground"
-        android:src="@drawable/ic_px_sliders"
-        android:scaleType="fitCenter"
-        android:paddingVertical="@dimen/_8sdp"
+        <TextView
+            android:id="@+id/top_bar_title"
+            style="@style/TextAppearance.Mojo.ScreenTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/mojo_space_3"
+            android:layout_marginEnd="@dimen/mojo_space_2"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textSize="20sp"
+            tools:text="@string/nav_home" />
 
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <git.artdeell.mojo.ui.AccountChipView
+            android:id="@+id/account_chip"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/mojo_touch_target"
+            android:contentDescription="@string/top_bar_account" />
+    </LinearLayout>
 
-    <!-- Holding most of the dynamic content -->
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/container_fragment"
-        android:name="git.artdeell.mojo.fragments.MainMenuFragment"
+    <!-- Navigation rail + content -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/progress_layout"
-        app:layout_constraintTop_toBottomOf="@+id/account_spinner" />
+        android:layout_weight="1"
+        android:orientation="horizontal">
 
+        <LinearLayout
+            android:id="@+id/nav_rail"
+            android:layout_width="@dimen/mojo_nav_rail_width"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_nav_rail"
+            android:gravity="top|center_horizontal"
+            android:orientation="vertical"
+            android:padding="@dimen/mojo_space_2"
+            android:visibility="gone">
 
-    <com.kdt.mcgui.ProgressLayout
-        android:id="@+id/progress_layout"
+            <git.artdeell.mojo.ui.NavItemView
+                android:id="@+id/nav_rail_home"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:layout_marginBottom="@dimen/mojo_space_1" />
+
+            <git.artdeell.mojo.ui.NavItemView
+                android:id="@+id/nav_rail_instances"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:layout_marginBottom="@dimen/mojo_space_1" />
+
+            <git.artdeell.mojo.ui.NavItemView
+                android:id="@+id/nav_rail_browse"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:layout_marginBottom="@dimen/mojo_space_1" />
+
+            <git.artdeell.mojo.ui.NavItemView
+                android:id="@+id/nav_rail_downloads"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:layout_marginBottom="@dimen/mojo_space_1" />
+
+            <git.artdeell.mojo.ui.NavItemView
+                android:id="@+id/nav_rail_settings"
+                android:layout_width="match_parent"
+                android:layout_height="64dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/container_fragment"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <com.kdt.mcgui.ProgressLayout
+                android:id="@+id/progress_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Bottom navigation (phones) -->
+    <LinearLayout
+        android:id="@+id/bottom_nav"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        android:layout_height="@dimen/mojo_bottom_nav_height"
+        android:background="@drawable/bg_bottom_nav"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/mojo_space_1"
+        android:paddingTop="@dimen/mojo_space_1"
+        android:paddingEnd="@dimen/mojo_space_1"
+        android:paddingBottom="@dimen/mojo_space_1">
 
+        <git.artdeell.mojo.ui.NavItemView
+            android:id="@+id/nav_home"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
 
+        <git.artdeell.mojo.ui.NavItemView
+            android:id="@+id/nav_instances"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
 
+        <git.artdeell.mojo.ui.NavItemView
+            android:id="@+id/nav_browse"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <git.artdeell.mojo.ui.NavItemView
+            android:id="@+id/nav_downloads"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <git.artdeell.mojo.ui.NavItemView
+            android:id="@+id/nav_settings"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <!-- Keeps every login/token-refresh/ExtraCore listener alive while the visible UI is custom. -->
+    <com.kdt.mcgui.AccountSpinner
+        android:id="@+id/account_spinner"
+        android:layout_width="1dp"
+        android:layout_height="1dp"
+        android:visibility="gone" />
+</LinearLayout>
