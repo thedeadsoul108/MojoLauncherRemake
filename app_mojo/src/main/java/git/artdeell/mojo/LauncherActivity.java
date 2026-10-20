@@ -55,6 +55,7 @@ import git.artdeell.mojo.fragments.LegacyFabricInstallFragment;
 import git.artdeell.mojo.fragments.LocalLoginFragment;
 import git.artdeell.mojo.fragments.MicrosoftLoginFragment;
 import git.artdeell.mojo.fragments.NeoforgeInstallFragment;
+import git.artdeell.mojo.fragments.OnboardingFragment;
 import git.artdeell.mojo.fragments.OptiFineInstallFragment;
 import git.artdeell.mojo.fragments.ProfileTypeSelectFragment;
 import git.artdeell.mojo.fragments.QuiltInstallFragment;
@@ -82,6 +83,8 @@ import git.artdeell.mojo.ui.ScreenTitleProvider;
 import git.artdeell.mojo.utils.NotificationUtils;
 import git.artdeell.mojo.utils.lifecycle.ContextAwareDoneListener;
 import git.artdeell.mojo.utils.lifecycle.ContextExecutor;
+
+import java.io.IOException;
 
 public class LauncherActivity extends BaseActivity {
     public static final String SETTING_FRAGMENT_TAG = "SETTINGS_FRAGMENT";
@@ -295,6 +298,42 @@ public class LauncherActivity extends BaseActivity {
         if(savedInstanceState == null || getSupportFragmentManager().findFragmentById(mFragmentView.getId()) == null) {
             selectRootTab(mCurrentTab);
         }
+        if(savedInstanceState == null) {
+            mFragmentView.post(this::maybeShowOnboarding);
+        }
+    }
+
+    /**
+     * The setup screen is intentionally gated on an empty library and an empty account list.
+     * Both checks read from disk, so they run on the shared executor; the preference makes the
+     * screen a one-time introduction rather than a recurring interstitial.
+     */
+    private void maybeShowOnboarding() {
+        if (LauncherPreferences.DEFAULT_PREF.getBoolean(
+                LauncherPreferences.PREF_KEY_ONBOARDING_DONE, false)) return;
+        MojoApplication.sExecutorService.execute(() -> {
+            boolean emptyLibrary;
+            try {
+                emptyLibrary = Instances.loadAllInstances().isEmpty();
+            } catch (IOException e) {
+                emptyLibrary = true;
+            }
+            Account account = Accounts.getCurrent();
+            boolean shouldShow = emptyLibrary && account == null;
+            Tools.runOnUiThread(() -> {
+                if (!shouldShow || isFinishing() || isDestroyed()
+                        || getSupportFragmentManager().isStateSaved()) return;
+                Fragment current = getSupportFragmentManager().findFragmentById(mFragmentView.getId());
+                if (!(current instanceof HomeFragment)) return;
+                if (getSupportFragmentManager().findFragmentByTag(OnboardingFragment.TAG) != null) {
+                    return;
+                }
+                LauncherPreferences.DEFAULT_PREF.edit()
+                        .putBoolean(LauncherPreferences.PREF_KEY_ONBOARDING_DONE, true)
+                        .apply();
+                Tools.swapFragment(this, OnboardingFragment.class, OnboardingFragment.TAG, null);
+            });
+        });
     }
 
     @Override

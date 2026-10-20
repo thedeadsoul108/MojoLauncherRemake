@@ -69,6 +69,12 @@ public class DownloadsFragment extends Fragment implements ScreenTitleProvider {
         mNotificationCard = view.findViewById(R.id.downloads_notification_card);
         mNotificationsEnabled = view.findViewById(R.id.downloads_notifications_enabled);
         mNotificationAction = view.findViewById(R.id.downloads_notification_action);
+        view.findViewById(R.id.downloads_empty_browse).setOnClickListener(v -> {
+            if (getActivity() instanceof LauncherActivity) {
+                ((LauncherActivity) requireActivity()).selectRootTab(LauncherActivity.TAB_BROWSE);
+            }
+        });
+
         mNotificationAction.setOnClickListener(v -> {
             if (!(getActivity() instanceof LauncherActivity)) return;
             LauncherActivity activity = (LauncherActivity) getActivity();

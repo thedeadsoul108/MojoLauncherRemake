@@ -772,6 +772,7 @@
     <string name="downloads_subtitle">Active downloads and installs.</string>
     <string name="downloads_active_title">In progress</string>
     <string name="downloads_empty_title">Nothing in progress</string>
+    <string name="downloads_empty_action">Browse Modrinth</string>
     <string name="downloads_empty_body">Game files, runtimes, modpacks and instances will appear here while they install.</string>
     <string name="downloads_notification_title">Keep downloads running</string>
     <string name="downloads_notification_body">Allow notifications so Android does not stop downloads when MojoRemake is in the background.</string>
@@ -1033,4 +1034,22 @@
     <string name="content_disabled">Disabled</string>
     <string name="content_switch_description">Enable or disable %1$s</string>
     <string name="content_count">%1$d files</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_title">Welcome to MojoRemake</string>
+    <string name="onboarding_eyebrow">GET STARTED</string>
+    <string name="onboarding_body">A fast, familiar Minecraft launcher for Android. Create an instance, sign in, and play.</string>
+    <string name="onboarding_logo_description">MojoRemake logo</string>
+    <string name="onboarding_step_one_number">1</string>
+    <string name="onboarding_step_two_number">2</string>
+    <string name="onboarding_step_three_number">3</string>
+    <string name="onboarding_step_one_title">Create an instance</string>
+    <string name="onboarding_step_one_body">Start from a vanilla version, a mod loader, or a Modrinth modpack.</string>
+    <string name="onboarding_step_two_title">Add your account</string>
+    <string name="onboarding_step_two_body">Microsoft, Ely.by, or a local offline profile.</string>
+    <string name="onboarding_step_three_title">Launch the game</string>
+    <string name="onboarding_step_three_body">Keep mods, packs, settings, and notes together in one instance.</string>
+    <string name="onboarding_create">Create an instance</string>
+    <string name="onboarding_sign_in">Sign in</string>
+    <string name="onboarding_skip">Skip for now</string>
 </resources>

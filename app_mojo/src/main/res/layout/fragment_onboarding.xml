@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.kdt.DefocusableScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    android:clipToPadding="false">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/mojo_screen_padding"
+        android:paddingTop="@dimen/mojo_space_8"
+        android:paddingEnd="@dimen/mojo_screen_padding"
+        android:paddingBottom="@dimen/mojo_space_8">
+
+        <ImageView
+            android:layout_width="108dp"
+            android:layout_height="108dp"
+            android:background="@drawable/bg_hero_icon"
+            android:contentDescription="@string/onboarding_logo_description"
+            android:padding="@dimen/mojo_space_4"
+            android:src="@drawable/ic_splash_logo" />
+
+        <TextView
+            style="@style/TextAppearance.Mojo.Badge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/mojo_space_5"
+            android:letterSpacing="0.14"
+            android:text="@string/onboarding_eyebrow"
+            android:textColor="@color/accent" />
+
+        <TextView
+            style="@style/TextAppearance.Mojo.Display"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/mojo_space_2"
+            android:gravity="center"
+            android:text="@string/onboarding_title" />
+
+        <TextView
+            style="@style/TextAppearance.Mojo.Body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/mojo_space_2"
+            android:gravity="center"
+            android:text="@string/onboarding_body"
+            android:textColor="@color/text_secondary" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/mojo_space_6"
+            android:background="@drawable/bg_card"
+            android:orientation="vertical"
+            android:padding="@dimen/mojo_card_padding">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/TextAppearance.Mojo.Badge"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="@drawable/bg_badge_accent"
+                    android:gravity="center"
+                    android:text="@string/onboarding_step_one_number"
+                    android:textColor="@color/accent" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/mojo_space_3"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/TextAppearance.Mojo.CardTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/onboarding_step_one_title" />
+
+                    <TextView
+                        style="@style/TextAppearance.Mojo.Meta"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="@string/onboarding_step_one_body" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/mojo_space_4"
+                android:gravity="top"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/TextAppearance.Mojo.Badge"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="@drawable/bg_badge_accent"
+                    android:gravity="center"
+                    android:text="@string/onboarding_step_two_number"
+                    android:textColor="@color/accent" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/mojo_space_3"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/TextAppearance.Mojo.CardTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/onboarding_step_two_title" />
+
+                    <TextView
+                        style="@style/TextAppearance.Mojo.Meta"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="@string/onboarding_step_two_body" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/mojo_space_4"
+                android:gravity="top"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/TextAppearance.Mojo.Badge"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="@drawable/bg_badge_accent"
+                    android:gravity="center"
+                    android:text="@string/onboarding_step_three_number"
+                    android:textColor="@color/accent" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/mojo_space_3"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/TextAppearance.Mojo.CardTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/onboarding_step_three_title" />
+
+                    <TextView
+                        style="@style/TextAppearance.Mojo.Meta"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="@string/onboarding_step_three_body" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/onboarding_create"
+            style="@style/Widget.Mojo.Button.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/mojo_button_height"
+            android:layout_marginTop="@dimen/mojo_space_5"
+            android:text="@string/onboarding_create" />
+
+        <Button
+            android:id="@+id/onboarding_sign_in"
+            style="@style/Widget.Mojo.Button.Secondary"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/mojo_button_height"
+            android:layout_marginTop="@dimen/mojo_space_3"
+            android:text="@string/onboarding_sign_in" />
+
+        <Button
+            android:id="@+id/onboarding_skip"
+            style="@style/Widget.Mojo.Button.Text"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/mojo_button_height"
+            android:layout_marginTop="@dimen/mojo_space_1"
+            android:text="@string/onboarding_skip" />
+    </LinearLayout>
+</com.kdt.DefocusableScrollView>

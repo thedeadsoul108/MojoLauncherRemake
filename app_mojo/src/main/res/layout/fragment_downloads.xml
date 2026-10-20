@@ -176,6 +176,14 @@
                 android:gravity="center"
                 android:text="@string/downloads_empty_body"
                 android:textColor="@color/text_secondary" />
+
+            <Button
+                android:id="@+id/downloads_empty_browse"
+                style="@style/Widget.Mojo.Button.Secondary"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/mojo_button_height"
+                android:layout_marginTop="@dimen/mojo_space_4"
+                android:text="@string/downloads_empty_action" />
         </LinearLayout>
     </LinearLayout>
 </com.kdt.DefocusableScrollView>
