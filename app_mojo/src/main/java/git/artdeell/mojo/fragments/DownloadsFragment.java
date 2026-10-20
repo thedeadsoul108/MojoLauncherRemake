@@ -43,7 +43,11 @@ public class DownloadsFragment extends Fragment implements ScreenTitleProvider {
 
     private final ProgressKeeper.GlobalProgressListener mProgressListener = tasks -> {
         View view = getView();
-        if (view != null) view.post(() -> renderTasks(tasks));
+        if (view == null) return;
+        view.post(() -> {
+            if (!isAdded() || getView() == null || !mViewReady) return;
+            renderTasks(tasks);
+        });
     };
 
     public DownloadsFragment() {
@@ -119,7 +123,7 @@ public class DownloadsFragment extends Fragment implements ScreenTitleProvider {
     }
 
     private void renderTasks(@NonNull List<ProgressKeeper.TaskSnapshot> tasks) {
-        if (!mViewReady || mTasks == null) return;
+        if (!isAdded() || getView() == null || !mViewReady || mTasks == null) return;
         LayoutInflater inflater = LayoutInflater.from(requireContext());
         List<String> seen = new ArrayList<>(tasks.size());
         for (ProgressKeeper.TaskSnapshot task : tasks) {

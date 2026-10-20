@@ -60,6 +60,7 @@ public class SearchModFragment extends Fragment implements ModItemAdapter.Search
     public static final String TAG = "SearchModFragment";
 
     private static final long SEARCH_DEBOUNCE_MS = 350L;
+    private static final String STATE_QUERY = "browse_query";
 
     private final SearchFilters mSearchFilters = new SearchFilters();
     private final Handler mHandler = new Handler(Looper.getMainLooper());
@@ -77,6 +78,7 @@ public class SearchModFragment extends Fragment implements ModItemAdapter.Search
     private Button mImportButton;
     private ModpackApi mModpackApi;
     private TaskCountListener mTaskCountListener;
+    private boolean mRestoringQuery;
 
     private final Runnable mSearchRunnable = () -> {
         if (mSearchEditText != null) searchMods(mSearchEditText.getText().toString());
@@ -152,6 +154,7 @@ public class SearchModFragment extends Fragment implements ModItemAdapter.Search
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 mClearButton.setVisibility(s.length() > 0 ? View.VISIBLE : View.GONE);
+                if (mRestoringQuery) return;
                 mHandler.removeCallbacks(mSearchRunnable);
                 mHandler.postDelayed(mSearchRunnable, SEARCH_DEBOUNCE_MS);
             }
@@ -161,20 +164,39 @@ public class SearchModFragment extends Fragment implements ModItemAdapter.Search
         });
 
         mTaskCountListener = taskCount -> {
-            Tools.runOnUiThread(() -> mImportButton.setEnabled(taskCount == 0));
+            Tools.runOnUiThread(() -> {
+                if (!isAdded() || getView() == null || mImportButton == null) return;
+                mImportButton.setEnabled(taskCount == 0);
+            });
             return false;
         };
         ProgressKeeper.addTaskCountListener(mTaskCountListener);
 
         showState(R.drawable.ic_ui_browse, R.string.browse_empty_title,
                 R.string.browse_empty_body, 0, null);
-        searchMods("");
+
+        String restoredQuery = savedInstanceState == null ? ""
+                : savedInstanceState.getString(STATE_QUERY, "");
+        mRestoringQuery = true;
+        mSearchEditText.setText(restoredQuery);
+        mSearchEditText.setSelection(restoredQuery.length());
+        mRestoringQuery = false;
+        mClearButton.setVisibility(restoredQuery.isEmpty() ? View.GONE : View.VISIBLE);
+        searchMods(restoredQuery);
 
         if (getActivity() instanceof LauncherActivity) {
             LauncherActivity activity = (LauncherActivity) getActivity();
             if (activity.consumeBrowseImportRequest()) {
                 view.post(this::beginLocalImport);
             }
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mSearchEditText != null) {
+            outState.putString(STATE_QUERY, mSearchEditText.getText().toString());
         }
     }
 
@@ -190,7 +212,7 @@ public class SearchModFragment extends Fragment implements ModItemAdapter.Search
 
     /** Called by the shell when another screen asks to import a local modpack. */
     public void beginLocalImport() {
-        if (mImportButton == null) return;
+        if (!isAdded() || getView() == null || mImportButton == null) return;
         if (ProgressKeeper.getTaskCount() > 0) {
             Toast.makeText(requireContext(), R.string.tasks_ongoing, Toast.LENGTH_SHORT).show();
             return;
@@ -233,6 +255,7 @@ public class SearchModFragment extends Fragment implements ModItemAdapter.Search
     }
 
     private void searchMods(String name) {
+        if (!isAdded() || getView() == null || mModItemAdapter == null) return;
         mSearchProgressBar.setVisibility(View.VISIBLE);
         mStateContainer.setVisibility(View.GONE);
         mRecyclerView.setVisibility(View.VISIBLE);
@@ -242,6 +265,7 @@ public class SearchModFragment extends Fragment implements ModItemAdapter.Search
 
     @Override
     public void onSearchFinished() {
+        if (!isAdded() || getView() == null) return;
         mSearchProgressBar.setVisibility(View.GONE);
         mStateContainer.setVisibility(View.GONE);
         mRecyclerView.setVisibility(View.VISIBLE);
@@ -249,14 +273,16 @@ public class SearchModFragment extends Fragment implements ModItemAdapter.Search
 
     @Override
     public void onSearchError(int error) {
+        if (!isAdded() || getView() == null) return;
         mSearchProgressBar.setVisibility(View.GONE);
         if (error == ERROR_NO_RESULTS) {
             showState(R.drawable.ic_ui_search, R.string.browse_no_results_title,
                     R.string.browse_no_results_body, 0, null);
         } else {
+            String query = mSearchEditText == null ? "" : mSearchEditText.getText().toString();
             showState(R.drawable.ic_ui_warning, R.string.browse_error_title,
                     R.string.browse_error_body, R.string.browse_retry,
-                    v -> searchMods(mSearchEditText.getText().toString()));
+                    v -> searchMods(query));
         }
     }
 
@@ -278,6 +304,7 @@ public class SearchModFragment extends Fragment implements ModItemAdapter.Search
     }
 
     private void displayFilterDialog() {
+        if (!isAdded() || getView() == null) return;
         AlertDialog dialog = new AlertDialog.Builder(requireContext())
                 .setView(R.layout.dialog_mod_filters)
                 .create();
@@ -310,6 +337,7 @@ public class SearchModFragment extends Fragment implements ModItemAdapter.Search
     }
 
     private void hideKeyboard() {
+        if (!isAdded() || mSearchEditText == null) return;
         InputMethodManager imm = (InputMethodManager) requireContext()
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm != null) imm.hideSoftInputFromWindow(mSearchEditText.getWindowToken(), 0);

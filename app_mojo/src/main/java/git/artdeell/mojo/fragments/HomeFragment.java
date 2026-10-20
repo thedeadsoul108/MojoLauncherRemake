@@ -31,6 +31,7 @@ import git.artdeell.mojo.instances.Instances;
 import git.artdeell.mojo.progresskeeper.ProgressKeeper;
 import git.artdeell.mojo.progresskeeper.TaskCountListener;
 import git.artdeell.mojo.ui.ScreenTitleProvider;
+import git.artdeell.mojo.ui.TaskCountRelay;
 import git.artdeell.mojo.ui.UiUtils;
 
 import java.io.File;
@@ -60,10 +61,16 @@ public class HomeFragment extends Fragment implements ScreenTitleProvider {
 
     private volatile Instance mSelectedInstance;
     private boolean mLoadPending;
+    private final TaskCountRelay mTaskCountRelay = new TaskCountRelay();
 
     private final TaskCountListener mTaskCountListener = count -> {
         View view = getView();
-        if(view != null) view.post(() -> updateTaskCount(count));
+        if (view == null) return false;
+        view.post(() -> {
+            // The post can outlive the view (rotation while a download is running).
+            if (!isAdded() || getView() == null) return;
+            mTaskCountRelay.dispatch(count);
+        });
         return false;
     };
 
@@ -81,7 +88,9 @@ public class HomeFragment extends Fragment implements ScreenTitleProvider {
         super.onViewCreated(view, savedInstanceState);
         bindViews(view);
         setupActions(view);
+        mTaskCountRelay.attach(this::updateTaskCount);
         ProgressKeeper.addTaskCountListener(mTaskCountListener);
+        updateTaskCount(ProgressKeeper.getTaskCount());
     }
 
     @Override
@@ -93,6 +102,7 @@ public class HomeFragment extends Fragment implements ScreenTitleProvider {
     @Override
     public void onDestroyView() {
         ProgressKeeper.removeTaskCountListener(mTaskCountListener);
+        mTaskCountRelay.detach();
         super.onDestroyView();
     }
 
@@ -316,6 +326,7 @@ public class HomeFragment extends Fragment implements ScreenTitleProvider {
     }
 
     private void updateTaskCount(int count) {
+        if (!isAdded() || getView() == null) return;
         mDownloadsCard.setVisibility(count > 0 ? View.VISIBLE : View.GONE);
         mTasksCount.setText(getString(R.string.home_tasks_count, count));
     }

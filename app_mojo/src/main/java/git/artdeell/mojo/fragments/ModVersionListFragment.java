@@ -71,6 +71,7 @@ public abstract class ModVersionListFragment<T> extends Fragment implements Runn
         try {
             T versions = loadVersionList();
             Tools.runOnUiThread(()->{
+                if(!isAdded() || getView() == null) return;
                 if(versions != null) {
                     mExpandableListView.setAdapter(createAdapter(versions, mInflater));
                 }else{
@@ -80,8 +81,8 @@ public abstract class ModVersionListFragment<T> extends Fragment implements Runn
             });
         }catch (IOException e) {
             Tools.runOnUiThread(()-> {
-                if (getContext() != null) {
-                    Tools.showError(getContext(), e);
+                if (isAdded() && getView() != null) {
+                    Tools.showError(requireContext(), e);
                     mRetryView.setVisibility(View.VISIBLE);
                     mProgressBar.setVisibility(View.GONE);
                 }
@@ -91,6 +92,7 @@ public abstract class ModVersionListFragment<T> extends Fragment implements Runn
 
     @Override
     public void onClick(View view) {
+        if (!isAdded() || getView() == null) return;
         mRetryView.setVisibility(View.GONE);
         mProgressBar.setVisibility(View.VISIBLE);
         new Thread(this).start();
@@ -115,9 +117,11 @@ public abstract class ModVersionListFragment<T> extends Fragment implements Runn
     @Override
     public void onDownloadFinished(File downloadedFile) {
         Tools.runOnUiThread(()->{
-            Context context = requireContext();
-            getTaskProxy().detachListener();
+            ModloaderListenerProxy proxy = getTaskProxy();
+            if (proxy != null) proxy.detachListener();
             setTaskProxy(null);
+            if (!isAdded() || getView() == null) return;
+            Context context = requireContext();
             mExpandableListView.setEnabled(true);
             // Read the comment in FabricInstallFragment.onDownloadFinished() to see how this works
             getParentFragmentManager().popBackStackImmediate();
@@ -128,9 +132,11 @@ public abstract class ModVersionListFragment<T> extends Fragment implements Runn
     @Override
     public void onDataNotAvailable() {
         Tools.runOnUiThread(()->{
-            Context context = requireContext();
-            getTaskProxy().detachListener();
+            ModloaderListenerProxy proxy = getTaskProxy();
+            if (proxy != null) proxy.detachListener();
             setTaskProxy(null);
+            if (!isAdded() || getView() == null) return;
+            Context context = requireContext();
             mExpandableListView.setEnabled(true);
             Tools.dialog(context,
                     context.getString(R.string.global_error),
@@ -141,9 +147,11 @@ public abstract class ModVersionListFragment<T> extends Fragment implements Runn
     @Override
     public void onDownloadError(Exception e) {
         Tools.runOnUiThread(()->{
-            Context context = requireContext();
-            getTaskProxy().detachListener();
+            ModloaderListenerProxy proxy = getTaskProxy();
+            if (proxy != null) proxy.detachListener();
             setTaskProxy(null);
+            if (!isAdded() || getView() == null) return;
+            Context context = requireContext();
             mExpandableListView.setEnabled(true);
             Tools.showError(context, e);
         });

@@ -141,9 +141,11 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
     @Override
     public void onDownloadFinished(File downloadedFile) {
         Tools.runOnUiThread(()->{
-
-            getListenerProxy().detachListener();
+            // Clean up the proxy even if the view is gone, then avoid every view/context call.
+            ModloaderListenerProxy proxy = getListenerProxy();
+            if (proxy != null) proxy.detachListener();
             setListenerProxy(null);
+            if (!isAdded() || getView() == null) return;
             mStartButton.setEnabled(true);
             // This works because the due to the fact that we have transitioned here
             // without adding a transaction to the back stack, which caused the previous
@@ -158,9 +160,11 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
     @Override
     public void onDataNotAvailable() {
         Tools.runOnUiThread(()->{
-            Context context = requireContext();
-            getListenerProxy().detachListener();
+            ModloaderListenerProxy proxy = getListenerProxy();
+            if (proxy != null) proxy.detachListener();
             setListenerProxy(null);
+            if (!isAdded() || getView() == null) return;
+            Context context = requireContext();
             mStartButton.setEnabled(true);
             Tools.dialog(context,
                     context.getString(R.string.global_error),
@@ -171,9 +175,11 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
     @Override
     public void onDownloadError(Exception e) {
         Tools.runOnUiThread(()-> {
-            Context context = requireContext();
-            getListenerProxy().detachListener();
+            ModloaderListenerProxy proxy = getListenerProxy();
+            if (proxy != null) proxy.detachListener();
             setListenerProxy(null);
+            if (!isAdded() || getView() == null) return;
+            Context context = requireContext();
             mStartButton.setEnabled(true);
             Tools.showError(context, e);
         });
@@ -204,7 +210,7 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
 
     private void onException(Future<?> myFuture, Exception e) {
         Tools.runOnUiThread(()->{
-            if(myFuture.isCancelled()) return;
+            if(myFuture.isCancelled() || !isAdded() || getView() == null) return;
             stopLoading();
             if(e != null) Tools.showError(requireContext(), e);
             mRetryView.setVisibility(View.VISIBLE);
@@ -246,7 +252,7 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
         }
         private void onFinished(Future<?> myFuture) {
             Tools.runOnUiThread(()->{
-                if(myFuture.isCancelled()) return;
+                if(myFuture.isCancelled() || !isAdded() || getView() == null) return;
                 stopLoading();
                 updateLoaderSpinner();
             });
@@ -259,7 +265,7 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
     }
 
     private void updateLoaderSpinner() {
-        if(mLoaderVersionArray == null || isDetached()) return;
+        if(mLoaderVersionArray == null || !isAdded() || getView() == null) return;
         mLoaderVersionSpinner.setAdapter(createAdapter(mLoaderVersionArray, mOnlyStableCheckbox.isChecked()));
     }
 
@@ -293,7 +299,7 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
         }
         private void onFinished(Future<?> myFuture) {
             Tools.runOnUiThread(()->{
-                if(myFuture.isCancelled()) return;
+                if(myFuture.isCancelled() || !isAdded() || getView() == null) return;
                 stopLoading();
                 updateGameSpinner();
             });
@@ -306,7 +312,7 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
     }
 
     private void updateGameSpinner() {
-        if(mGameVersionArray == null || isDetached()) return;
+        if(mGameVersionArray == null || !isAdded() || getView() == null) return;
         mGameVersionSpinner.setAdapter(createAdapter(mGameVersionArray, mOnlyStableCheckbox.isChecked()));
     }
 
