@@ -122,6 +122,9 @@
     </style>
 
     <!-- MojoRemake components -->
+    <!-- Base namespace style: dotted children without an explicit parent resolve here. -->
+    <style name="Widget.Mojo" />
+
     <style name="Widget.Mojo.Button.Primary" parent="Widget.AppCompat.Button">
         <item name="android:background">@drawable/bg_button_primary</item>
         <item name="android:textColor">@color/on_accent</item>
