@@ -148,6 +148,15 @@ derivative of MojoLauncher under LGPLv3.
   - empty and error states in Instances, Browse, and Content screens wrapped in
     `com.kdt.DefocusableScrollView` with `fillViewport="true"` so actions are never
     trapped below the fold on tight screens.
+- [x] Verified CI build with final art and Inter font (run
+  [`39530884212`](https://github.com/thedeadsoul108/MojoLauncherRemake/actions/runs/39530884212),
+  build #22, commit `cca83e4`):
+  - `MojoRemake-v1.0.1-b22-full-debug.apk`:
+    `git.artdeell.mjlaunch.debug.b22`, `versionName v1.0.1`;
+  - `MojoRemake-v1.0.1-b22-noruntime-debug.apk`:
+    `git.artdeell.mjlaunch.noruntime.debug.b22`,
+    `versionName v1.0.1-noruntime`;
+  - unit tests passed, both APKs assembled and verified with artifacts and checksums.
 
 ## Known limitations
 
@@ -175,8 +184,6 @@ derivative of MojoLauncher under LGPLv3.
   Large exports have no cancel/progress UI.
 - **New strings are English-only.** Existing locales are preserved but fall back
   to English for the remake's new screens.
-- **The launcher icon/splash are original provisional vectors.** Final artwork
-  was not supplied.
 - **JVM tests only.** No Robolectric/Android instrumentation suite was added, so
   fragment lifecycle guards are verified by characterization tests (task-count
   relay) and static review rather than runtime UI tests.
@@ -192,9 +199,7 @@ derivative of MojoLauncher under LGPLv3.
 3. **Localization**: the new screens are English-only; other locales fall back
    to English by design (`tools:ignore="MissingTranslation"`). Translate when
    the string set is frozen.
-4. **Final art**: replace the provisional original vector launcher icon/splash
-   with final artwork when available; keep the current files as the fallback.
-5. **Optional follow-ups from device feedback**: update installation with
+4. **Optional follow-ups from device feedback**: update installation with
    dependency resolution, persistent Downloads history/cancel, tablet rail
    spacing, TalkBack labels, and OEM-specific inset behaviour.
 
