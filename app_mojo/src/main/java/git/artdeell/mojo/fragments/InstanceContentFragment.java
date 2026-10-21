@@ -206,12 +206,13 @@ public class InstanceContentFragment extends Fragment implements ScreenTitleProv
         }
         if (mProgress != null) mProgress.setVisibility(View.VISIBLE);
         final int generation = mGeneration;
+        final Instance checkInstance = mInstance;
         final List<ContentEntry> entries = new ArrayList<>(mEntries);
         MojoApplication.sExecutorService.execute(() -> {
             ContentUpdateChecker.Result result = null;
             Throwable error = null;
             try {
-                result = ContentUpdateChecker.check(mInstance, entries, UPDATE_CHECK_LIMIT);
+                result = ContentUpdateChecker.check(checkInstance, entries, UPDATE_CHECK_LIMIT);
             } catch (IOException | RuntimeException e) {
                 error = e;
             }
@@ -260,9 +261,10 @@ public class InstanceContentFragment extends Fragment implements ScreenTitleProv
                 .setTitle(R.string.content_update_title)
                 .setMessage(message.toString())
                 .setPositiveButton(R.string.content_update_browse, (dialog, which) -> {
-                    if (isAdded() && getActivity() instanceof LauncherActivity) {
-                        ((LauncherActivity) requireActivity()).selectRootTab(LauncherActivity.TAB_BROWSE);
-                    }
+                    if (!isAdded() || !(getActivity() instanceof LauncherActivity)) return;
+                    if (mInstance != null) Instances.setSelectedInstance(mInstance);
+                    ((LauncherActivity) requireActivity())
+                            .selectRootTab(LauncherActivity.TAB_BROWSE);
                 })
                 .setNegativeButton(R.string.action_close, null)
                 .show();
@@ -281,8 +283,12 @@ public class InstanceContentFragment extends Fragment implements ScreenTitleProv
 
     private void showLoadFailure() {
         if (!isAdded()) return;
-        Toast.makeText(requireContext(), R.string.content_load_failed, Toast.LENGTH_LONG).show();
+        mEntries = Collections.emptyList();
+        mInstance = null;
+        if (mAdapter != null) mAdapter.submit(mEntries);
+        if (mHeading != null) mHeading.setText(R.string.content_title);
         if (mEmpty != null) mEmpty.setVisibility(View.VISIBLE);
         if (mCheckUpdates != null) mCheckUpdates.setEnabled(false);
+        Toast.makeText(requireContext(), R.string.content_load_failed, Toast.LENGTH_LONG).show();
     }
 }

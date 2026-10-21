@@ -1,6 +1,6 @@
 # MojoRemake — progress and handoff
 
-Last updated: 2026-10-20
+Last updated: 2026-10-21
 
 ## What this project is
 
@@ -77,20 +77,117 @@ derivative of MojoLauncher under LGPLv3.
 - [x] Commits: `50aee53` (design system/branding), `4c7c62a` (shell and
   screens), `3b32803` (plan), `f359a7c` and `3350c68` (AAPT style-parent
   fixes).
+- [x] Modrinth Browse and installation (`30867d6`, `cf8e4bf`):
+  - v2 search/detail/version APIs with percent-encoded JSON facets, project
+    type/version/loader/category/environment filters, sort and pagination;
+  - 350 ms debounce, session cache, disk cache with TTL, retry with exponential
+    backoff, explicit 429 `Retry-After` handling, skeleton rows, cached-offline
+    results and an error/retry state;
+  - installs mods, resource packs, shader packs and data packs into
+    `mods/`, `resourcepacks/`, `shaderpacks/` and `datapacks/` respectively;
+  - downloads only over HTTPS to a temporary sibling, requires and verifies
+    the Modrinth SHA-1, then renames into place; partial files are removed on
+    failure;
+  - retains local `.mrpack`/Modrinth pack import and the legacy modpack APIs.
+- [x] In-app skin editor (`450974b`, `9a79c5c`):
+  - Crafatar previews for remote players and a local body renderer for drafts;
+  - 64x32 classic and 64x64 slim validation, 2 MiB cap, PNG signature/IHDR
+    checks, variant selection, URL/player lookup and local persistence;
+  - Microsoft profile skin upload through the authenticated Minecraft API;
+  - Ely.by and local skins are stored locally because neither provides a public
+    third-party skin-upload API;
+  - capes are listed read-only with an honest explanation: no public API exists
+    to change the active cape.
+- [x] Instance management (`8ec70e4`, `20760c3`):
+  - per-instance notes in the editor and instance metadata;
+  - duplication into a new root with a safe `Copy of …` name and cleanup on
+    failure;
+  - streaming export through `ACTION_CREATE_DOCUMENT`, deterministic entry
+    order and timestamps, path-containment checks, and state restored after
+    rotation;
+  - content manager listing mods, resource packs, shader packs and data packs,
+    enable/disable by adding or removing `.disabled`, background scanning, and
+    Modrinth SHA-1 update checks for enabled files (up to 20 per run, with an
+    explicit limit notice).
+- [x] First-run onboarding and Downloads (`5901bd8`):
+  - onboarding only when both the instance library and account list are empty,
+    with persistent completion flag; create-instance, sign-in and skip exits;
+  - Downloads empty state offers a direct Browse Modrinth action.
+- [x] Lifecycle and rotation hardening (`9bc7be9`, `d7bac5d`, `40af95b`):
+  - load markers reset and stale callbacks discarded after view recreation on
+    Home, Instances, Accounts, Browse and the content screen;
+  - task-count callbacks dropped after detach;
+  - content switches revert while a scan/check/toggle is active, and buttons
+    are disabled while busy;
+  - persisted skins are revalidated on load; upload completion after rotation
+    re-enables the new view's actions;
+  - stream copies handle zero-length reads correctly.
+- [x] JVM unit tests run in CI before APK builds:
+  - skin validation, skin variant rules, deterministic export, path containment,
+    content scanning/enable-disable naming, update-check eligibility, Modrinth
+    facet/version URL encoding and task-count detach behaviour;
+  - 14 tests pass locally and in the CI unit-test step.
+- [x] CI verified after the remake (runs `39436338573`, `39519281205`,
+  `39519871813`):
+  - `MojoRemake-v1.0.1-b16-full-debug.apk`:
+    `git.artdeell.mjlaunch.debug.b16`, `versionName v1.0.1`;
+  - `MojoRemake-v1.0.1-b16-noruntime-debug.apk`:
+    `git.artdeell.mjlaunch.noruntime.debug.b16`,
+    `versionName v1.0.1-noruntime`;
+  - both have `versionCode 10001016`, `minSdk 21`, `targetSdk 36`, label
+    `MojoRemake`, the new shell/content/skin/onboarding layouts, and the
+    expected adaptive icons;
+  - the full APK additionally contains the five JRE archives; the noruntime
+    APK contains no JRE archives.
+
+## Known limitations
+
+- **No on-device testing in this environment.** Rotation, TalkBack, gesture
+  insets, 360 dp layout, tablets and Android 5/old GLES2 devices are checked
+  only by code review and resource compilation, not on hardware or emulators.
+- **Live service calls are not exercised by CI.** Browse, content update checks,
+  Microsoft upload and Ely.by flow compile and have their pure logic tested, but
+  no real account/network session was available. Microsoft endpoints can change
+  without notice.
+- **Capes are read-only.** Minecraft exposes no public cape-equip endpoint, and
+  Ely.by does not expose third-party cape management. The UI reports this rather
+  than pretending the change worked.
+- **Ely.by/local skin uploads are local-only.** They persist in app storage and
+  render locally; they are not uploaded to Ely.by. Microsoft uploads use the
+  profile API.
+- **Update checks report, but do not install.** They are limited to 20 enabled
+  files per run, match only files known to Modrinth by SHA-1, and do not resolve
+  dependencies or choose release channels.
+- **Downloads shows active tasks only.** There is no persistent completed-task
+  history or cancel button because `ProgressKeeper` exposes no cancellation or
+  completion result.
+- **Export is a plain ZIP, not `.mrpack`.** It includes the instance directory
+  it can see; shared-data instances keep their shared content outside that root.
+  Large exports have no cancel/progress UI.
+- **New strings are English-only.** Existing locales are preserved but fall back
+  to English for the remake's new screens.
+- **The launcher icon/splash are original provisional vectors.** Final artwork
+  was not supplied.
+- **JVM tests only.** No Robolectric/Android instrumentation suite was added, so
+  fragment lifecycle guards are verified by characterization tests (task-count
+  relay) and static review rather than runtime UI tests.
 
 ## Next steps
 
-1. **Device smoke test** (the only remaining verification gap): first launch,
-   local/Microsoft/Ely.by login, create + edit instance, modpack
-   import, download progress, game launch, rotation, and gesture-nav insets on
-   Android 5/7/10/14.
-2. **Localization**: the new screens are English-only; other locales fall back
+1. **Device smoke test** (the main remaining verification gap): first launch,
+   local/Microsoft/Ely.by login, create + edit instance, modpack import,
+   Modrinth search/install/update check, skin upload, download progress, game
+   launch, rotation, and gesture-nav insets on Android 5/7/10/14.
+2. **Live-service check** on a real account: Microsoft skin upload and profile
+   refresh, Modrinth rate limiting/offline cache, and a 429 response.
+3. **Localization**: the new screens are English-only; other locales fall back
    to English by design (`tools:ignore="MissingTranslation"`). Translate when
    the string set is frozen.
-3. **Final art**: replace the provisional original vector launcher icon/splash
+4. **Final art**: replace the provisional original vector launcher icon/splash
    with final artwork when available; keep the current files as the fallback.
-4. **Polish pass after device feedback**: tablet rail spacing, TalkBack labels,
-   and any OEM-specific inset behavior.
+5. **Optional follow-ups from device feedback**: update installation with
+   dependency resolution, persistent Downloads history/cancel, tablet rail
+   spacing, TalkBack labels, and OEM-specific inset behaviour.
 
 ## Build notes
 

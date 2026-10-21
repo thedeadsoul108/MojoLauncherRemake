@@ -55,10 +55,11 @@ public class ContentInstaller {
             throw new IOException("Could not create the " + directoryName + " folder");
         }
         File target = new File(directory, fileName);
-        if (target.isFile() && sha1Matches(target, file.hashes == null ? null : file.hashes.sha1)) {
+        String sha1 = requireSha1(file);
+        if (target.isFile() && sha1Matches(target, sha1)) {
             return target;
         }
-        download(file, target, progressKey(version));
+        download(file, target, sha1, progressKey(version));
         return target;
     }
 
@@ -73,10 +74,11 @@ public class ContentInstaller {
             throw new IOException("Could not create the modpack cache folder");
         }
         File target = new File(directory, project.cacheTag() + "-" + fileName);
-        if (target.isFile() && sha1Matches(target, file.hashes == null ? null : file.hashes.sha1)) {
+        String sha1 = requireSha1(file);
+        if (target.isFile() && sha1Matches(target, sha1)) {
             return target;
         }
-        download(file, target, progressKey(version));
+        download(file, target, sha1, progressKey(version));
         return target;
     }
 
@@ -110,8 +112,19 @@ public class ContentInstaller {
         }
     }
 
-    private void download(ModrinthModels.VersionFile file, File target, String progressKey)
-            throws IOException {
+    private static String requireSha1(ModrinthModels.VersionFile file) throws IOException {
+        if (file.hashes == null || file.hashes.sha1 == null
+                || !file.hashes.sha1.matches("(?i)[0-9a-f]{40}")) {
+            throw new IOException("Modrinth did not publish a SHA-1 for this file");
+        }
+        return file.hashes.sha1;
+    }
+
+    private void download(ModrinthModels.VersionFile file, File target, String expectedSha1,
+                          String progressKey) throws IOException {
+        if (file.url == null || !file.url.startsWith("https://")) {
+            throw new IOException("Modrinth returned a non-HTTPS download URL");
+        }
         File temporary = new File(target.getAbsolutePath() + ".part");
         temporary.delete();
         ProgressLayout.setProgress(progressKey, 0);
@@ -153,9 +166,7 @@ public class ContentInstaller {
                 output.flush();
             }
             String actualSha1 = hex(digest.digest());
-            String expected = file.hashes == null ? null : file.hashes.sha1;
-            if (expected != null && !expected.isEmpty()
-                    && !expected.equalsIgnoreCase(actualSha1)) {
+            if (!expectedSha1.equalsIgnoreCase(actualSha1)) {
                 throw new IOException("The downloaded file is corrupted (SHA-1 mismatch)");
             }
             if (target.exists() && !target.delete()) {
