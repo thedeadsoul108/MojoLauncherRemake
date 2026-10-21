@@ -120,6 +120,7 @@ public class InstanceContentFragment extends Fragment implements ScreenTitleProv
     private void loadContent() {
         if (mLoadPending || mInstanceRoot == null) return;
         mLoadPending = true;
+        if (mCheckUpdates != null) mCheckUpdates.setEnabled(false);
         if (mProgress != null) mProgress.setVisibility(View.VISIBLE);
         final int generation = mGeneration;
         MojoApplication.sExecutorService.execute(() -> {
@@ -167,7 +168,11 @@ public class InstanceContentFragment extends Fragment implements ScreenTitleProv
     }
 
     private void toggleEntry(@NonNull ContentEntry entry) {
-        if (mLoadPending || mChecking || mTogglePending) return;
+        if (mLoadPending || mChecking || mTogglePending) {
+            // The switch already flipped itself; put it back while the screen is busy.
+            if (mAdapter != null) mAdapter.notifyDataSetChanged();
+            return;
+        }
         mTogglePending = true;
         final int generation = mGeneration;
         MojoApplication.sExecutorService.execute(() -> {
@@ -193,7 +198,7 @@ public class InstanceContentFragment extends Fragment implements ScreenTitleProv
     }
 
     private void checkForUpdates() {
-        if (mInstance == null || mEntries.isEmpty() || mChecking) return;
+        if (mInstance == null || mEntries.isEmpty() || mChecking || mLoadPending) return;
         mChecking = true;
         if (mCheckUpdates != null) {
             mCheckUpdates.setEnabled(false);
