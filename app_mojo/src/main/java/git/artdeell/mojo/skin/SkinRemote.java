@@ -55,6 +55,9 @@ public final class SkinRemote {
     }
 
     public static byte[] download(String url) throws IOException {
+        if (url == null || !url.startsWith("https://")) {
+            throw new IOException("Only HTTPS image URLs are allowed");
+        }
         HttpURLConnection connection = null;
         try {
             connection = (HttpURLConnection) new URL(url).openConnection();

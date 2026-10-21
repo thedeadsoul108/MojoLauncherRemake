@@ -328,9 +328,9 @@ public class LauncherActivity extends BaseActivity {
                 if (getSupportFragmentManager().findFragmentByTag(OnboardingFragment.TAG) != null) {
                     return;
                 }
-                LauncherPreferences.DEFAULT_PREF.edit()
-                        .putBoolean(LauncherPreferences.PREF_KEY_ONBOARDING_DONE, true)
-                        .apply();
+                // The flag is only written when the user actually leaves the setup screen.
+                // Marking it here would hide onboarding forever if the activity is recreated
+                // before the fragment transaction is committed.
                 Tools.swapFragment(this, OnboardingFragment.class, OnboardingFragment.TAG, null);
             });
         });

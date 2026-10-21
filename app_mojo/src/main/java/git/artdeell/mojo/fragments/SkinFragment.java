@@ -526,7 +526,7 @@ public class SkinFragment extends Fragment implements ScreenTitleProvider {
 
     private void loadFromUrl(String url) {
         if (mAppContext == null) return;
-        if (!url.startsWith("https://") && !url.startsWith("http://")) {
+        if (!url.startsWith("https://")) {
             showStatus(getString(R.string.skin_error_url), true);
             return;
         }

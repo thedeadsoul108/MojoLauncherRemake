@@ -972,7 +972,7 @@
     <string name="skin_player_example">Notch</string>
     <string name="skin_player_copy">Copy</string>
     <string name="skin_error_no_account">This account could not be loaded.</string>
-    <string name="skin_error_url">Enter an http:// or https:// image URL.</string>
+    <string name="skin_error_url">Enter an https:// image URL.</string>
     <string name="skin_error_not_png">The file is not a PNG skin.</string>
     <string name="skin_error_dimensions">Skins must be exactly 64x32 or 64x64 pixels.</string>
     <string name="skin_error_too_large">The skin is larger than 2 MB.</string>

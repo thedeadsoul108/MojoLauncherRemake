@@ -46,7 +46,7 @@ public final class SkinStore {
             stored.png = bytes;
             stored.updatedAt = png.lastModified();
             File metadata = new File(directory(context), key(account) + ".json");
-            if (metadata.isFile()) {
+            if (metadata.isFile() && metadata.length() <= 65536) {
                 Metadata meta = GSON.fromJson(new String(readFile(metadata), "UTF-8"), Metadata.class);
                 if (meta != null) {
                     stored.variant = "slim".equals(meta.variant) ? "slim" : "classic";
