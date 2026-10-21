@@ -140,7 +140,7 @@ public class SettingsFragment extends Fragment implements ScreenTitleProvider {
 
         mRendererSummary = addRow(inflater, container, R.drawable.ic_px_image_renderer,
                 R.string.settings_renderer_select_title, currentRendererName,
-                v -> showRendererDialog(cache));
+                v -> showRendererDialog(cache)).summary;
 
         // Resolution Scaling Slider
         int currentRes = (int) (LauncherPreferences.PREF_SCALE_FACTOR * 100);
@@ -280,14 +280,14 @@ public class SettingsFragment extends Fragment implements ScreenTitleProvider {
                 ? LauncherPreferences.PREF_DEFAULT_RUNTIME : getString(R.string.use_global_default);
         mRuntimeSummary = addRow(inflater, container, R.drawable.ic_px_runtime_mgr,
                 R.string.multirt_title, runtimeName,
-                v -> openMultiRTDialog());
+                v -> openMultiRTDialog()).summary;
 
         // JVM Arguments
         String currentJvm = Tools.isValidString(LauncherPreferences.PREF_CUSTOM_JAVA_ARGS)
                 ? LauncherPreferences.PREF_CUSTOM_JAVA_ARGS : getString(R.string.mcl_setting_subtitle_javaargs);
         mJvmSummary = addRow(inflater, container, R.drawable.ic_px_console,
                 R.string.settings_jvm_title, currentJvm,
-                v -> showJvmArgumentsDialog());
+                v -> showJvmArgumentsDialog()).summary;
 
         // Java Sandbox
         addSwitchRow(inflater, container, R.drawable.ic_px_java_run,

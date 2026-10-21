@@ -334,7 +334,7 @@ public class HomeFragment extends Fragment implements ScreenTitleProvider {
         if (mStatRam != null) {
             int allocated = LauncherPreferences.PREF_RAM_ALLOCATION;
             int total = Tools.getTotalDeviceMemory(requireContext());
-            mStatRam.setText(getString(R.string.home_stat_ram_value, allocated, total > 0 ? (total + " MB") : ""));
+            mStatRam.setText(total > 0 ? (allocated + " MB / " + total + " MB") : (allocated + " MB"));
         }
         if (mStatGpu != null) {
             boolean hasVulkan = GpuUtils.checkVulkanSupport(requireContext().getPackageManager());
