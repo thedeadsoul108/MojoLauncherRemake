@@ -91,7 +91,7 @@ public class BrowseFragment extends Fragment implements ScreenTitleProvider {
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout mRefresh;
     private LinearLayout mSkeleton;
-    private LinearLayout mStateContainer;
+    private View mStateContainer;
     private ImageView mStateIcon;
     private TextView mStateTitle;
     private TextView mStateBody;

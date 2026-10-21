@@ -43,7 +43,7 @@ public class InstanceContentFragment extends Fragment implements ScreenTitleProv
     private static final int UPDATE_CHECK_LIMIT = 20;
 
     private RecyclerView mList;
-    private LinearLayout mEmpty;
+    private View mEmpty;
     private ProgressBar mProgress;
     private TextView mHeading;
     private Button mCheckUpdates;
