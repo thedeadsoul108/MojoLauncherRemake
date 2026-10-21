@@ -1,6 +1,7 @@
 package git.artdeell.mojo.content;
 
 import java.io.File;
+import java.util.Locale;
 
 /** One file inside an instance content folder, including its disabled state. */
 public final class ContentEntry {
@@ -31,5 +32,13 @@ public final class ContentEntry {
         this.displayName = displayName;
         this.enabled = enabled;
         this.size = size;
+    }
+
+    /** True for enabled files whose type can be matched by a Modrinth version file. */
+    public boolean canCheckForUpdates() {
+        if (!enabled || displayName == null) return false;
+        String name = displayName.toLowerCase(Locale.ROOT);
+        if (category == Category.MODS) return name.endsWith(".jar");
+        return name.endsWith(".zip");
     }
 }

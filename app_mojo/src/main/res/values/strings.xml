@@ -1008,17 +1008,18 @@
 
     <!-- Instance content -->
     <string name="content_title">Content</string>
-    <string name="content_intro">Enable or disable installed files without deleting them.</string>
+    <string name="content_intro">Enable or disable installed files without deleting them. Update checks compare enabled files with Modrinth.</string>
     <string name="content_instance">Installed in %1$s</string>
     <string name="content_shared_suffix">shared data</string>
     <string name="content_empty_title">No content installed</string>
     <string name="content_empty_body">Browse Modrinth or import a modpack to add content to this instance.</string>
     <string name="content_check_updates">Check for updates</string>
-    <string name="content_checking">Checking installed mods…</string>
+    <string name="content_checking">Checking installed content…</string>
     <string name="content_check_failed">Could not check for updates</string>
-    <string name="content_checked_none">No updates found for the checked mods.</string>
+    <string name="content_checked_none">No updates found for the checked content.</string>
     <string name="content_checked_some">%1$d updates available.</string>
-    <string name="content_checked_partial">%1$d mods checked, %2$d could not be checked.</string>
+    <string name="content_checked_partial">%1$d files checked, %2$d could not be checked.</string>
+    <string name="content_checked_limit">Stopped after %1$d files; %2$d more were not checked.</string>
     <string name="content_update_title">Updates available</string>
     <string name="content_update_line">%1$s: %2$s → %3$s</string>
     <string name="content_update_more">…and %1$d more.</string>

@@ -193,6 +193,7 @@ public class BrowseFragment extends Fragment implements ScreenTitleProvider {
     public void onDestroyView() {
         mHandler.removeCallbacks(mSearchRunnable);
         mGeneration++;
+        mLoading = false;
         if (mAdapter != null) {
             mAdapter.submit(new ArrayList<>(), false);
             if (mRecyclerView != null) mRecyclerView.setAdapter(null);

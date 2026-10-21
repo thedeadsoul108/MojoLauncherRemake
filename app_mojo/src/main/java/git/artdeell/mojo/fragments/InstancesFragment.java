@@ -75,6 +75,7 @@ public class InstancesFragment extends Fragment implements ScreenTitleProvider, 
     private File mSelectedRoot;
     private int mSortMode = SORT_NAME;
     private boolean mLoadPending;
+    private int mGeneration;
     private String mPendingExportPath;
     private String mPendingExportName;
 
@@ -156,7 +157,19 @@ public class InstancesFragment extends Fragment implements ScreenTitleProvider, 
 
     @Override
     public void onDestroyView() {
+        mGeneration++;
+        mLoadPending = false;
         if (mList != null) mList.setAdapter(null);
+        mList = null;
+        mAdapter = null;
+        mEmptyState = null;
+        mErrorState = null;
+        mEmptyTitle = null;
+        mEmptyBody = null;
+        mCount = null;
+        mEmptyCreate = null;
+        mEmptyImport = null;
+        mSearch = null;
         super.onDestroyView();
     }
 
@@ -170,7 +183,7 @@ public class InstancesFragment extends Fragment implements ScreenTitleProvider, 
     }
 
     private void loadInstances() {
-        if (mLoadPending) return;
+        if (mLoadPending || getView() == null || mErrorState == null || mCount == null) return;
         mLoadPending = true;
         mErrorState.setVisibility(View.GONE);
         if (mAllInstances.isEmpty()) {
@@ -178,6 +191,7 @@ public class InstancesFragment extends Fragment implements ScreenTitleProvider, 
             mCount.setText(R.string.instances_loading);
         }
         final android.content.res.Resources resources = getResources();
+        final int generation = mGeneration;
         MojoApplication.sExecutorService.execute(() -> {
             List<Instance> instances = null;
             File selectedRoot = null;
@@ -197,8 +211,8 @@ public class InstancesFragment extends Fragment implements ScreenTitleProvider, 
             List<Instance> finalInstances = instances;
             File finalSelectedRoot = selectedRoot;
             Tools.runOnUiThread(() -> {
+                if (generation != mGeneration || !isAdded() || getView() == null) return;
                 mLoadPending = false;
-                if (!isAdded() || getView() == null) return;
                 if (finalInstances == null) {
                     showErrorState();
                     return;

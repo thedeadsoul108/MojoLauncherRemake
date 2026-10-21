@@ -51,7 +51,8 @@ public final class InstanceExporter {
                 try (InputStream input = new FileInputStream(child)) {
                     byte[] buffer = new byte[8192];
                     int count;
-                    while ((count = input.read(buffer)) >= 0) {
+                    while ((count = input.read(buffer)) != -1) {
+                        if (count == 0) continue;
                         zip.write(buffer, 0, count);
                     }
                 }

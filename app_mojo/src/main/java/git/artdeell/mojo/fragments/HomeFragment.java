@@ -61,6 +61,7 @@ public class HomeFragment extends Fragment implements ScreenTitleProvider {
 
     private volatile Instance mSelectedInstance;
     private boolean mLoadPending;
+    private int mGeneration;
     private final TaskCountRelay mTaskCountRelay = new TaskCountRelay();
 
     private final TaskCountListener mTaskCountListener = count -> {
@@ -101,6 +102,8 @@ public class HomeFragment extends Fragment implements ScreenTitleProvider {
 
     @Override
     public void onDestroyView() {
+        mGeneration++;
+        mLoadPending = false;
         ProgressKeeper.removeTaskCountListener(mTaskCountListener);
         mTaskCountRelay.detach();
         super.onDestroyView();
@@ -180,9 +183,10 @@ public class HomeFragment extends Fragment implements ScreenTitleProvider {
     }
 
     private void loadContent() {
-        if (mLoadPending) return;
+        if (mLoadPending || getView() == null) return;
         mLoadPending = true;
         final android.content.res.Resources resources = getResources();
+        final int generation = mGeneration;
         MojoApplication.sExecutorService.execute(() -> {
             List<Instance> instances;
             File selectedRoot;
@@ -200,8 +204,8 @@ public class HomeFragment extends Fragment implements ScreenTitleProvider {
             List<Instance> finalInstances = instances;
             File finalSelectedRoot = selectedRoot;
             Tools.runOnUiThread(() -> {
+                if (generation != mGeneration || !isAdded() || getView() == null) return;
                 mLoadPending = false;
-                if (!isAdded() || getView() == null) return;
                 applyContent(finalInstances, finalSelectedRoot, account, accountFace);
             });
         });

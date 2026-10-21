@@ -47,6 +47,7 @@ public class AccountManagerFragment extends Fragment implements ScreenTitleProvi
     private final Map<Account, Bitmap> mFaces = new IdentityHashMap<>();
     private int mSelectedIndex;
     private boolean mLoadPending;
+    private int mGeneration;
 
     public AccountManagerFragment() {
         super(R.layout.fragment_account_manager);
@@ -74,14 +75,22 @@ public class AccountManagerFragment extends Fragment implements ScreenTitleProvi
         loadAccounts();
     }
 
+    @Override
+    public void onDestroyView() {
+        mGeneration++;
+        mLoadPending = false;
+        super.onDestroyView();
+    }
+
     private void addAccount() {
         Tools.swapFragment(requireActivity(), SelectAuthFragment.class,
                 SelectAuthFragment.TAG, null);
     }
 
     private void loadAccounts() {
-        if (mLoadPending) return;
+        if (mLoadPending || getView() == null || mLoading == null) return;
         mLoadPending = true;
+        final int generation = mGeneration;
         if (mAccounts.isEmpty()) {
             mLoading.setVisibility(View.VISIBLE);
         }
@@ -104,8 +113,8 @@ public class AccountManagerFragment extends Fragment implements ScreenTitleProvi
             int finalSelected = selected;
             Map<Account, Bitmap> finalFaces = faces;
             Tools.runOnUiThread(() -> {
+                if (generation != mGeneration || !isAdded() || getView() == null) return;
                 mLoadPending = false;
-                if (!isAdded() || getView() == null) return;
                 mLoading.setVisibility(View.GONE);
                 if (finalAccounts == null) {
                     showEmpty();

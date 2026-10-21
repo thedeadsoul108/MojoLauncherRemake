@@ -53,6 +53,7 @@ public class InstanceContentFragment extends Fragment implements ScreenTitleProv
     private File mInstanceRoot;
     private boolean mLoadPending;
     private boolean mChecking;
+    private boolean mTogglePending;
     private int mGeneration;
 
     public static InstanceContentFragment newInstance(@NonNull File instanceRoot) {
@@ -103,6 +104,9 @@ public class InstanceContentFragment extends Fragment implements ScreenTitleProv
     @Override
     public void onDestroyView() {
         mGeneration++;
+        mLoadPending = false;
+        mChecking = false;
+        mTogglePending = false;
         if (mList != null) mList.setAdapter(null);
         mList = null;
         mEmpty = null;
@@ -132,8 +136,8 @@ public class InstanceContentFragment extends Fragment implements ScreenTitleProv
             final List<ContentEntry> loadedEntries = entries;
             final Throwable loadedError = error;
             Tools.runOnUiThread(() -> {
-                mLoadPending = false;
                 if (generation != mGeneration || !isAdded() || getView() == null) return;
+                mLoadPending = false;
                 if (mProgress != null) mProgress.setVisibility(View.GONE);
                 if (loadedError != null) {
                     showLoadFailure();
@@ -147,21 +151,24 @@ public class InstanceContentFragment extends Fragment implements ScreenTitleProv
                     if (mInstance.sharedData) name = name + " · " + getString(R.string.content_shared_suffix);
                     mHeading.setText(getString(R.string.content_instance, name));
                 }
-                boolean hasMods = false;
+                boolean hasCheckable = false;
                 for (ContentEntry entry : mEntries) {
-                    if (entry.category == ContentEntry.Category.MODS && entry.enabled) {
-                        hasMods = true;
+                    if (ContentUpdateChecker.isCheckable(entry)) {
+                        hasCheckable = true;
                         break;
                     }
                 }
-                if (mCheckUpdates != null) mCheckUpdates.setEnabled(hasMods);
+                if (mCheckUpdates != null) {
+                    mCheckUpdates.setEnabled(hasCheckable && !mChecking);
+                }
                 if (mEmpty != null) mEmpty.setVisibility(mEntries.isEmpty() ? View.VISIBLE : View.GONE);
             });
         });
     }
 
     private void toggleEntry(@NonNull ContentEntry entry) {
-        if (mLoadPending || mChecking) return;
+        if (mLoadPending || mChecking || mTogglePending) return;
+        mTogglePending = true;
         final int generation = mGeneration;
         MojoApplication.sExecutorService.execute(() -> {
             boolean success = true;
@@ -173,6 +180,7 @@ public class InstanceContentFragment extends Fragment implements ScreenTitleProv
             final boolean finalSuccess = success;
             Tools.runOnUiThread(() -> {
                 if (generation != mGeneration || !isAdded() || getView() == null) return;
+                mTogglePending = false;
                 if (!finalSuccess) {
                     Toast.makeText(requireContext(), R.string.content_toggle_failed,
                             Toast.LENGTH_LONG).show();
@@ -205,8 +213,8 @@ public class InstanceContentFragment extends Fragment implements ScreenTitleProv
             final ContentUpdateChecker.Result loadedResult = result;
             final Throwable loadedError = error;
             Tools.runOnUiThread(() -> {
-                mChecking = false;
                 if (generation != mGeneration || !isAdded() || getView() == null) return;
+                mChecking = false;
                 if (mProgress != null) mProgress.setVisibility(View.GONE);
                 if (mCheckUpdates != null) {
                     mCheckUpdates.setText(R.string.content_check_updates);
@@ -225,10 +233,9 @@ public class InstanceContentFragment extends Fragment implements ScreenTitleProv
     private void showUpdateResult(@Nullable ContentUpdateChecker.Result result) {
         if (result == null) return;
         if (result.updates.isEmpty()) {
-            String message = result.failed > 0
-                    ? getString(R.string.content_checked_partial, result.checked, result.failed)
-                    : getString(R.string.content_checked_none);
-            Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show();
+            StringBuilder message = new StringBuilder(getString(R.string.content_checked_none));
+            appendCheckNotes(message, result);
+            Toast.makeText(requireContext(), message.toString(), Toast.LENGTH_LONG).show();
             return;
         }
         StringBuilder message = new StringBuilder();
@@ -243,10 +250,7 @@ public class InstanceContentFragment extends Fragment implements ScreenTitleProv
             message.append('\n').append(getString(R.string.content_update_more,
                     result.updates.size() - shown));
         }
-        if (result.failed > 0) {
-            message.append('\n').append(getString(R.string.content_checked_partial,
-                    result.checked, result.failed));
-        }
+        appendCheckNotes(message, result);
         new AlertDialog.Builder(requireContext())
                 .setTitle(R.string.content_update_title)
                 .setMessage(message.toString())
@@ -257,6 +261,17 @@ public class InstanceContentFragment extends Fragment implements ScreenTitleProv
                 })
                 .setNegativeButton(R.string.action_close, null)
                 .show();
+    }
+
+    private void appendCheckNotes(StringBuilder message, ContentUpdateChecker.Result result) {
+        if (result.failed > 0) {
+            message.append('\n').append(getString(R.string.content_checked_partial,
+                    result.checked, result.failed));
+        }
+        if (result.remaining > 0) {
+            message.append('\n').append(getString(R.string.content_checked_limit,
+                    result.checked, result.remaining));
+        }
     }
 
     private void showLoadFailure() {

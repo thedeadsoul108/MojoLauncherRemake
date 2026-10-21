@@ -70,7 +70,8 @@ public final class SkinRemote {
                 ByteArrayOutputStream output = new ByteArrayOutputStream();
                 byte[] buffer = new byte[8192];
                 int count;
-                while ((count = input.read(buffer)) >= 0) {
+                while ((count = input.read(buffer)) != -1) {
+                    if (count == 0) continue;
                     output.write(buffer, 0, count);
                     if (output.size() > MAX_IMAGE_BYTES) {
                         throw new IOException("Image is too large");
