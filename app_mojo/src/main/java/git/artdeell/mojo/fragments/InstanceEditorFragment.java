@@ -215,6 +215,60 @@ public class InstanceEditorFragment extends Fragment implements ScreenTitleProvi
         mSharedData.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (!mBinding) markDirty();
         });
+
+        View manageContent = view.findViewById(R.id.editor_manage_content);
+        if (manageContent != null) {
+            manageContent.setOnClickListener(v -> {
+                if (mInstance == null) return;
+                Tools.swapFragment(requireActivity(),
+                        InstanceContentFragment.newInstance(mInstance.getInstanceRoot()),
+                        InstanceContentFragment.TAG);
+            });
+        }
+
+        View jvmPresets = view.findViewById(R.id.editor_jvm_presets);
+        if (jvmPresets != null) {
+            jvmPresets.setOnClickListener(v -> showJvmPresetsDialog());
+        }
+
+        View openDir = view.findViewById(R.id.editor_open_directory);
+        if (openDir != null) {
+            openDir.setOnClickListener(v -> {
+                if (mInstance == null) return;
+                File gameDir = mInstance.getGameDirectory();
+                FileUtils.ensureDirectorySilently(gameDir);
+                Tools.openPath(requireContext(), gameDir, false);
+            });
+        }
+
+        View duplicate = view.findViewById(R.id.editor_duplicate);
+        if (duplicate != null) {
+            duplicate.setOnClickListener(v -> {
+                if (mInstance == null) return;
+                final String displayName = UiUtils.displayName(requireContext(), mInstance);
+                final String copyName = getString(R.string.instances_copy_name, displayName);
+                MojoApplication.sExecutorService.execute(() -> {
+                    boolean success = true;
+                    try {
+                        Instances.duplicateInstance(mInstance, copyName);
+                    } catch (IOException | RuntimeException e) {
+                        success = false;
+                    }
+                    final boolean finalSuccess = success;
+                    Tools.runOnUiThread(() -> {
+                        if (!isAdded() || getView() == null) return;
+                        Toast.makeText(requireContext(), finalSuccess
+                                ? getString(R.string.instances_duplicate_done, displayName)
+                                : getString(R.string.instances_duplicate_failed),
+                                finalSuccess ? Toast.LENGTH_SHORT : Toast.LENGTH_LONG).show();
+                        if (finalSuccess) {
+                            getParentFragmentManager().popBackStack();
+                        }
+                    });
+                });
+            });
+        }
+
         mSave.setOnClickListener(v -> save());
         view.findViewById(R.id.editor_delete).setOnClickListener(v -> {
             if (mInstance == null) return;
@@ -222,6 +276,31 @@ public class InstanceEditorFragment extends Fragment implements ScreenTitleProvi
                     mInstance.getInstanceRoot(), mName.getText().toString());
             dialog.show(getParentFragmentManager(), DeleteConfirmDialogFragment.TAG);
         });
+    }
+
+    private void showJvmPresetsDialog() {
+        String[] presetNames = new String[] {
+                getString(R.string.settings_jvm_preset_aikar),
+                getString(R.string.settings_jvm_preset_shenandoah),
+                getString(R.string.settings_jvm_preset_zgc),
+                getString(R.string.settings_jvm_preset_low_ram),
+                getString(R.string.settings_jvm_preset_clear)
+        };
+        String[] presetValues = new String[] {
+                "-XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1",
+                "-XX:+UnlockExperimentalVMOptions -XX:+UseShenandoahGC -XX:ShenandoahGCMode=iu -XX:+AlwaysPreTouch",
+                "-XX:+UnlockExperimentalVMOptions -XX:+UseZGC -XX:+AlwaysPreTouch",
+                "-XX:+UseG1GC -XX:MaxGCPauseMillis=150 -XX:+ParallelRefProcEnabled -XX:SurvivorRatio=8",
+                ""
+        };
+        new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.settings_jvm_presets)
+                .setItems(presetNames, (dialog, which) -> {
+                    mJvm.setText(presetValues[which]);
+                    markDirty();
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
     }
 
     private void loadInstance() {

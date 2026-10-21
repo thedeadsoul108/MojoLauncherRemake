@@ -1,7 +1,9 @@
 package git.artdeell.mojo.fragments;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.text.format.Formatter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +16,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
+import git.artdeell.mojo.CustomControlsActivity;
 import git.artdeell.mojo.LauncherActivity;
 import git.artdeell.mojo.MojoApplication;
 import git.artdeell.mojo.R;
@@ -28,11 +32,13 @@ import git.artdeell.mojo.extra.ExtraCore;
 import git.artdeell.mojo.instances.Instance;
 import git.artdeell.mojo.instances.InstanceIconProvider;
 import git.artdeell.mojo.instances.Instances;
+import git.artdeell.mojo.prefs.LauncherPreferences;
 import git.artdeell.mojo.progresskeeper.ProgressKeeper;
 import git.artdeell.mojo.progresskeeper.TaskCountListener;
 import git.artdeell.mojo.ui.ScreenTitleProvider;
 import git.artdeell.mojo.ui.TaskCountRelay;
 import git.artdeell.mojo.ui.UiUtils;
+import git.artdeell.mojo.utils.GpuUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,7 +64,11 @@ public class HomeFragment extends Fragment implements ScreenTitleProvider {
     private View mDownloadsCard;
     private LinearLayout mRecentContainer;
     private TextView mRecentEmpty;
+    private TextView mStatRam;
+    private TextView mStatGpu;
+    private TextView mStatStorage;
 
+    private List<Instance> mLoadedInstances = Collections.emptyList();
     private volatile Instance mSelectedInstance;
     private boolean mLoadPending;
     private int mGeneration;
@@ -122,11 +132,22 @@ public class HomeFragment extends Fragment implements ScreenTitleProvider {
         mDownloadsCard = view.findViewById(R.id.home_downloads_card);
         mRecentContainer = view.findViewById(R.id.home_recent_container);
         mRecentEmpty = view.findViewById(R.id.home_recent_empty);
+        mStatRam = view.findViewById(R.id.home_stat_ram);
+        mStatGpu = view.findViewById(R.id.home_stat_gpu);
+        mStatStorage = view.findViewById(R.id.home_stat_storage);
     }
 
     private void setupActions(View view) {
         view.findViewById(R.id.home_play).setOnClickListener(v ->
                 ExtraCore.setValue(ExtraConstants.LAUNCH_GAME, true));
+        View switchBtn = view.findViewById(R.id.home_switch);
+        if (switchBtn != null) {
+            switchBtn.setOnClickListener(v -> showQuickSwitchDialog());
+        }
+        View modsBtn = view.findViewById(R.id.home_mods);
+        if (modsBtn != null) {
+            modsBtn.setOnClickListener(v -> openContent());
+        }
         view.findViewById(R.id.home_configure).setOnClickListener(v -> openEditor());
         view.findViewById(R.id.home_empty_create).setOnClickListener(v -> openCreate());
         view.findViewById(R.id.home_recent_all).setOnClickListener(v -> selectTab(LauncherActivity.TAB_INSTANCES));
@@ -139,12 +160,68 @@ public class HomeFragment extends Fragment implements ScreenTitleProvider {
         bindActionTile(view.findViewById(R.id.home_action_browse), R.drawable.ic_ui_browse,
                 R.string.home_quick_browse_title, R.string.home_quick_browse_body,
                 v -> selectTab(LauncherActivity.TAB_BROWSE));
-        bindActionTile(view.findViewById(R.id.home_action_import), R.drawable.ic_ui_file_download,
-                R.string.home_quick_import_title, R.string.home_quick_import_body,
-                v -> requireLauncherActivity().requestBrowseImport());
+        View controlsTile = view.findViewById(R.id.home_action_controls);
+        if (controlsTile != null) {
+            bindActionTile(controlsTile, R.drawable.ic_px_gamepad,
+                    R.string.home_quick_controls_title, R.string.home_quick_controls_body,
+                    v -> startActivity(new Intent(requireContext(), CustomControlsActivity.class)));
+        }
         bindActionTile(view.findViewById(R.id.home_action_settings), R.drawable.ic_ui_settings,
                 R.string.home_quick_settings_title, R.string.home_quick_settings_body,
                 v -> selectTab(LauncherActivity.TAB_SETTINGS));
+    }
+
+    private void openContent() {
+        Instance instance = mSelectedInstance;
+        if (instance == null) {
+            Toast.makeText(requireContext(), R.string.no_instance, Toast.LENGTH_LONG).show();
+            return;
+        }
+        Tools.swapFragment(requireActivity(),
+                InstanceContentFragment.newInstance(instance.getInstanceRoot()),
+                InstanceContentFragment.TAG);
+    }
+
+    private void showQuickSwitchDialog() {
+        if (mLoadedInstances == null || mLoadedInstances.isEmpty()) {
+            Toast.makeText(requireContext(), R.string.home_recent_empty, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        LayoutInflater inflater = LayoutInflater.from(requireContext());
+        LinearLayout container = new LinearLayout(requireContext());
+        container.setOrientation(LinearLayout.VERTICAL);
+        int pad = getResources().getDimensionPixelSize(R.dimen.mojo_space_3);
+        container.setPadding(pad, pad, pad, pad);
+
+        AlertDialog dialog = new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.home_quick_instance_select_title)
+                .setView(container)
+                .setPositiveButton(R.string.home_create_instance, (d, which) -> openCreate())
+                .setNegativeButton(android.R.string.cancel, null)
+                .create();
+
+        Instance selected = mSelectedInstance;
+        for (Instance inst : mLoadedInstances) {
+            View row = inflater.inflate(R.layout.item_instance_quick_switch, container, false);
+            ImageView icon = row.findViewById(R.id.quick_switch_icon);
+            TextView name = row.findViewById(R.id.quick_switch_name);
+            TextView meta = row.findViewById(R.id.quick_switch_meta);
+            ImageView check = row.findViewById(R.id.quick_switch_check);
+
+            icon.setImageDrawable(InstanceIconProvider.fetchIcon(getResources(), inst));
+            name.setText(UiUtils.displayName(requireContext(), inst));
+            meta.setText(UiUtils.describeInstance(requireContext(), inst));
+
+            boolean isCurrent = selected != null && inst.getInstanceRoot().equals(selected.getInstanceRoot());
+            check.setVisibility(isCurrent ? View.VISIBLE : View.GONE);
+
+            row.setOnClickListener(v -> {
+                dialog.dismiss();
+                selectInstance(inst);
+            });
+            container.addView(row);
+        }
+        dialog.show();
     }
 
     private void bindActionTile(View tile, int icon, @StringRes int title,
@@ -213,6 +290,9 @@ public class HomeFragment extends Fragment implements ScreenTitleProvider {
 
     private void applyContent(@Nullable List<Instance> instances, @Nullable File selectedRoot,
                               @Nullable Account account, @Nullable Bitmap accountFace) {
+        mLoadedInstances = instances != null ? instances : Collections.emptyList();
+        updateSystemDiagnostics();
+
         if (instances == null) {
             mSelectedInstance = null;
             mSelectedCard.setVisibility(View.GONE);
@@ -247,6 +327,34 @@ public class HomeFragment extends Fragment implements ScreenTitleProvider {
 
         bindAccount(account, accountFace);
         bindRecentInstances(instances, selected);
+    }
+
+    private void updateSystemDiagnostics() {
+        if (!isAdded() || getView() == null) return;
+        if (mStatRam != null) {
+            int allocated = LauncherPreferences.PREF_RAM_ALLOCATION;
+            int total = Tools.getTotalDeviceMemory(requireContext());
+            mStatRam.setText(getString(R.string.home_stat_ram_value, allocated, total > 0 ? (total + " MB") : ""));
+        }
+        if (mStatGpu != null) {
+            boolean hasVulkan = GpuUtils.checkVulkanSupport(requireContext().getPackageManager());
+            mStatGpu.setText(hasVulkan ? R.string.home_vulkan_supported : R.string.home_vulkan_not_supported);
+            mStatGpu.setTextColor(androidx.core.content.ContextCompat.getColor(
+                    requireContext(), hasVulkan ? R.color.accent : R.color.text_secondary));
+        }
+        if (mStatStorage != null) {
+            try {
+                File dir = new File(Tools.DIR_GAME_NEW);
+                long usable = dir.getUsableSpace();
+                if (usable > 0) {
+                    mStatStorage.setText(Formatter.formatFileSize(requireContext(), usable) + " Free");
+                } else {
+                    mStatStorage.setText("—");
+                }
+            } catch (Exception e) {
+                mStatStorage.setText("—");
+            }
+        }
     }
 
     private void bindAccount(@Nullable Account account, @Nullable Bitmap face) {

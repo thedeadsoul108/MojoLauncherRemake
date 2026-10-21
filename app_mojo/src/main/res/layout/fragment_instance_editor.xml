@@ -39,6 +39,17 @@
                         android:layout_height="wrap_content"
                         android:text="@string/editor_section_general" />
 
+                    <Button
+                        android:id="@+id/editor_manage_content"
+                        style="@style/Widget.Mojo.Button.Secondary"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/mojo_button_height"
+                        android:layout_marginTop="@dimen/mojo_space_3"
+                        android:drawableStart="@drawable/ic_ui_box"
+                        android:drawablePadding="@dimen/mojo_space_2"
+                        android:drawableTint="@color/accent"
+                        android:text="@string/editor_manage_content" />
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -267,12 +278,28 @@
                         android:layout_height="wrap_content"
                         android:text="@string/editor_section_performance" />
 
-                    <TextView
-                        style="@style/TextAppearance.Mojo.Meta"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/mojo_space_4"
-                        android:text="@string/editor_jvm_label" />
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            style="@style/TextAppearance.Mojo.Meta"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/editor_jvm_label" />
+
+                        <Button
+                            android:id="@+id/editor_jvm_presets"
+                            style="@style/Widget.Mojo.Button.Text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:minHeight="@dimen/mojo_touch_target"
+                            android:text="@string/editor_jvm_presets" />
+                    </LinearLayout>
 
                     <EditText
                         android:id="@+id/editor_jvm"
@@ -336,6 +363,28 @@
                             android:layout_marginStart="@dimen/mojo_space_3"
                             android:contentDescription="@string/editor_shared_data_title" />
                     </LinearLayout>
+
+                    <Button
+                        android:id="@+id/editor_open_directory"
+                        style="@style/Widget.Mojo.Button.Secondary"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/mojo_button_height"
+                        android:layout_marginTop="@dimen/mojo_space_3"
+                        android:drawableStart="@drawable/ic_ui_folder"
+                        android:drawablePadding="@dimen/mojo_space_2"
+                        android:drawableTint="@color/text_primary"
+                        android:text="@string/editor_open_directory" />
+
+                    <Button
+                        android:id="@+id/editor_duplicate"
+                        style="@style/Widget.Mojo.Button.Secondary"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/mojo_button_height"
+                        android:layout_marginTop="@dimen/mojo_space_2"
+                        android:drawableStart="@drawable/ic_ui_add"
+                        android:drawablePadding="@dimen/mojo_space_2"
+                        android:drawableTint="@color/text_primary"
+                        android:text="@string/editor_duplicate_instance" />
                 </LinearLayout>
 
                 <!-- Danger -->

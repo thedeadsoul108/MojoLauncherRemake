@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg">
+    android:background="@color/bg"
+    android:clipToPadding="false">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,15 +22,63 @@
             android:text="@string/settings_subtitle"
             android:textColor="@color/text_secondary" />
 
+        <!-- 1. Graphics & Renderer -->
         <TextView
             style="@style/TextAppearance.Mojo.SectionTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/mojo_space_6"
-            android:text="@string/settings_section_appearance" />
+            android:text="@string/settings_section_renderer" />
+
+        <!-- Vulkan Diagnostic Hero Banner -->
+        <LinearLayout
+            android:id="@+id/settings_vulkan_banner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/mojo_space_2"
+            android:background="@drawable/bg_card_hero"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="@dimen/mojo_space_4">
+
+            <ImageView
+                android:id="@+id/settings_vulkan_icon"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@drawable/bg_hero_icon"
+                android:importantForAccessibility="no"
+                android:padding="@dimen/mojo_space_2"
+                android:src="@drawable/ic_ui_check_circle"
+                android:tint="@color/accent" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/mojo_space_3"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/settings_vulkan_title"
+                    style="@style/TextAppearance.Mojo.CardTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_vulkan_badge_supported"
+                    android:textColor="@color/accent" />
+
+                <TextView
+                    android:id="@+id/settings_vulkan_desc"
+                    style="@style/TextAppearance.Mojo.Meta"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/settings_vulkan_badge_supported_desc"
+                    android:textColor="@color/text_secondary" />
+            </LinearLayout>
+        </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/settings_appearance_container"
+            android:id="@+id/settings_renderer_container"
             style="@style/Widget.Mojo.Card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -37,15 +86,143 @@
             android:orientation="vertical"
             android:padding="@dimen/mojo_space_1" />
 
+        <!-- 2. Java & Memory -->
         <TextView
             style="@style/TextAppearance.Mojo.SectionTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/mojo_space_6"
-            android:text="@string/settings_section_accounts" />
+            android:text="@string/settings_section_java" />
+
+        <!-- RAM Allocation Visual Card -->
+        <LinearLayout
+            android:id="@+id/settings_ram_card"
+            style="@style/Widget.Mojo.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/mojo_space_2"
+            android:orientation="vertical"
+            android:padding="@dimen/mojo_space_4">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="@drawable/bg_hero_icon"
+                    android:importantForAccessibility="no"
+                    android:padding="@dimen/mojo_space_2"
+                    android:src="@drawable/ic_px_ram"
+                    android:tint="@color/accent" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/mojo_space_3"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/TextAppearance.Mojo.CardTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/settings_ram_title" />
+
+                    <TextView
+                        android:id="@+id/settings_ram_status"
+                        style="@style/TextAppearance.Mojo.Meta"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="1dp"
+                        tools:text="Allocated: 2048 MB · Available: ~4200 MB · Total: 8192 MB" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/settings_ram_badge"
+                    style="@style/TextAppearance.Mojo.Badge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_badge_accent"
+                    android:paddingStart="@dimen/mojo_space_2"
+                    android:paddingTop="3dp"
+                    android:paddingEnd="@dimen/mojo_space_2"
+                    android:paddingBottom="3dp"
+                    android:textColor="@color/accent"
+                    tools:text="2048 MB" />
+            </LinearLayout>
+
+            <SeekBar
+                android:id="@+id/settings_ram_seekbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/mojo_space_3" />
+
+            <!-- RAM Presets -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/mojo_space_2"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/settings_ram_preset_15"
+                    style="@style/Widget.Mojo.Button.Secondary"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/mojo_touch_target"
+                    android:layout_weight="1"
+                    android:minHeight="@dimen/mojo_touch_target"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:text="@string/settings_ram_preset_15"
+                    android:textSize="12sp" />
+
+                <Button
+                    android:id="@+id/settings_ram_preset_25"
+                    style="@style/Widget.Mojo.Button.Secondary"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/mojo_touch_target"
+                    android:layout_marginStart="@dimen/mojo_space_1"
+                    android:layout_weight="1"
+                    android:minHeight="@dimen/mojo_touch_target"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:text="@string/settings_ram_preset_25"
+                    android:textSize="12sp" />
+
+                <Button
+                    android:id="@+id/settings_ram_preset_40"
+                    style="@style/Widget.Mojo.Button.Secondary"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/mojo_touch_target"
+                    android:layout_marginStart="@dimen/mojo_space_1"
+                    android:layout_weight="1"
+                    android:minHeight="@dimen/mojo_touch_target"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:text="@string/settings_ram_preset_40"
+                    android:textSize="12sp" />
+
+                <Button
+                    android:id="@+id/settings_ram_preset_max"
+                    style="@style/Widget.Mojo.Button.Secondary"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/mojo_touch_target"
+                    android:layout_marginStart="@dimen/mojo_space_1"
+                    android:layout_weight="1"
+                    android:minHeight="@dimen/mojo_touch_target"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:text="@string/settings_ram_preset_max"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/settings_accounts_container"
+            android:id="@+id/settings_java_container"
             style="@style/Widget.Mojo.Card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -53,15 +230,16 @@
             android:orientation="vertical"
             android:padding="@dimen/mojo_space_1" />
 
+        <!-- 3. Controls & Input -->
         <TextView
             style="@style/TextAppearance.Mojo.SectionTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/mojo_space_6"
-            android:text="@string/settings_section_gameplay" />
+            android:text="@string/settings_section_controls" />
 
         <LinearLayout
-            android:id="@+id/settings_gameplay_container"
+            android:id="@+id/settings_controls_container"
             style="@style/Widget.Mojo.Card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -69,15 +247,16 @@
             android:orientation="vertical"
             android:padding="@dimen/mojo_space_1" />
 
+        <!-- 4. Launcher & Behavior -->
         <TextView
             style="@style/TextAppearance.Mojo.SectionTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/mojo_space_6"
-            android:text="@string/settings_section_tools" />
+            android:text="@string/settings_section_behavior" />
 
         <LinearLayout
-            android:id="@+id/settings_tools_container"
+            android:id="@+id/settings_behavior_container"
             style="@style/Widget.Mojo.Card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -85,15 +264,16 @@
             android:orientation="vertical"
             android:padding="@dimen/mojo_space_1" />
 
+        <!-- 5. System & Diagnostics -->
         <TextView
             style="@style/TextAppearance.Mojo.SectionTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/mojo_space_6"
-            android:text="@string/settings_section_about" />
+            android:text="@string/settings_section_system" />
 
         <LinearLayout
-            android:id="@+id/settings_about_container"
+            android:id="@+id/settings_system_container"
             style="@style/Widget.Mojo.Card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

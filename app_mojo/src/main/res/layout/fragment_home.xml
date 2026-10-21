@@ -112,28 +112,164 @@
                     android:textColor="@color/accent" />
             </LinearLayout>
 
+            <Button
+                android:id="@+id/home_play"
+                style="@style/Widget.Mojo.Button.Primary"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="@dimen/mojo_space_4"
+                android:drawableStart="@drawable/ic_ui_play"
+                android:drawablePadding="@dimen/mojo_space_2"
+                android:drawableTint="@color/on_accent"
+                android:letterSpacing="0.08"
+                android:text="@string/home_play"
+                android:textSize="17sp" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/mojo_space_5"
+                android:layout_marginTop="@dimen/mojo_space_2"
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/home_play"
-                    style="@style/Widget.Mojo.Button.Primary"
+                    android:id="@+id/home_switch"
+                    style="@style/Widget.Mojo.Button.Secondary"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/mojo_button_height"
                     android:layout_weight="1"
-                    android:text="@string/home_play" />
+                    android:drawableStart="@drawable/ic_ui_chevron_down"
+                    android:drawablePadding="@dimen/mojo_space_1"
+                    android:drawableTint="@color/text_primary"
+                    android:paddingStart="@dimen/mojo_space_2"
+                    android:paddingEnd="@dimen/mojo_space_2"
+                    android:text="@string/home_switch_instance" />
+
+                <Button
+                    android:id="@+id/home_mods"
+                    style="@style/Widget.Mojo.Button.Secondary"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/mojo_button_height"
+                    android:layout_marginStart="@dimen/mojo_space_2"
+                    android:layout_weight="1"
+                    android:drawableStart="@drawable/ic_ui_box"
+                    android:drawablePadding="@dimen/mojo_space_1"
+                    android:drawableTint="@color/text_primary"
+                    android:paddingStart="@dimen/mojo_space_2"
+                    android:paddingEnd="@dimen/mojo_space_2"
+                    android:text="@string/home_manage_mods" />
 
                 <Button
                     android:id="@+id/home_configure"
                     style="@style/Widget.Mojo.Button.Secondary"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/mojo_button_height"
-                    android:layout_marginStart="@dimen/mojo_space_3"
+                    android:layout_marginStart="@dimen/mojo_space_2"
                     android:layout_weight="1"
+                    android:drawableStart="@drawable/ic_ui_edit"
+                    android:drawablePadding="@dimen/mojo_space_1"
+                    android:drawableTint="@color/text_primary"
+                    android:paddingStart="@dimen/mojo_space_2"
+                    android:paddingEnd="@dimen/mojo_space_2"
                     android:text="@string/home_configure" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Hardware & System Specs -->
+        <LinearLayout
+            android:id="@+id/home_system_card"
+            style="@style/Widget.Mojo.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/mojo_space_4"
+            android:orientation="vertical"
+            android:padding="@dimen/mojo_space_4">
+
+            <TextView
+                style="@style/TextAppearance.Mojo.Badge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:letterSpacing="0.1"
+                android:text="@string/settings_section_system"
+                android:textColor="@color/text_muted" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/mojo_space_3"
+                android:baselineAligned="false"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/TextAppearance.Mojo.Meta"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/home_stat_ram_label"
+                        android:textColor="@color/text_muted" />
+
+                    <TextView
+                        android:id="@+id/home_stat_ram"
+                        style="@style/TextAppearance.Mojo.CardTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:textSize="14sp"
+                        tools:text="2048 MB" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/mojo_space_2"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/TextAppearance.Mojo.Meta"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/home_stat_gpu_label"
+                        android:textColor="@color/text_muted" />
+
+                    <TextView
+                        android:id="@+id/home_stat_gpu"
+                        style="@style/TextAppearance.Mojo.CardTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:textColor="@color/accent"
+                        android:textSize="14sp"
+                        tools:text="Vulkan 1.0+" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/mojo_space_2"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/TextAppearance.Mojo.Meta"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/home_stat_storage_label"
+                        android:textColor="@color/text_muted" />
+
+                    <TextView
+                        android:id="@+id/home_stat_storage"
+                        style="@style/TextAppearance.Mojo.CardTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:textSize="14sp"
+                        tools:text="34.8 GB Free" />
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
 
@@ -219,7 +355,7 @@
             android:orientation="horizontal">
 
             <include
-                android:id="@+id/home_action_import"
+                android:id="@+id/home_action_controls"
                 layout="@layout/view_action_tile"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
