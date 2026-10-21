@@ -127,23 +127,27 @@ derivative of MojoLauncher under LGPLv3.
     content scanning/enable-disable naming, update-check eligibility, Modrinth
     facet/version URL encoding and task-count detach behaviour;
   - 14 tests pass locally and in the CI unit-test step.
-- [x] Final CI verification (run
-  [`39521502939`](https://github.com/thedeadsoul108/MojoLauncherRemake/actions/runs/39521502939),
-  build #20, commit `890c01e`):
-  - `MojoRemake-v1.0.1-b20-full-debug.apk`:
-    `git.artdeell.mjlaunch.debug.b20`, `versionName v1.0.1`;
-  - `MojoRemake-v1.0.1-b20-noruntime-debug.apk`:
-    `git.artdeell.mjlaunch.noruntime.debug.b20`,
-    `versionName v1.0.1-noruntime`;
-  - both have `versionCode 10001020`, `minSdk 21`, `targetSdk 36`, label
-    `MojoRemake`, the new shell/content/skin/onboarding layouts, and the
-    expected adaptive icons; the published MD5 files match the downloaded APKs;
-  - the full APK additionally contains the five JRE archives
-    (`bin-arm`, `bin-arm64`, `bin-x86`, `bin-x86_64`, `universal`);
-    the noruntime APK contains no JRE archives;
-  - earlier remake runs `39436338573`, `39519281205`, `39519871813`,
-    `39521148344` and `39521502939` all passed the unit-test step and both APK
-    builds.
+- [x] Final art and brand identity:
+  - replaced provisional "M." vectors with updated high-resolution MojoRemake
+    logo (`mojoremakelogo.png`);
+  - generated crisp assets across Play Store icon (512x512), legacy launcher
+    mipmaps (mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi square & round), adaptive icon
+    foreground and monochrome layers for API 26+ and API 33+ themed icons,
+    splash logo (`ic_splash_logo`), and UI chrome mark (`ic_brand_mark`).
+- [x] Bundled Inter typeface:
+  - Inter Regular, Medium, SemiBold, and Bold bundled in `app_mojo/src/main/res/font/`;
+  - `inter.xml` AppCompat font family wired into base theme and typography styles
+    (`TextAppearance.Mojo.*`).
+- [x] Design tokens:
+  - dark and light themes aligned 1:1 with Modrinth App (`modrinth/theseus`
+    `variables.scss`) surface, background, border, text, and accent values.
+- [x] Landscape responsiveness and single-scroll containers:
+  - `values-land/dimens.xml` with compact top bar and nav rail item heights;
+  - navigation rail item heights now scale dynamically so all 5 destinations fit
+    cleanly in compact landscape (e.g. 360dp phone landscape);
+  - empty and error states in Instances, Browse, and Content screens wrapped in
+    `com.kdt.DefocusableScrollView` with `fillViewport="true"` so actions are never
+    trapped below the fold on tight screens.
 
 ## Known limitations
 

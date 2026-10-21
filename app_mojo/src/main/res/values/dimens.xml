@@ -43,6 +43,7 @@
     <dimen name="mojo_top_bar_height">56dp</dimen>
     <dimen name="mojo_bottom_nav_height">64dp</dimen>
     <dimen name="mojo_nav_rail_width">88dp</dimen>
+    <dimen name="mojo_nav_rail_item_height">56dp</dimen>
     <dimen name="mojo_touch_target">48dp</dimen>
     <dimen name="mojo_icon_size">24dp</dimen>
     <dimen name="mojo_icon_size_small">20dp</dimen>

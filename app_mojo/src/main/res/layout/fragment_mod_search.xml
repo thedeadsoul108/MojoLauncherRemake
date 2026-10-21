@@ -227,56 +227,62 @@
                 android:paddingEnd="@dimen/mojo_screen_padding"
                 tools:visibility="visible" />
 
-            <LinearLayout
+            <com.kdt.DefocusableScrollView
                 android:id="@+id/browse_state"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="@dimen/mojo_space_6"
+                android:layout_height="match_parent"
+                android:fillViewport="true"
                 android:visibility="gone"
                 tools:visibility="gone">
 
-                <ImageView
-                    android:id="@+id/browse_state_icon"
-                    android:layout_width="@dimen/mojo_hero_icon"
-                    android:layout_height="@dimen/mojo_hero_icon"
-                    android:background="@drawable/bg_hero_icon"
-                    android:importantForAccessibility="no"
-                    android:padding="@dimen/mojo_space_3"
-                    android:src="@drawable/ic_ui_browse"
-                    android:tint="@color/accent" />
-
-                <TextView
-                    android:id="@+id/browse_state_title"
-                    style="@style/TextAppearance.Mojo.SectionTitle"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/mojo_space_4"
+                    android:layout_gravity="center"
                     android:gravity="center"
-                    tools:text="@string/browse_empty_title" />
+                    android:orientation="vertical"
+                    android:padding="@dimen/mojo_space_6">
 
-                <TextView
-                    android:id="@+id/browse_state_body"
-                    style="@style/TextAppearance.Mojo.Body"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/mojo_space_2"
-                    android:gravity="center"
-                    android:textColor="@color/text_secondary"
-                    tools:text="@string/browse_empty_body" />
+                    <ImageView
+                        android:id="@+id/browse_state_icon"
+                        android:layout_width="@dimen/mojo_hero_icon"
+                        android:layout_height="@dimen/mojo_hero_icon"
+                        android:background="@drawable/bg_hero_icon"
+                        android:importantForAccessibility="no"
+                        android:padding="@dimen/mojo_space_3"
+                        android:src="@drawable/ic_ui_browse"
+                        android:tint="@color/accent" />
 
-                <Button
-                    android:id="@+id/browse_state_action"
-                    style="@style/Widget.Mojo.Button.Secondary"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/mojo_button_height"
-                    android:layout_marginTop="@dimen/mojo_space_5"
-                    android:text="@string/browse_retry"
-                    android:visibility="gone"
-                    tools:visibility="visible" />
-            </LinearLayout>
+                    <TextView
+                        android:id="@+id/browse_state_title"
+                        style="@style/TextAppearance.Mojo.SectionTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/mojo_space_4"
+                        android:gravity="center"
+                        tools:text="@string/browse_empty_title" />
+
+                    <TextView
+                        android:id="@+id/browse_state_body"
+                        style="@style/TextAppearance.Mojo.Body"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/mojo_space_2"
+                        android:gravity="center"
+                        android:textColor="@color/text_secondary"
+                        tools:text="@string/browse_empty_body" />
+
+                    <Button
+                        android:id="@+id/browse_state_action"
+                        style="@style/Widget.Mojo.Button.Secondary"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/mojo_button_height"
+                        android:layout_marginTop="@dimen/mojo_space_5"
+                        android:text="@string/browse_retry"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
+                </LinearLayout>
+            </com.kdt.DefocusableScrollView>
         </FrameLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </LinearLayout>

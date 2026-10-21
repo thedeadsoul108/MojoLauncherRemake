@@ -77,31 +77,31 @@
             <git.artdeell.mojo.ui.NavItemView
                 android:id="@+id/nav_rail_home"
                 android:layout_width="match_parent"
-                android:layout_height="64dp"
+                android:layout_height="@dimen/mojo_nav_rail_item_height"
                 android:layout_marginBottom="@dimen/mojo_space_1" />
 
             <git.artdeell.mojo.ui.NavItemView
                 android:id="@+id/nav_rail_instances"
                 android:layout_width="match_parent"
-                android:layout_height="64dp"
+                android:layout_height="@dimen/mojo_nav_rail_item_height"
                 android:layout_marginBottom="@dimen/mojo_space_1" />
 
             <git.artdeell.mojo.ui.NavItemView
                 android:id="@+id/nav_rail_browse"
                 android:layout_width="match_parent"
-                android:layout_height="64dp"
+                android:layout_height="@dimen/mojo_nav_rail_item_height"
                 android:layout_marginBottom="@dimen/mojo_space_1" />
 
             <git.artdeell.mojo.ui.NavItemView
                 android:id="@+id/nav_rail_downloads"
                 android:layout_width="match_parent"
-                android:layout_height="64dp"
+                android:layout_height="@dimen/mojo_nav_rail_item_height"
                 android:layout_marginBottom="@dimen/mojo_space_1" />
 
             <git.artdeell.mojo.ui.NavItemView
                 android:id="@+id/nav_rail_settings"
                 android:layout_width="match_parent"
-                android:layout_height="64dp" />
+                android:layout_height="@dimen/mojo_nav_rail_item_height" />
         </LinearLayout>
 
         <LinearLayout

@@ -100,106 +100,118 @@
             android:paddingBottom="@dimen/mojo_space_6"
             tools:listitem="@layout/view_instance_card" />
 
-        <LinearLayout
+        <com.kdt.DefocusableScrollView
             android:id="@+id/instances_empty"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:padding="@dimen/mojo_space_6"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
             android:visibility="gone"
             tools:visibility="visible">
 
-            <ImageView
-                android:layout_width="@dimen/mojo_hero_icon"
-                android:layout_height="@dimen/mojo_hero_icon"
-                android:background="@drawable/bg_hero_icon"
-                android:importantForAccessibility="no"
-                android:padding="@dimen/mojo_space_3"
-                android:src="@drawable/ic_ui_instances"
-                android:tint="@color/accent" />
-
-            <TextView
-                android:id="@+id/instances_empty_title"
-                style="@style/TextAppearance.Mojo.SectionTitle"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/mojo_space_4"
+                android:layout_gravity="center"
                 android:gravity="center"
-                android:text="@string/instances_empty_title" />
+                android:orientation="vertical"
+                android:padding="@dimen/mojo_space_6">
 
-            <TextView
-                android:id="@+id/instances_empty_body"
-                style="@style/TextAppearance.Mojo.Body"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/mojo_space_2"
-                android:gravity="center"
-                android:text="@string/instances_empty_body"
-                android:textColor="@color/text_secondary" />
+                <ImageView
+                    android:layout_width="@dimen/mojo_hero_icon"
+                    android:layout_height="@dimen/mojo_hero_icon"
+                    android:background="@drawable/bg_hero_icon"
+                    android:importantForAccessibility="no"
+                    android:padding="@dimen/mojo_space_3"
+                    android:src="@drawable/ic_ui_instances"
+                    android:tint="@color/accent" />
 
-            <Button
-                android:id="@+id/instances_empty_create"
-                style="@style/Widget.Mojo.Button.Primary"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/mojo_button_height"
-                android:layout_marginTop="@dimen/mojo_space_5"
-                android:text="@string/instances_create" />
+                <TextView
+                    android:id="@+id/instances_empty_title"
+                    style="@style/TextAppearance.Mojo.SectionTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/mojo_space_4"
+                    android:gravity="center"
+                    android:text="@string/instances_empty_title" />
 
-            <Button
-                android:id="@+id/instances_empty_import"
-                style="@style/Widget.Mojo.Button.Secondary"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/mojo_button_height"
-                android:layout_marginTop="@dimen/mojo_space_2"
-                android:text="@string/instances_import" />
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/instances_empty_body"
+                    style="@style/TextAppearance.Mojo.Body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/mojo_space_2"
+                    android:gravity="center"
+                    android:text="@string/instances_empty_body"
+                    android:textColor="@color/text_secondary" />
 
-        <LinearLayout
+                <Button
+                    android:id="@+id/instances_empty_create"
+                    style="@style/Widget.Mojo.Button.Primary"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/mojo_button_height"
+                    android:layout_marginTop="@dimen/mojo_space_5"
+                    android:text="@string/instances_create" />
+
+                <Button
+                    android:id="@+id/instances_empty_import"
+                    style="@style/Widget.Mojo.Button.Secondary"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/mojo_button_height"
+                    android:layout_marginTop="@dimen/mojo_space_2"
+                    android:text="@string/instances_import" />
+            </LinearLayout>
+        </com.kdt.DefocusableScrollView>
+
+        <com.kdt.DefocusableScrollView
             android:id="@+id/instances_error"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:padding="@dimen/mojo_space_6"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
             android:visibility="gone"
             tools:visibility="gone">
 
-            <ImageView
-                android:layout_width="@dimen/mojo_hero_icon"
-                android:layout_height="@dimen/mojo_hero_icon"
-                android:background="@drawable/bg_hero_icon"
-                android:importantForAccessibility="no"
-                android:padding="@dimen/mojo_space_3"
-                android:src="@drawable/ic_ui_warning"
-                android:tint="@color/warning" />
-
-            <TextView
-                style="@style/TextAppearance.Mojo.SectionTitle"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/mojo_space_4"
+                android:layout_gravity="center"
                 android:gravity="center"
-                android:text="@string/instances_error_title" />
+                android:orientation="vertical"
+                android:padding="@dimen/mojo_space_6">
 
-            <TextView
-                style="@style/TextAppearance.Mojo.Body"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/mojo_space_2"
-                android:gravity="center"
-                android:text="@string/instances_error_body"
-                android:textColor="@color/text_secondary" />
+                <ImageView
+                    android:layout_width="@dimen/mojo_hero_icon"
+                    android:layout_height="@dimen/mojo_hero_icon"
+                    android:background="@drawable/bg_hero_icon"
+                    android:importantForAccessibility="no"
+                    android:padding="@dimen/mojo_space_3"
+                    android:src="@drawable/ic_ui_warning"
+                    android:tint="@color/warning" />
 
-            <Button
-                android:id="@+id/instances_retry"
-                style="@style/Widget.Mojo.Button.Secondary"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/mojo_button_height"
-                android:layout_marginTop="@dimen/mojo_space_5"
-                android:text="@string/action_retry" />
-        </LinearLayout>
+                <TextView
+                    style="@style/TextAppearance.Mojo.SectionTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/mojo_space_4"
+                    android:gravity="center"
+                    android:text="@string/instances_error_title" />
+
+                <TextView
+                    style="@style/TextAppearance.Mojo.Body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/mojo_space_2"
+                    android:gravity="center"
+                    android:text="@string/instances_error_body"
+                    android:textColor="@color/text_secondary" />
+
+                <Button
+                    android:id="@+id/instances_retry"
+                    style="@style/Widget.Mojo.Button.Secondary"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/mojo_button_height"
+                    android:layout_marginTop="@dimen/mojo_space_5"
+                    android:text="@string/action_retry" />
+            </LinearLayout>
+        </com.kdt.DefocusableScrollView>
     </FrameLayout>
 </LinearLayout>

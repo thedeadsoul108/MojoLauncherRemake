@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- MojoRemake semantic palette: light theme (default configuration). -->
-    <color name="bg">#F4F5F7</color>
-    <color name="surface">#FFFFFF</color>
-    <color name="surface_raised">#ECEEF1</color>
-    <color name="border">#D7DCE2</color>
-    <color name="text_primary">#15181D</color>
-    <color name="text_secondary">#4C555F</color>
-    <color name="text_muted">#6B7480</color>
+    <!-- MojoRemake semantic palette: light theme (Modrinth Design Tokens from theseus). -->
+    <color name="bg">#EBEBEB</color>
+    <color name="surface">#F5F5F5</color>
+    <color name="surface_raised">#F8F8F8</color>
+    <color name="border">#DDDDDD</color>
+    <color name="text_primary">#1A202C</color>
+    <color name="text_secondary">#484D54</color>
+    <color name="text_muted">#686A72</color>
     <color name="accent">#1BD96A</color>
     <color name="accent_pressed">#16B858</color>
     <color name="on_accent">#04130A</color>
-    <color name="danger">#C7362F</color>
-    <color name="warning">#9A6400</color>
-    <color name="info">#1F6FD0</color>
+    <color name="danger">#CB2245</color>
+    <color name="warning">#E08325</color>
+    <color name="info">#1F68C0</color>
 
     <color name="accent_soft">#241BD96A</color>
     <color name="accent_border">#661BD96A</color>

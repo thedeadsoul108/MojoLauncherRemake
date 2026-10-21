@@ -17,6 +17,7 @@
         android:layout_marginTop="2dp"
         android:duplicateParentState="true"
         android:ellipsize="end"
+        android:fontFamily="@font/inter_medium"
         android:maxLines="1"
         android:textSize="11sp"
         tools:text="@string/nav_home" />
