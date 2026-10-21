@@ -47,5 +47,9 @@ public class InstanceExporterTest {
         assertTrue(json);
         assertTrue(jar);
         assertNotNull(output.toByteArray());
+
+        ByteArrayOutputStream second = new ByteArrayOutputStream();
+        InstanceExporter.zipDirectory(root, second);
+        assertTrue(java.util.Arrays.equals(output.toByteArray(), second.toByteArray()));
     }
 }

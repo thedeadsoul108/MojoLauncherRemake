@@ -671,7 +671,13 @@ public class SkinFragment extends Fragment implements ScreenTitleProvider {
             final Bitmap loadedFace = refreshedFace;
             Tools.runOnUiThread(() -> {
                 mApplying = false;
-                if (generation != mGeneration || !isAdded() || getView() == null) return;
+                if (!isAdded() || getView() == null) return;
+                if (generation != mGeneration) {
+                    // The upload finished after a rotation; the new view still needs its buttons
+                    // re-enabled even though the old generation's status is stale.
+                    refreshApplyState();
+                    return;
+                }
                 refreshApplyState();
                 if (loadedError != null) {
                     showStatus(describeError(loadedError), true);

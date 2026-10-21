@@ -34,6 +34,12 @@ public class ModrinthQueryTest {
     }
 
     @Test
+    public void versionFileUsesTheSha1Algorithm() {
+        assertEquals(ModrinthQuery.BASE + "/version_file/abc123?algorithm=sha1",
+                ModrinthQuery.versionFile("abc123"));
+    }
+
+    @Test
     public void emptyFiltersOnlyKeepProjectType() throws Exception {
         String url = ModrinthQuery.search("", "shader", null, null, null, null,
                 "relevance", 10, 0);

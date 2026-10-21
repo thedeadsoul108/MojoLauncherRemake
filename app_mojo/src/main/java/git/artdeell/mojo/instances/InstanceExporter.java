@@ -43,11 +43,15 @@ public final class InstanceExporter {
         for (File child : sorted) {
             String relative = relativePath(root, child);
             if (child.isDirectory()) {
-                zip.putNextEntry(new ZipEntry(relative + "/"));
+                ZipEntry entry = new ZipEntry(relative + "/");
+                entry.setTime(0L);
+                zip.putNextEntry(entry);
                 zip.closeEntry();
                 zipDirectory(child, root, zip);
             } else if (child.isFile()) {
-                zip.putNextEntry(new ZipEntry(relative));
+                ZipEntry entry = new ZipEntry(relative);
+                entry.setTime(0L);
+                zip.putNextEntry(entry);
                 try (InputStream input = new FileInputStream(child)) {
                     byte[] buffer = new byte[8192];
                     int count;

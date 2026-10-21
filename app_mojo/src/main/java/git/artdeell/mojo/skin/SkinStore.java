@@ -38,10 +38,10 @@ public final class SkinStore {
 
     public static StoredSkin load(Context context, Account account) {
         File png = new File(directory(context), key(account) + ".png");
-        if (!png.isFile()) return null;
+        if (!png.isFile() || png.length() > SkinValidator.MAX_BYTES) return null;
         try {
             byte[] bytes = readFile(png);
-            if (bytes.length == 0) return null;
+            SkinValidator.validate(bytes);
             StoredSkin stored = new StoredSkin();
             stored.png = bytes;
             stored.updatedAt = png.lastModified();
@@ -62,6 +62,7 @@ public final class SkinStore {
 
     public static void save(Context context, Account account, byte[] png, String variant, String source)
             throws IOException {
+        SkinValidator.validate(png);
         File directory = directory(context);
         if (!directory.isDirectory() && !directory.mkdirs()) {
             throw new IOException("Could not create the skin directory");
