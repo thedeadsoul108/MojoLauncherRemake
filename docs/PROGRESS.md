@@ -127,18 +127,23 @@ derivative of MojoLauncher under LGPLv3.
     content scanning/enable-disable naming, update-check eligibility, Modrinth
     facet/version URL encoding and task-count detach behaviour;
   - 14 tests pass locally and in the CI unit-test step.
-- [x] CI verified after the remake (runs `39436338573`, `39519281205`,
-  `39519871813`):
-  - `MojoRemake-v1.0.1-b16-full-debug.apk`:
-    `git.artdeell.mjlaunch.debug.b16`, `versionName v1.0.1`;
-  - `MojoRemake-v1.0.1-b16-noruntime-debug.apk`:
-    `git.artdeell.mjlaunch.noruntime.debug.b16`,
+- [x] Final CI verification (run
+  [`39521502939`](https://github.com/thedeadsoul108/MojoLauncherRemake/actions/runs/39521502939),
+  build #20, commit `890c01e`):
+  - `MojoRemake-v1.0.1-b20-full-debug.apk`:
+    `git.artdeell.mjlaunch.debug.b20`, `versionName v1.0.1`;
+  - `MojoRemake-v1.0.1-b20-noruntime-debug.apk`:
+    `git.artdeell.mjlaunch.noruntime.debug.b20`,
     `versionName v1.0.1-noruntime`;
-  - both have `versionCode 10001016`, `minSdk 21`, `targetSdk 36`, label
+  - both have `versionCode 10001020`, `minSdk 21`, `targetSdk 36`, label
     `MojoRemake`, the new shell/content/skin/onboarding layouts, and the
-    expected adaptive icons;
-  - the full APK additionally contains the five JRE archives; the noruntime
-    APK contains no JRE archives.
+    expected adaptive icons; the published MD5 files match the downloaded APKs;
+  - the full APK additionally contains the five JRE archives
+    (`bin-arm`, `bin-arm64`, `bin-x86`, `bin-x86_64`, `universal`);
+    the noruntime APK contains no JRE archives;
+  - earlier remake runs `39436338573`, `39519281205`, `39519871813`,
+    `39521148344` and `39521502939` all passed the unit-test step and both APK
+    builds.
 
 ## Known limitations
 
